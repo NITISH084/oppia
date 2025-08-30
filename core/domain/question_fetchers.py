@@ -22,6 +22,7 @@ import copy
 
 from core import feconf
 from core.domain import question_domain
+from core.constants import constants
 from core.domain import state_domain
 from core.platform import models
 
@@ -200,3 +201,24 @@ def migrate_state_schema(
         state_schema_version += 1
 
     return next_content_id_index
+
+def get_all_questions(
+    offset: int = 0,
+    question_count: int = constants.MAX_QUESTIONS_FETCHABLE
+) -> List[question_domain.Question]:
+    """Returns all the questions.
+
+    Args:
+        offset: int. Number of query results to skip.
+        question_count: int. The number of questions to return.
+
+    Returns:
+        dict. A dict with two keys:
+            question_ids: list(str). The list of question ids.
+            next_offset: str. The offset to query the next set of questions.
+    """
+    question_models_list = question_models.QuestionModel.get_all_questions(
+        offset, question_count)
+    return [
+        get_question_from_model(model) for model in question_models_list
+    ]
