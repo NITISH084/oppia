@@ -29,7 +29,7 @@ from core.domain import subtopic_page_domain
 from core.domain import topic_fetchers
 from core.platform import models
 
-from typing import Dict, List, Literal, Optional, Sequence, overload
+from typing import Dict, List, Literal, Optional, Tuple, Sequence, overload
 
 MYPY = False
 if MYPY: # pragma: no cover
@@ -205,6 +205,36 @@ def get_subtopic_pages_with_ids(
             subtopic_pages.append(
                 get_subtopic_page_from_model(subtopic_page_model))
     return subtopic_pages
+
+
+def get_subtopic_pages_with_ids_and_versions(
+    topic_ids_subtopic_ids_and_versions: List[Tuple[str, int, Optional[int]]]
+) -> List[Optional[subtopic_page_domain.SubtopicPage]]:
+    """Returns a list of subtopic pages matching the IDs and versions provided.
+
+    Args:
+        topic_ids_subtopic_ids_and_versions: list(tuple(str, int, int|None)).
+            List of tuples of topic ID, subtopic ID, and version number. If
+            version number is None, the latest version will be returned.
+
+    Returns:
+        list(SubtopicPage|None). The list of subtopic pages corresponding to
+        the given topic IDs, subtopic IDs, and versions. If a subtopic page
+        does not exist, the corresponding entry will be None.
+    """
+    subtopic_page_ids_and_versions = [
+        (subtopic_page_domain.SubtopicPage.get_subtopic_page_id(
+            topic_id, subtopic_id), version)
+        for (topic_id, subtopic_id, version) in (
+            topic_ids_subtopic_ids_and_versions)
+    ]
+    subtopic_page_models = subtopic_models.SubtopicPageModel.get_version_multi(
+        subtopic_page_ids_and_versions)
+    return [
+        get_subtopic_page_from_model(subtopic_page_model)
+        if subtopic_page_model is not None else None
+        for subtopic_page_model in subtopic_page_models
+    ]
 
 
 @overload
