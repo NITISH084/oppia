@@ -19,9 +19,10 @@
 from __future__ import annotations
 
 from core import feconf
-from core.domain import question_domain, skill_services
+from core.domain import question_domain
 from core.domain import question_fetchers
 from core.domain import question_services
+from core.domain import skill_services
 from core.domain import translation_domain
 from core.domain import user_services
 from core.platform import models
@@ -339,5 +340,6 @@ class QuestionFetchersUnitTests(test_utils.GenericTestBase):
         question_services.create_new_question_skill_link(
             self.editor_id, question_id, skill_id, 0.3)
 
-        questions = question_fetchers.get_all_questions(offset=0, question_count=0)
+        questions = question_fetchers.
+        get_all_questions(offset=0, question_count=0)
         self.assertEqual(questions, [])
