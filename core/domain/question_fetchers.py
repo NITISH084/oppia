@@ -217,6 +217,9 @@ def get_all_questions(
             question_ids: list(str). The list of question ids.
             next_offset: str. The offset to query the next set of questions.
     """
+    if question_count == 0:
+        return []
+
     question_models_list = question_models.QuestionModel.get_all_questions(
         offset, question_count)
     return [
