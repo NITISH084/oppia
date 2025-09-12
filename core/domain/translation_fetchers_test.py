@@ -137,7 +137,6 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
     def test_get_entity_translations_returns_expected_values(self) -> None:
         """Test fetching single entity translations by type,
         id, version and language.
-        
         """
         exp_id = 'exp123'
         translation_models.EntityTranslationsModel.create_new(
