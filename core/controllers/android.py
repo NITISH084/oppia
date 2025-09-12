@@ -46,6 +46,7 @@ MYPY = False
 if MYPY: # pragma: no cover
     from mypy_imports import translation_models
 
+
 class InitializeAndroidTestDataHandler(
     base.BaseHandler[Dict[str, str], Dict[str, str]]
 ):
@@ -208,8 +209,8 @@ class AndroidActivityHandler(base.BaseHandler[
         if len(set(hashed_activities_data)) != len(hashed_activities_data):
             raise self.InvalidInputException(
                 'Entries in activities_data should be unique'
-            )
-        
+ )
+
         if activity_type == constants.ACTIVITY_TYPE_SUBTOPIC:
             # Subtopic pages require special handling because their IDs are
             # compound keys (topic_id-subtopic_id) that need to be split and
@@ -249,9 +250,8 @@ class AndroidActivityHandler(base.BaseHandler[
                         'Version cannot be specified when fetching questions')
 
             if offset is None:
-                raise self.InvalidInputException(
-                    'Offset required when fetching questions')
-            
+                raise self.InvalidInputException('Offset required when fetching questions')
+
             questions = (
                 question_fetchers.get_all_questions(offset=offset))
 
@@ -259,7 +259,7 @@ class AndroidActivityHandler(base.BaseHandler[
                 'id': question.id,
                 'payload': question.to_dict()
             } for question in questions])
-                 
+
         elif activity_type == (
             constants.ACTIVITY_TYPE_SUBTOPIC_WITH_STUDY_GUIDE_MIGRATION
         ):
@@ -335,7 +335,6 @@ class AndroidActivityHandler(base.BaseHandler[
                     'language_code': language_code,
                 })
 
-
             translations = (
                 translation_fetchers.get_multiple_entity_translations(
                     translation_references))
@@ -356,8 +355,7 @@ class AndroidActivityHandler(base.BaseHandler[
             # All other activities are standard versioned models
             # that can be fetched in bulk using their respective
             # get_multiple_*_by_ids_and_version methods.
-            ids_and_versions = [
-                               (activity_data['id'], activity_data.get('version'))
+            ids_and_versions = [(activity_data['id'], activity_data.get('version'))
                 for activity_data in activities_data]
 
             fetched_entities: Sequence[Optional[Union[

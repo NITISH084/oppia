@@ -112,15 +112,15 @@ class AndroidActivityHandlerTests(test_utils.GenericTestBase):
             )
 
     def test_non_question_activity_with_offset_raises_error(self) -> None:
-            """Test that non-question activity with offset returns error."""
-            with self.secrets_swap:
-                response = self.get_json(
+        """Test that non-question activity with offset returns error."""
+        with self.secrets_swap:
+            resonse = self.get_json(
                     '/android_data?activity_type=exploration&'
                     'activities_data=[{"id": "exp_id"}]&offset=0',
                     headers={'X-ApiKey': 'secret'},
                     expected_status_int=400
                 )
-                self.assertEqual(
+            self.assertEqual(
                     response['error'],
                     'Offset should only be provided for fetching questions'
                 )

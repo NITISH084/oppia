@@ -1499,7 +1499,7 @@ class VersionedModel(BaseModel):
             if not strict:
                 return None
             raise e
-  
+
     @classmethod
     def get_version_multi(
             cls: Type[SELF_VERSIONED_MODEL],
