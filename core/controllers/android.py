@@ -160,7 +160,6 @@ class AndroidActivityHandler(base.BaseHandler[
                         constants.ACTIVITY_TYPE_SUBTOPIC_WITH_STUDY_GUIDE,
                         constants.ACTIVITY_TYPE_LEARN_TOPIC,
                         constants.ACTIVITY_TYPE_CLASSROOM,
-                        constants.ACTIVITY_TYPE_CLASSROOM,
                         constants.ACTIVITY_TYPE_QUESTIONS,
                     ]
                 },
@@ -350,7 +349,10 @@ class AndroidActivityHandler(base.BaseHandler[
                     if translation is not None else None)
             } for activity_data, translation in zip(
                 activities_data, translations)])
+            self.render_json(activities)
+            return
 
+        else:
             # All other activities are standard versioned models
             # that can be fetched in bulk using their respective
             # get_multiple_*_by_ids_and_version methods.
@@ -385,6 +387,8 @@ class AndroidActivityHandler(base.BaseHandler[
 
             for activity_data, entity in zip(activities_data, fetched_entities):
                 response_dict: ActivityDataResponseDict = {
+                    'id': activity_data['id'],
+                    'version': activity_data.get('version'),
                     'payload': entity.to_dict() if entity is not None else None
                 }
                 activities.append(response_dict)
