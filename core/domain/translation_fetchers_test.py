@@ -164,7 +164,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
 
     def test_get_entity_translations_returns_none_if_not_found(self) -> None:
         """Test fetching translations that do not exist returns None."""
-        result = translation_fetchers.get_entity_translations(
+        result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, 'nonexistent', 1, 'hi'
         )
         self.assertIsNone(result)
@@ -228,6 +228,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         self.assertEqual(len(results), 4)
 
         self.assertIsNotNone(results[0])
+        assert results[0] is not None
         self.assertEqual(results[0].entity_id, exp_id_1)
         self.assertEqual(results[0].entity_version, 1)
         self.assertEqual(
@@ -273,10 +274,10 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
                 'needs_update': False}}
         ).put()
 
-        hi_result = translation_fetchers.get_entity_translations(
+        hi_result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, exp_id, 1, 'hi'
         )
-        fr_result = translation_fetchers.get_entity_translations(
+        fr_result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, exp_id, 1, 'fr'
         )
 
@@ -300,7 +301,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
                 'needs_update': True}}
         ).put()
 
-        result = translation_fetchers.get_entity_translations(
+        result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, exp_id, 1, 'hi'
         )
 
