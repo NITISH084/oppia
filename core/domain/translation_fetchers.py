@@ -159,8 +159,14 @@ def get_entity_translation(
             entity_type, entity_id, entity_version, language_code)
     )
 
-    if entity_translation_model is None:
-        return None
+    if not model:
+        return translation_domain.EntityTranslation(
+            entity_type,
+            entity_id,
+            version,
+            language_code,
+            translations={}
+        )
 
     if entity_translation_model:
         domain_object = _get_entity_translation_from_model(
