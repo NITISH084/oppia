@@ -251,8 +251,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
 
         self.assertIsNone(results[3])
 
-    def test_get_entity_translations_with_different_languages
-    (self) -> None:
+    def test_get_entity_translations_with_different_languages(self) -> None:
         """Test fetching translations in multiple languages for the same entity."""
         exp_id = 'exp_lang'
         translation_models.EntityTranslationsModel.create_new(

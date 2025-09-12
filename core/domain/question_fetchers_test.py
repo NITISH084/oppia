@@ -340,6 +340,5 @@ class QuestionFetchersUnitTests(test_utils.GenericTestBase):
         question_services.create_new_question_skill_link(
             self.editor_id, question_id, skill_id, 0.3)
 
-        questions = question_fetchers.
-        get_all_questions(offset=0, question_count=0)
+        questions = question_fetchers.get_all_questions(offset=0, question_count=0)
         self.assertEqual(questions, [])
