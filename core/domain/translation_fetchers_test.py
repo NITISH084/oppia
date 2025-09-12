@@ -148,7 +148,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
             }
         ).put()
 
-        result = translation_fetchers.get_entity_translations(
+        result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, exp_id, 1, 'hi'
         )
 

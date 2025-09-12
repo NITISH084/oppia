@@ -325,19 +325,19 @@ class QuestionFetchersUnitTests(test_utils.GenericTestBase):
             offset=0, question_count=2)
         self.assertEqual(len(questions), 2)
 
-def test_get_all_questions_with_zero_count_returns_empty(self) -> None:
-    skill_id = skill_services.get_new_skill_id()
-    question_id = question_services.get_new_question_id()
-    content_id_generator = translation_domain.ContentIdGenerator()
+    def test_get_all_questions_with_zero_count_returns_empty(self) -> None:
+        skill_id = skill_services.get_new_skill_id()
+        question_id = question_services.get_new_question_id()
+        content_id_generator = translation_domain.ContentIdGenerator()
 
-    self.save_new_question(
-        question_id, self.editor_id,
-        self._create_valid_question_data('Question', content_id_generator),
-        [skill_id],
-        content_id_generator.next_content_id_index
-    )
-    question_services.create_new_question_skill_link(
-        self.editor_id, question_id, skill_id, 0.3)
+        self.save_new_question(
+            question_id, self.editor_id,
+            self._create_valid_question_data('Question', content_id_generator),
+            [skill_id],
+            content_id_generator.next_content_id_index
+        )
+        question_services.create_new_question_skill_link(
+            self.editor_id, question_id, skill_id, 0.3)
 
-    questions = question_fetchers.get_all_questions(offset=0, question_count=0)
-    self.assertEqual(questions, [])
+        questions = question_fetchers.get_all_questions(offset=0, question_count=0)
+        self.assertEqual(questions, [])
