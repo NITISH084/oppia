@@ -159,11 +159,11 @@ def get_entity_translation(
             entity_type, entity_id, entity_version, language_code)
     )
 
-    if not model:
+    if not entity_translation_model:
         return translation_domain.EntityTranslation(
             entity_type,
             entity_id,
-            version,
+            entity_version,
             language_code,
             translations={}
         )
