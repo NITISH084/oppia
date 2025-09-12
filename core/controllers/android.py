@@ -24,10 +24,10 @@ from core.domain import android_services
 from core.domain import classroom_config_domain
 from core.domain import classroom_config_services
 from core.domain import classroom_domain
-from core.domain import question_domain
-from core.domain import question_fetchers
 from core.domain import exp_domain
 from core.domain import exp_fetchers
+from core.domain import question_domain
+from core.domain import question_fetchers
 from core.domain import skill_domain
 from core.domain import skill_fetchers
 from core.domain import story_domain
