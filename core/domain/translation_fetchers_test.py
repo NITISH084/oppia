@@ -136,7 +136,8 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
 
     def test_get_entity_translations_returns_expected_values(self) -> None:
         """Test fetching single entity translations by type,
-        id, version and language."""
+        id, version and language.
+        """
         exp_id = 'exp123'
         translation_models.EntityTranslationsModel.create_new(
             'exploration', exp_id, 1, 'hi',
@@ -252,7 +253,8 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         self.assertIsNone(results[3])
 
     def test_get_entity_translations_with_different_languages(self) -> None:
-        """Test fetching translations in multiple languages for the same entity."""
+        """Test fetching translations in multiple 
+        languages for the same entity."""
         exp_id = 'exp_lang'
         translation_models.EntityTranslationsModel.create_new(
             'exploration', exp_id, 1, 'hi',
