@@ -162,12 +162,12 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
             result.translations['content_1'].content_value, 'नमस्ते'
         )
 
-    def test_get_entity_translations_returns_none_if_not_found(self) -> None:
-        """Test fetching translations that do not exist returns None."""
+    def test_get_entity_translation_returns_empty_if_not_found(self) -> None:
+        """Test fetching translations that do not exist returns an empty object."""
         result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, 'nonexistent', 1, 'hi'
         )
-        self.assertIsNone(result)
+        self.assertTrue(result.is_empty())
 
     def test_get_multiple_entity_translations(self) -> None:
         """Test fetching multiple entity translations with specific versions."""
