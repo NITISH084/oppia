@@ -323,8 +323,7 @@ def get_multiple_skills_by_ids_and_version(
         and versions. If a skill does not exist, the corresponding entry will
         be None.
     """
-    skill_model_list = skill_models.SkillModel.get_version_multi(
-        skill_ids_and_versions)
+    skill_model_list = skill_models.SkillModel.get_version_multi(skill_ids_and_versions)
     return [
         get_skill_from_model(skill_model)
         if skill_model is not None else None
