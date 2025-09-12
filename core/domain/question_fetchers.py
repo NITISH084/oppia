@@ -21,8 +21,8 @@ from __future__ import annotations
 import copy
 
 from core import feconf
-from core.domain import question_domain
 from core.constants import constants
+from core.domain import question_domain
 from core.domain import state_domain
 from core.platform import models
 
@@ -201,6 +201,7 @@ def migrate_state_schema(
         state_schema_version += 1
 
     return next_content_id_index
+
 
 def get_all_questions(
     offset: int = 0,
