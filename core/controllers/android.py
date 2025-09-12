@@ -355,9 +355,12 @@ class AndroidActivityHandler(base.BaseHandler[
 
         else:
             # All other activities are standard versioned models
-            # that can be fetched in bulk using their 
-            #respective get_multiple_*_by_ids_and_version #methods.
-            ids_and_versions = [(activity_data['id'], activity_data.get('version'))
+            # that can be fetched in bulk using their
+            # respective get_multiple_*_by_ids_and_version
+            # methods.
+            ids_and_versions = [
+                (activity_data['id'],
+                 activity_data.get('version'))
                 for activity_data in activities_data]
 
             fetched_entities: Sequence[Optional[Union[
