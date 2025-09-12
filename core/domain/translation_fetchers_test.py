@@ -163,7 +163,9 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         )
 
     def test_get_entity_translation_returns_empty_if_not_found(self) -> None:
-        """Test fetching translations that do not exist returns an empty object."""
+        """Test fetching translations that do not exist
+         returns an empty object.
+         """
         result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, 'nonexistent', 1, 'hi'
         )
