@@ -236,6 +236,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         )
 
         self.assertIsNotNone(results[1])
+        assert results[1] is not None
         self.assertEqual(results[1].entity_id, exp_id_1)
         self.assertEqual(results[1].entity_version, 2)
         self.assertEqual(
@@ -244,6 +245,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         )
 
         self.assertIsNotNone(results[2])
+        assert results[2] is not None
         self.assertEqual(results[2].entity_id, exp_id_2)
         self.assertEqual(results[2].entity_version, 1)
         self.assertEqual(
