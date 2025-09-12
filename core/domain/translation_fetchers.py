@@ -190,4 +190,3 @@ def get_multiple_entity_translations(
         if entity_translation_model is not None else None
         for entity_translation_model in entity_translation_models
     ]
-
