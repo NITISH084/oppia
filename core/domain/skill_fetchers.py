@@ -308,6 +308,7 @@ def _migrate_rubrics_to_latest_schema(
             versioned_rubrics, rubric_schema_version)
         rubric_schema_version += 1
 
+
 def get_multiple_skills_by_ids_and_version(
     skill_ids_and_versions: List[Tuple[str, Optional[int]]]
 ) -> List[Optional[skill_domain.Skill]]:

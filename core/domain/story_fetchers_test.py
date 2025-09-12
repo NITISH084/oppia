@@ -366,7 +366,6 @@ class StoryFetchersUnitTests(test_utils.GenericTestBase):
         self.assertEqual(user_progress[0]['visited_checkpoints_count'], 1)
         self.assertEqual(user_progress[0]['total_checkpoints_count'], 1)
 
-
     def test_get_multiple_stories_by_ids_and_version(self) -> None:
         """Test fetching multiple stories with specific versions."""
 

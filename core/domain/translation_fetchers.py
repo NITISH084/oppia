@@ -167,6 +167,7 @@ def get_entity_translation(
         entity_type, entity_id, language_code, entity_version=entity_version
     )
 
+
 def get_multiple_entity_translations(
     entity_references: List[translation_models.EntityTranslationReferenceDict]
 ) -> List[Optional[translation_domain.EntityTranslation]]:
