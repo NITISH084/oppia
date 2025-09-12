@@ -169,7 +169,7 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         result = translation_fetchers.get_entity_translation(
             feconf.TranslatableEntityType.EXPLORATION, 'nonexistent', 1, 'hi'
         )
-        self.assertTrue(result.is_empty())
+        self.assertEqual(result.translations, {})
 
     def test_get_multiple_entity_translations(self) -> None:
         """Test fetching multiple entity translations with specific versions."""
