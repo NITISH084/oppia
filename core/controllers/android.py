@@ -348,7 +348,7 @@ class AndroidActivityHandler(base.BaseHandler[
                 'language_code': activity_data.get('language_code'),
                 'payload': (
                     translation.to_dict()['translations']
-                    if translation is not None else None)
+                    if translation is not None else {})
             } for activity_data, translation in zip(
                 activities_data, translations)])
             self.render_json(activities)

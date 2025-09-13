@@ -698,8 +698,8 @@ class AndroidActivityHandlerTests(test_utils.GenericTestBase):
                 }]
             )
 
-    def test_get_nonexistent_translation_returns_null_payload(self) -> None:
-        """Test requesting nonexistent translation returns null payload."""
+    def test_get_nonexistent_translation_returns_empty_payload(self) -> None:
+        """Test requesting nonexistent translation returns empty payload."""
         with self.secrets_swap:
             self.assertEqual(
                 self.get_json(
@@ -714,7 +714,7 @@ class AndroidActivityHandlerTests(test_utils.GenericTestBase):
                     'id': 'nonexistent_id',
                     'version': 1,
                     'language_code': 'es',
-                    'payload': None
+                    'payload': {}
                 }]
             )
 
