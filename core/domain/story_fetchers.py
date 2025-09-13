@@ -34,7 +34,7 @@ from core.domain import topic_fetchers
 from core.domain import user_services
 from core.platform import models
 
-from typing import Dict, List, Literal, Optional, Tuple, Sequence, overload
+from typing import Dict, List, Literal, Optional, Sequence, Tuple, overload
 
 MYPY = False
 if MYPY: # pragma: no cover
@@ -219,6 +219,7 @@ def get_story_by_id(
         else:
             return None
 
+
 def get_multiple_stories_by_ids_and_version(
     story_ids_and_versions: List[Tuple[str, Optional[int]]]
 ) -> List[Optional[story_domain.Story]]:
@@ -241,6 +242,7 @@ def get_multiple_stories_by_ids_and_version(
         if story_model is not None else None
         for story_model in story_model_list
     ]
+
 
 def get_story_by_url_fragment(
     url_fragment: str

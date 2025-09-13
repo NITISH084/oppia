@@ -509,6 +509,7 @@ class ExplorationRetrievalTests(test_utils.GenericTestBase):
         results = exp_fetchers.get_multiple_explorations_by_ids_and_version([])
         self.assertEqual(results, [])
 
+
 class LoggedOutUserProgressTests(test_utils.GenericTestBase):
     """Tests the fetching of the logged-out user progress."""
 

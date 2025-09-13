@@ -425,7 +425,8 @@ class EntityTranslationsModelTest(test_utils.GenericTestBase):
         self.assertEqual(
             results[1].translations['content']['content_value'],
             'Updated Translation')
-        
+
+
 class MachineTranslationModelTests(test_utils.GenericTestBase):
     def test_create_model(self) -> None:
         model_id = translation_models.MachineTranslationModel.create(

@@ -323,7 +323,6 @@ class SkillFetchersUnitTests(test_utils.GenericTestBase):
             feconf.CURRENT_RUBRIC_SCHEMA_VERSION
         )
 
-
     def test_get_multiple_skills_by_ids_and_version(self) -> None:
         """Test fetching multiple skills with specific versions."""
         skill_1_id = skill_services.get_new_skill_id()

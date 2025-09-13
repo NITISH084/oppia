@@ -444,6 +444,7 @@ class TestVersionedModel(base_models.VersionedModel):
 # Field to seed some content into different versions.
     description = datastore_services.StringProperty(indexed=True)
 
+
 class BaseCommitLogEntryModelTests(test_utils.GenericTestBase):
 
     def test_get_deletion_policy_is_locally_pseudonymize(self) -> None:

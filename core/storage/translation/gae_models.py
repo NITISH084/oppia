@@ -22,7 +22,7 @@ from core import feconf
 from core import utils
 from core.platform import models
 
-from typing import Dict, Optional, List, Sequence, TypedDict
+from typing import Dict, List, Optional, Sequence, TypedDict
 
 MYPY = False
 if MYPY: # pragma: no cover
@@ -35,6 +35,7 @@ if MYPY: # pragma: no cover
 
 datastore_services = models.Registry.import_datastore_services()
 
+
 class EntityTranslationReferenceDict(TypedDict):
     """Dictionary representing the reference to an entity translation model."""
 
@@ -42,7 +43,8 @@ class EntityTranslationReferenceDict(TypedDict):
     entity_id: str
     entity_version: int
     language_code: str
-    
+
+
 class EntityTranslationsModel(base_models.BaseModel):
     """Model for storing entity translations."""
 
@@ -137,7 +139,7 @@ class EntityTranslationsModel(base_models.BaseModel):
         model_id = cls._generate_id(
             entity_type, entity_id, entity_version, language_code)
         return cls.get_by_id(model_id)
-    
+
     @classmethod
     def get_model_multi(
             cls,
@@ -162,7 +164,7 @@ class EntityTranslationsModel(base_models.BaseModel):
             for reference in entity_translation_references
         ]
         return cls.get_multi(model_ids)
-    
+
     @classmethod
     def get_all_for_entity(
         cls,

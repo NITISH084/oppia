@@ -508,6 +508,7 @@ def get_multiple_explorations_by_id(
     result.update(db_results_dict)
     return result
 
+
 def get_multiple_explorations_by_ids_and_version(
     exp_ids_and_versions: List[Tuple[str, Optional[int]]]
 ) -> List[Optional[exp_domain.Exploration]]:
@@ -530,6 +531,7 @@ def get_multiple_explorations_by_ids_and_version(
         if exp_model is not None else None
         for exp_model in exp_models_list
     ]
+
 
 def get_exploration_summaries_where_user_has_role(
     user_id: str

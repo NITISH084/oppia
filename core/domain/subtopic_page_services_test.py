@@ -18,8 +18,8 @@
 
 from __future__ import annotations
 
-import re
 import copy
+import re
 
 from core import feconf
 from core.constants import constants

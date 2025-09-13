@@ -323,6 +323,7 @@ def get_multiple_topics_by_ids_and_version(
         for topic_model in topic_models_list
     ]
 
+
 @overload
 def get_topic_by_name(
     topic_name: str, *, strict: Literal[True] = ...
