@@ -27,7 +27,7 @@ from core.domain import (
     exp_domain,
     exp_fetchers,
     question_domain,
-    question_fetchers
+    question_fetchers,
     skill_domain,
     skill_fetchers,
     story_domain,
