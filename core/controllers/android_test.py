@@ -25,9 +25,9 @@ from core.domain import (
     exp_fetchers,
     exp_services,
     question_services,
-    skill_services
+    skill_services,
     topic_fetchers,
-    translation_domain
+    translation_domain,
 )
 from core.platform import models
 from core.tests import test_utils
