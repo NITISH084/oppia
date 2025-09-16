@@ -26,7 +26,7 @@ from core.domain import (
     question_services,
     skill_services,
     translation_domain,
-    user_services
+    user_services,
 )
 from core.platform import models
 from core.tests import test_utils
