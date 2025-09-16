@@ -38,7 +38,7 @@ from core.domain import (
     subtopic_page_services,
     topic_domain,
     topic_fetchers,
-    translation_fetchers,
+    translation_fetchers
 )
 
 from typing import Dict, List, Optional, Sequence, TypedDict, Union
