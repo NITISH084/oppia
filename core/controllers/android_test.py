@@ -18,21 +18,23 @@ from __future__ import annotations
 
 from core import feconf
 from core.constants import constants
-from core.domain import classroom_config_services
-from core.domain import exp_domain
-from core.domain import exp_fetchers
-from core.domain import exp_services
-from core.domain import question_services
-from core.domain import skill_services
-from core.domain import topic_fetchers
-from core.domain import translation_domain
+
+from core.domain import (
+    classroom_config_services,
+    exp_domain,
+    exp_fetchers,
+    exp_services,
+    question_services,
+    skill_services
+    topic_fetchers,
+    translation_domain
+)
 from core.platform import models
 from core.tests import test_utils
 
 MYPY = False
 if MYPY: # pragma: no cover
-    from mypy_imports import secrets_services
-    from mypy_imports import translation_models
+    from mypy_imports import secrets_services, translation_models
 
 secrets_services = models.Registry.import_secrets_services()
 

@@ -22,16 +22,14 @@ import copy
 
 from core import feconf
 from core.constants import constants
-from core.domain import question_domain
-from core.domain import state_domain
+from core.domain import question_domain, state_domain
 from core.platform import models
 
 from typing import List, Optional, Tuple
 
 MYPY = False
 if MYPY: # pragma: no cover
-    from mypy_imports import question_models
-    from mypy_imports import skill_models
+    from mypy_imports import question_models, skill_models
 
 (question_models, skill_models) = models.Registry.import_models(
     [models.Names.QUESTION, models.Names.SKILL])
