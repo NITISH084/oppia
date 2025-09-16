@@ -21,6 +21,7 @@ from __future__ import annotations
 from core import feconf
 from core.platform import models
 from core.tests import test_utils
+
 from typing import List
 
 MYPY = False

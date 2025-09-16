@@ -19,7 +19,6 @@
 from __future__ import annotations
 
 from core import feconf
-
 from core.domain import (
     question_domain,
     question_fetchers,

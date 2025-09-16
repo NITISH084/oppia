@@ -18,7 +18,6 @@ from __future__ import annotations
 
 from core import feconf
 from core.constants import constants
-
 from core.domain import (
     classroom_config_services,
     exp_domain,
