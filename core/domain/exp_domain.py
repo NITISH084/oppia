@@ -35,6 +35,7 @@ from core.constants import constants
 from core.domain import html_cleaner  # pylint: disable=invalid-import-from
 from core.domain import (  # pylint: disable=invalid-import-from
     change_domain,
+    exp_services,
     html_validation_service,
     interaction_registry,
     param_domain,
@@ -1313,6 +1314,30 @@ class ExplorationDict(TypedDict):
     states_schema_version: int
     init_state_name: str
     states: Dict[str, state_domain.StateDict]
+    param_specs: Dict[str, param_domain.ParamSpecDict]
+    param_changes: List[param_domain.ParamChangeDict]
+    auto_tts_enabled: bool
+    edits_allowed: bool
+    next_content_id_index: int
+    version: int
+
+
+class ExplorationDictForAndroid(TypedDict):
+    """Dictionary representing the Exploration object for Android (with old
+    schema).
+    """
+
+    id: str
+    title: str
+    category: str
+    objective: str
+    language_code: str
+    tags: List[str]
+    blurb: str
+    author_notes: str
+    states_schema_version: int
+    init_state_name: str
+    states: Dict[str, state_domain.StateDictForAndroid]
     param_specs: Dict[str, param_domain.ParamSpecDict]
     param_changes: List[param_domain.ParamChangeDict]
     auto_tts_enabled: bool
@@ -5821,6 +5846,54 @@ class Exploration(translation_domain.BaseTranslatableObject):
             'edits_allowed': self.edits_allowed,
             'states': {state_name: state.to_dict()
                        for (state_name, state) in self.states.items()},
+            'version': self.version
+        })
+        exploration_dict_deepcopy = copy.deepcopy(exploration_dict)
+        return exploration_dict_deepcopy
+
+    def to_exploration_dict_for_android(self) -> ExplorationDictForAndroid:
+        """Returns a copy of the exploration dict in the old schema format,
+        which includes the `recorded_voiceovers` field. This field is
+        temporarily reintroduced to maintain compatibility until the Android
+        client is updated to fetch voiceovers from the EntityVoiceoversModel.
+
+        Returns:
+            dict. A dict mapping all fields of Exploration instance.
+        """
+        print(self.id)
+        print(self.version)
+        print(self.states)
+        voiceovers_in_old_schema_for_android = (
+            exp_services.get_recorded_voiceovers_data_for_given_exploration(
+                self.id, self.version, self.states))
+
+        state_name_to_state_dict = {}
+        for state_name, state in self.states.items():
+            voiceovers_mapping = voiceovers_in_old_schema_for_android[
+                state_name]
+            state_dict = state.to_dict()
+            state_dict['recorded_voiceovers'] = {}
+            state_dict['recorded_voiceovers'][
+                'voiceovers_mapping'] = voiceovers_mapping
+            state_name_to_state_dict[state_name] = state_dict
+
+        exploration_dict: ExplorationDictForAndroid = ({
+            'id': self.id,
+            'title': self.title,
+            'category': self.category,
+            'author_notes': self.author_notes,
+            'blurb': self.blurb,
+            'states_schema_version': self.states_schema_version,
+            'init_state_name': self.init_state_name,
+            'language_code': self.language_code,
+            'objective': self.objective,
+            'param_changes': self.param_change_dicts,
+            'param_specs': self.param_specs_dict,
+            'tags': self.tags,
+            'auto_tts_enabled': self.auto_tts_enabled,
+            'next_content_id_index': self.next_content_id_index,
+            'edits_allowed': self.edits_allowed,
+            'states': state_name_to_state_dict,
             'version': self.version
         })
         exploration_dict_deepcopy = copy.deepcopy(exploration_dict)

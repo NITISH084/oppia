@@ -37,6 +37,7 @@ from core.domain import (
     topic_domain,
     topic_fetchers,
     translation_fetchers,
+    voiceover_services
 )
 
 from typing import Dict, List, Optional, TypedDict, Union
@@ -186,6 +187,13 @@ class AndroidActivityHandler(base.BaseHandler[
             )
 
         if activity_type == constants.ACTIVITY_TYPE_EXPLORATION:
+            exploration_dict_for_android: Optional[
+                exp_domain.ExplorationDictForAndroid] = None
+            if exploration is not None:
+                exploration_dict_for_android = (
+                    exploration.to_exploration_dict_for_android()
+                )
+
             for activity_data in activities_data:
                 exploration = exp_fetchers.get_exploration_by_id(
                     activity_data['id'],
@@ -194,9 +202,7 @@ class AndroidActivityHandler(base.BaseHandler[
                 activities.append({
                     'id': activity_data['id'],
                     'version': activity_data.get('version'),
-                    'payload': (
-                        exploration.to_dict() if exploration is not None
-                        else None)
+                    'payload': exploration_dict_for_android
                 })
         elif activity_type == constants.ACTIVITY_TYPE_STORY:
             for activity_data in activities_data:
@@ -314,6 +320,38 @@ class AndroidActivityHandler(base.BaseHandler[
                         translation.to_dict()['translations']
                         if translation is not None
                         else None)
+                })
+        elif activity_type == constants.ACTIVITY_TYPE_EXPLORATION_VOICEOVERS:
+            entity_type = feconf.TranslatableEntityType(
+                feconf.ENTITY_TYPE_EXPLORATION)
+            for activity_data in activities_data:
+                version = activity_data.get('version')
+                language_code = activity_data.get('language_code')
+                if version is None or language_code is None:
+                    raise self.InvalidInputException(
+                        'Version and language code must be specified '
+                        'for voiceovers'
+                    )
+                entity_voiceovers = (
+                    voiceover_services.
+                    fetch_entity_voiceovers_by_language_code(
+                        entity_type,
+                        activity_data['id'],
+                        version,
+                        language_code
+                    )
+                )
+
+                language_accent_code_to_entity_voiceover = {}
+                for entity_voiceover in entity_voiceovers:
+                    language_accent_code_to_entity_voiceover[
+                        entity_voiceover.language_accent] = entity_voiceover
+
+                activities.append({
+                    'id': activity_data['id'],
+                    'version': version,
+                    'language_code': language_code,
+                    'payload': language_accent_code_to_entity_voiceover
                 })
         else:
             for activity_data in activities_data:

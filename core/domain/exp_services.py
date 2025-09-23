@@ -3934,3 +3934,97 @@ def does_exploration_support_voiceovers(exploration_id: str) -> bool:
             SHOW_VOICEOVER_TAB_FOR_NON_CURATED_EXPLORATIONS.value,
             None
         )
+
+
+def get_recorded_voiceovers_data_for_given_exploration(
+    exploration_id: str,
+    exploration_version: int,
+    state_name_to_state_object: Dict[str, state_domain.State]
+):
+    """Fetches the voiceover data for a given exploration and maps it to the
+    `recorded_voiceovers` format used in the old State schema.
+
+    Args:
+        exploration_id: str. The ID of the exploration.
+        exploration_version: int. The version of the exploration.
+        state_name_to_state_dict: dict. A dict mapping state names to their
+            corresponding State domain objects.
+
+    Returns:
+        dict. A dict mapping state names to their corresponding recorded
+        voiceovers data in the old schema.
+    """
+    # Since the old schema does not support language accents, the most commonly
+    # used accents are mapped to their corresponding language codes.
+    language_accent_code_to_default_language_code = {
+        'ar-AE': 'ar',
+        'en-US': 'en',
+        'es-US': 'es',
+        'pt-BR': 'pt',
+        'hi-IN': 'hi',
+        'hi-en-IN': 'hi-en',
+        'pcm-NG': 'pcm',
+    }
+    supported_language_accent_codes = list(
+        language_accent_code_to_default_language_code.keys())
+
+    entity_voiceovers_list = (
+        voiceover_services.get_entity_voiceovers_for_given_exploration(
+            exploration_id,
+            feconf.ENTITY_TYPE_EXPLORATION,
+            exploration_version))
+
+    print(entity_voiceovers_list)
+    print(len(entity_voiceovers_list))
+
+    filtered_entity_voiceovers = []
+    for entity_voiceovers in entity_voiceovers_list:
+        if entity_voiceovers.language_accent_code in (
+            supported_language_accent_codes):
+            filtered_entity_voiceovers.append(entity_voiceovers)
+    print(len(filtered_entity_voiceovers))
+
+    language_code_to_content_voiceover_mapping = {}
+
+    for entity_voiceovers in filtered_entity_voiceovers:
+        language_code = (
+            language_accent_code_to_default_language_code[
+                entity_voiceovers.language_accent_code])
+
+        content_id_to_voiceover = entity_voiceovers.voiceovers_mapping
+
+        for content_id, voiceover_type_to_voiceover in (
+                content_id_to_voiceover.items()):
+            manual_voiceover = voiceover_type_to_voiceover.get('manual')
+            manual_voiceover_dict = (
+                manual_voiceover.to_dict() if manual_voiceover else None)
+
+            language_code_to_content_voiceover_mapping.setdefault(
+                language_code, {})[content_id] = manual_voiceover_dict
+
+    state_name_to_content_id_list: Dict[str, List[str]] = {}
+
+    for state_name, state in state_name_to_state_object.items():
+        content_ids = list(
+            state.get_translatable_contents_collection().
+            content_id_to_translatable_content.keys())
+        state_name_to_content_id_list[state_name] = content_ids
+
+    voiceovers_in_old_schema_for_android = {}
+
+    for state_name, content_id_list in state_name_to_content_id_list.items():
+
+        voiceovers_mapping = {}
+
+        for content_id in content_id_list:
+            for language_code, content_id_to_voiceover in (
+                    language_code_to_content_voiceover_mapping.items()):
+
+                voiceover_dict = content_id_to_voiceover.get(content_id)
+
+                voiceovers_mapping.setdefault(
+                    content_id, {}).setdefault(language_code, voiceover_dict)
+
+        voiceovers_in_old_schema_for_android[state_name] = voiceovers_mapping
+
+    return voiceovers_in_old_schema_for_android
