@@ -25,6 +25,7 @@ storage model to be changed without affecting this module and others above it.
 from __future__ import annotations
 
 import collections
+import copy
 import datetime
 import io
 import logging
@@ -3936,24 +3937,21 @@ def does_exploration_support_voiceovers(exploration_id: str) -> bool:
         )
 
 
-def get_recorded_voiceovers_data_for_given_exploration(
-    exploration_id: str,
-    exploration_version: int,
-    state_name_to_state_object: Dict[str, state_domain.State]
-):
+def to_exploration_dict_for_android(
+    exploration: exp_domain.Exploration
+) -> exp_domain.ExplorationDictForAndroid:
     """Fetches the voiceover data for a given exploration and maps it to the
     `recorded_voiceovers` format used in the old State schema.
 
     Args:
-        exploration_id: str. The ID of the exploration.
-        exploration_version: int. The version of the exploration.
-        state_name_to_state_dict: dict. A dict mapping state names to their
-            corresponding State domain objects.
+        exploration: exp_domain.Exploration. The exploration object.
 
     Returns:
-        dict. A dict mapping state names to their corresponding recorded
-        voiceovers data in the old schema.
+        dict. An exploration dict in the format used in the old schema.
     """
+    exploration_id = exploration.id
+    exploration_version = exploration.version
+
     # Since the old schema does not support language accents, the most commonly
     # used accents are mapped to their corresponding language codes.
     language_accent_code_to_default_language_code = {
@@ -3980,7 +3978,8 @@ def get_recorded_voiceovers_data_for_given_exploration(
             supported_language_accent_codes):
             filtered_entity_voiceovers.append(entity_voiceovers)
 
-    language_code_to_content_voiceover_mapping = {}
+    language_code_to_content_voiceover_mapping: Dict[str, Dict[
+        str, state_domain.VoiceoverDict]] = {}
 
     for entity_voiceovers in filtered_entity_voiceovers:
         language_code = (
@@ -3995,25 +3994,23 @@ def get_recorded_voiceovers_data_for_given_exploration(
                 feconf.VoiceoverType.MANUAL
             )
             manual_voiceover_dict = (
-                manual_voiceover.to_dict() if manual_voiceover else None)
+                manual_voiceover.to_dict() if manual_voiceover else {})
 
             language_code_to_content_voiceover_mapping.setdefault(
                 language_code, {})[content_id] = manual_voiceover_dict
-    state_name_to_content_id_list: Dict[str, List[str]] = {}
 
-    for state_name, state in state_name_to_state_object.items():
+    state_name_to_state_dict: Dict[str, state_domain.StateDictForAndroid] = {}
+
+    for state_name, state in exploration.states.items():
         content_ids = list(
             state.get_translatable_contents_collection().
             content_id_to_translatable_content.keys())
-        state_name_to_content_id_list[state_name] = content_ids
+        state_name_to_state_dict[state_name] = state.to_dict()
 
-    voiceovers_in_old_schema_for_android = {}
+        voiceovers_mapping: Dict[str, Dict[
+            str, state_domain.VoiceoverDict]] = {}
 
-    for state_name, content_id_list in state_name_to_content_id_list.items():
-
-        voiceovers_mapping = {}
-
-        for content_id in content_id_list:
+        for content_id in content_ids:
             for language_code, content_id_to_voiceover in (
                     language_code_to_content_voiceover_mapping.items()):
 
@@ -4022,6 +4019,29 @@ def get_recorded_voiceovers_data_for_given_exploration(
                 voiceovers_mapping.setdefault(
                     content_id, {}).setdefault(language_code, voiceover_dict)
 
-        voiceovers_in_old_schema_for_android[state_name] = voiceovers_mapping
+        state_name_to_state_dict[state_name]['recorded_voiceovers'] = {
+            'voiceovers_mapping': voiceovers_mapping
+        }
 
-    return voiceovers_in_old_schema_for_android
+    exploration_dict: exp_domain.ExplorationDictForAndroid = ({
+            'id': exploration.id,
+            'title': exploration.title,
+            'category': exploration.category,
+            'author_notes': exploration.author_notes,
+            'blurb': exploration.blurb,
+            'states_schema_version': exploration.states_schema_version,
+            'init_state_name': exploration.init_state_name,
+            'language_code': exploration.language_code,
+            'objective': exploration.objective,
+            'param_changes': exploration.param_change_dicts,
+            'param_specs': exploration.param_specs_dict,
+            'tags': exploration.tags,
+            'auto_tts_enabled': exploration.auto_tts_enabled,
+            'next_content_id_index': exploration.next_content_id_index,
+            'edits_allowed': exploration.edits_allowed,
+            'states': state_name_to_state_dict,
+            'version': exploration.version
+        })
+
+    exploration_dict_deepcopy = copy.deepcopy(exploration_dict)
+    return exploration_dict_deepcopy

@@ -26,6 +26,7 @@ from core.domain import (
     classroom_domain,
     exp_domain,
     exp_fetchers,
+    exp_services,
     skill_domain,
     skill_fetchers,
     story_domain,
@@ -37,7 +38,8 @@ from core.domain import (
     topic_domain,
     topic_fetchers,
     translation_fetchers,
-    voiceover_services
+    voiceover_domain,
+    voiceover_services,
 )
 
 from typing import Dict, List, Optional, TypedDict, Union
@@ -100,7 +102,7 @@ class _ActivityDataResponseDictRequiredFields(TypedDict):
 
     id: str
     payload: Union[
-        exp_domain.ExplorationDict,
+        exp_domain.ExplorationDictForAndroid,
         story_domain.StoryDict,
         skill_domain.SkillDict,
         subtopic_page_domain.SubtopicPageDict,
@@ -109,6 +111,7 @@ class _ActivityDataResponseDictRequiredFields(TypedDict):
         classroom_config_domain.ClassroomDict,
         topic_domain.TopicDict,
         Dict[str, feconf.TranslatedContentDict],
+        Dict[str, voiceover_domain.EntityVoiceoversDict],
         classroom_domain.ClassroomDict,
         None
     ]
@@ -147,6 +150,7 @@ class AndroidActivityHandler(base.BaseHandler[
                     'choices': [
                         constants.ACTIVITY_TYPE_EXPLORATION,
                         constants.ACTIVITY_TYPE_EXPLORATION_TRANSLATIONS,
+                        constants.ACTIVITY_TYPE_EXPLORATION_VOICEOVERS,
                         constants.ACTIVITY_TYPE_STORY,
                         constants.ACTIVITY_TYPE_SKILL,
                         constants.ACTIVITY_TYPE_SUBTOPIC,
@@ -187,18 +191,18 @@ class AndroidActivityHandler(base.BaseHandler[
             )
 
         if activity_type == constants.ACTIVITY_TYPE_EXPLORATION:
-            exploration_dict_for_android: Optional[
-                exp_domain.ExplorationDictForAndroid] = None
-            if exploration is not None:
-                exploration_dict_for_android = (
-                    exploration.to_exploration_dict_for_android()
-                )
-
             for activity_data in activities_data:
                 exploration = exp_fetchers.get_exploration_by_id(
                     activity_data['id'],
                     strict=False,
                     version=activity_data.get('version'))
+
+                exploration_dict_for_android: Optional[
+                    exp_domain.ExplorationDictForAndroid] = None
+                if exploration is not None:
+                    exploration_dict_for_android = (
+                        exp_services.to_exploration_dict_for_android(exploration)
+                    )
                 activities.append({
                     'id': activity_data['id'],
                     'version': activity_data.get('version'),
@@ -322,8 +326,6 @@ class AndroidActivityHandler(base.BaseHandler[
                         else None)
                 })
         elif activity_type == constants.ACTIVITY_TYPE_EXPLORATION_VOICEOVERS:
-            entity_type = feconf.TranslatableEntityType(
-                feconf.ENTITY_TYPE_EXPLORATION)
             for activity_data in activities_data:
                 version = activity_data.get('version')
                 language_code = activity_data.get('language_code')
@@ -335,8 +337,8 @@ class AndroidActivityHandler(base.BaseHandler[
                 entity_voiceovers = (
                     voiceover_services.
                     fetch_entity_voiceovers_by_language_code(
-                        entity_type,
                         activity_data['id'],
+                        feconf.ENTITY_TYPE_EXPLORATION,
                         version,
                         language_code
                     )
@@ -345,7 +347,8 @@ class AndroidActivityHandler(base.BaseHandler[
                 language_accent_code_to_entity_voiceover = {}
                 for entity_voiceover in entity_voiceovers:
                     language_accent_code_to_entity_voiceover[
-                        entity_voiceover.language_accent] = entity_voiceover
+                        entity_voiceover.language_accent_code
+                    ] = entity_voiceover.to_dict()
 
                 activities.append({
                     'id': activity_data['id'],
