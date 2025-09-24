@@ -3974,15 +3974,11 @@ def get_recorded_voiceovers_data_for_given_exploration(
             feconf.ENTITY_TYPE_EXPLORATION,
             exploration_version))
 
-    print(entity_voiceovers_list)
-    print(len(entity_voiceovers_list))
-
     filtered_entity_voiceovers = []
     for entity_voiceovers in entity_voiceovers_list:
         if entity_voiceovers.language_accent_code in (
             supported_language_accent_codes):
             filtered_entity_voiceovers.append(entity_voiceovers)
-    print(len(filtered_entity_voiceovers))
 
     language_code_to_content_voiceover_mapping = {}
 
@@ -3995,13 +3991,14 @@ def get_recorded_voiceovers_data_for_given_exploration(
 
         for content_id, voiceover_type_to_voiceover in (
                 content_id_to_voiceover.items()):
-            manual_voiceover = voiceover_type_to_voiceover.get('manual')
+            manual_voiceover = voiceover_type_to_voiceover.get(
+                feconf.VoiceoverType.MANUAL
+            )
             manual_voiceover_dict = (
                 manual_voiceover.to_dict() if manual_voiceover else None)
 
             language_code_to_content_voiceover_mapping.setdefault(
                 language_code, {})[content_id] = manual_voiceover_dict
-
     state_name_to_content_id_list: Dict[str, List[str]] = {}
 
     for state_name, state in state_name_to_state_object.items():

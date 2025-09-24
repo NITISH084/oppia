@@ -276,9 +276,6 @@ class ExplorationHandler(
             exp_services.get_story_id_linked_to_exploration(
                 exploration_id) is not None)
         exploration = exp_fetchers.get_exploration_by_id(exploration_id)
-        print('\n\n\n\nPrinting Exploration data in old schema...')
-        print(exploration.to_exploration_dict_for_android())
-        print('\n\n\n\n')
 
         self.values.update(exploration_data)
         self.render_json(self.values)
