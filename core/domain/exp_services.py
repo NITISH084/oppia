@@ -3979,25 +3979,24 @@ def to_exploration_dict_for_android(
             filtered_entity_voiceovers.append(entity_voiceovers)
 
     language_code_to_content_voiceover_mapping: Dict[str, Dict[
-        str, state_domain.VoiceoverDict]] = {}
+        str, state_domain.VoiceoverDict]] = collections.defaultdict(dict)
 
     for entity_voiceovers in filtered_entity_voiceovers:
         language_code = (
             language_accent_code_to_default_language_code[
                 entity_voiceovers.language_accent_code])
 
-        content_id_to_voiceover = entity_voiceovers.voiceovers_mapping
-
         for content_id, voiceover_type_to_voiceover in (
-                content_id_to_voiceover.items()):
+                entity_voiceovers.voiceovers_mapping.items()):
             manual_voiceover = voiceover_type_to_voiceover.get(
                 feconf.VoiceoverType.MANUAL
             )
-            manual_voiceover_dict = (
-                manual_voiceover.to_dict() if manual_voiceover else {})
 
-            language_code_to_content_voiceover_mapping.setdefault(
-                language_code, {})[content_id] = manual_voiceover_dict
+            if manual_voiceover is not None:
+                manual_voiceover_dict = manual_voiceover.to_dict()
+
+                language_code_to_content_voiceover_mapping[
+                    language_code][content_id] = manual_voiceover_dict
 
     state_name_to_state_dict: Dict[str, state_domain.StateDictForAndroid] = {}
 
@@ -4005,20 +4004,29 @@ def to_exploration_dict_for_android(
         content_ids = list(
             state.get_translatable_contents_collection().
             content_id_to_translatable_content.keys())
-        state_name_to_state_dict[state_name] = state.to_dict()
+
+        # Here we use cast because we want to convert StateDict into
+        # StateDictForAndroid, allowing the recorded_voiceovers field to be
+        # added.
+        state_name_to_state_dict[state_name] = cast(
+            state_domain.StateDictForAndroid,
+            state.to_dict())
 
         voiceovers_mapping: Dict[str, Dict[
             str, state_domain.VoiceoverDict]] = {}
 
         for content_id in content_ids:
+            if content_id not in voiceovers_mapping:
+                voiceovers_mapping[content_id] = {}
+
             for language_code, content_id_to_voiceover in (
                     language_code_to_content_voiceover_mapping.items()):
 
                 voiceover_dict = content_id_to_voiceover.get(content_id)
 
-                voiceovers_mapping.setdefault(
-                    content_id, {}).setdefault(language_code, voiceover_dict)
-
+                if voiceover_dict is not None:
+                    voiceovers_mapping[content_id][
+                        language_code] = voiceover_dict
         state_name_to_state_dict[state_name]['recorded_voiceovers'] = {
             'voiceovers_mapping': voiceovers_mapping
         }

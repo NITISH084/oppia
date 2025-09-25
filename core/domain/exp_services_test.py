@@ -10294,7 +10294,7 @@ class ExplorationInOldSchemaFormatTests(test_utils.GenericTestBase):
                                     'duration_secs': 6.1,
                                 }
                             },
-                            'default_outcome_1': {'en': None},
+                            'default_outcome_1': {},
                         }
                     },
                 }

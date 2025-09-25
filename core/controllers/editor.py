@@ -275,7 +275,6 @@ class ExplorationHandler(
         exploration_data['exploration_is_linked_to_story'] = (  # type: ignore[misc]
             exp_services.get_story_id_linked_to_exploration(
                 exploration_id) is not None)
-        exploration = exp_fetchers.get_exploration_by_id(exploration_id)
 
         self.values.update(exploration_data)
         self.render_json(self.values)
