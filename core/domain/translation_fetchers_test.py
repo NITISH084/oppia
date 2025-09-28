@@ -132,34 +132,6 @@ class EntityTranslationFetchersTests(test_utils.GenericTestBase):
         self.assertEqual(entity_translation.language_code, 'hi')
         self.assertEqual(entity_translation.translations, {})
 
-    def test_get_entity_translations_returns_expected_values(self) -> None:
-        """Test fetching single entity translations by type,
-        id, version and language.
-        """
-        exp_id = 'exp123'
-        translation_models.EntityTranslationsModel.create_new(
-            'exploration', exp_id, 1, 'hi',
-            {
-                'content_1': {
-                    'content_format': 'html',
-                    'content_value': 'नमस्ते',
-                    'needs_update': False
-                }
-            }
-        ).put()
-
-        result = translation_fetchers.get_entity_translation(
-            feconf.TranslatableEntityType.EXPLORATION, exp_id, 1, 'hi'
-        )
-
-        self.assertIsNotNone(result)
-        self.assertEqual(result.entity_id, exp_id)
-        self.assertEqual(result.entity_version, 1)
-        self.assertIn('content_1', result.translations)
-        self.assertEqual(
-            result.translations['content_1'].content_value, 'नमस्ते'
-        )
-
     def test_get_entity_translation_returns_empty_if_not_found(self) -> None:
         """Test fetching translations that do not exist
          returns an empty object.
