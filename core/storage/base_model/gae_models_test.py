@@ -440,7 +440,7 @@ class TestVersionedModel(base_models.VersionedModel):
     SNAPSHOT_METADATA_CLASS = TestSnapshotMetadataModel
     SNAPSHOT_CONTENT_CLASS = TestSnapshotContentModel
     COMMIT_LOG_ENTRY_CLASS = TestCommitLogEntryModel
-# Field to seed some content into different versions.
+    # Field to seed some content into different versions.
     description = datastore_services.StringProperty(indexed=True)
 
 
