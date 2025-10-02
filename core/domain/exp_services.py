@@ -3990,7 +3990,7 @@ def to_exploration_dict_for_android(
         for content_id, voiceover_type_to_voiceover in (
                 entity_voiceovers.voiceovers_mapping.items()):
             manual_voiceover = voiceover_type_to_voiceover.get(
-                feconf.VoiceoverType.MANUAL
+                feconf.VoiceoverType.MANUAL.value
             )
 
             if manual_voiceover is not None:
