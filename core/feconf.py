@@ -80,8 +80,6 @@ def check_dev_mode_is_true() -> None:
 
 check_dev_mode_is_true()
 
-# TODO(#18260): Remove this when we permanently move to the Dockerized Setup.
-OPPIA_IS_DOCKERIZED = bool(os.environ.get('OPPIA_IS_DOCKERIZED', False))
 TESTS_DATA_DIR = os.path.join('core', 'tests', 'data')
 SAMPLE_EXPLORATIONS_DIR = os.path.join('data', 'explorations')
 SAMPLE_COLLECTIONS_DIR = os.path.join('data', 'collections')
@@ -492,6 +490,9 @@ VALID_MAILCHIMP_FIELD_KEYS = ['NAME']
 # Valid Mailchimp tags.
 VALID_MAILCHIMP_TAGS = ['Account', 'Android', 'Web']
 
+GAE_DEVELOPMENT_SERVER_PORT = 8181
+GAE_ADMIN_SERVER_PORT = 8000
+
 ES_HOST = os.environ.get('ES_HOST', 'localhost')
 ES_LOCALHOST_PORT = 9200
 # NOTE TO RELEASE COORDINATORS: Replace this with the correct ElasticSearch
@@ -539,7 +540,7 @@ DATAFLOW_STAGING_LOCATION = 'gs://todo/todo'
 DATAFLOW_TEMP_LOCATION_TEMPLATE = 'gs://%s-beam-jobs-temp/'
 DATAFLOW_STAGING_LOCATION_TEMPLATE = 'gs://%s-beam-jobs-staging/'
 
-OPPIA_VERSION = '3.4.7'
+OPPIA_VERSION = '3.4.8'
 OPPIA_PYTHON_PACKAGE_PATH = './build/oppia_beam_job-%s.tar.gz' % OPPIA_VERSION
 
 # Committer id for system actions. The username for the system committer
@@ -978,6 +979,9 @@ QUESTIONS_URL_PREFIX = '/question_player_handler'
 RECENT_COMMITS_DATA_URL = '/recentcommitshandler/recent_commits'
 RECENT_FEEDBACK_MESSAGES_DATA_URL = '/recent_feedback_messages'
 REGENERATE_TOPIC_SUMMARIES_URL = '/regenerate_topic_summaries_handler'
+GENERATE_STUDY_GUIDE_MODELS_URL = '/generate_study_guide_models_handler'
+DELETE_STUDY_GUIDE_MODELS_URL = '/delete_study_guide_models_handler'
+VERIFY_STUDY_GUIDE_MODELS_URL = '/verify_study_guide_models_handler'
 DELETE_ACCOUNT_URL = '/delete-account'
 DELETE_ACCOUNT_HANDLER_URL = '/delete-account-handler'
 EXPORT_ACCOUNT_HANDLER_URL = '/export-account-handler'
@@ -1066,8 +1070,6 @@ VOICEOVER_ADMIN_DATA_HANDLER_URL = '/voiceover_admin_data_handler'
 VOICEOVER_LANGUAGE_CODES_MAPPING_HANDLER_URL = (
     '/voiceover_language_codes_mapping'
 )
-VOICE_ARTIST_METADATA_HANDLER = '/voice_artist_metadata_handler'
-GET_SAMPLE_VOICEOVERS_FOR_VOICE_ARTIST = '/get_sample_voiceovers'
 REGENERATE_AUTOMATIC_VOICEOVER_HANDLER_URL = (
     '/regenerate_automatic_voiceover/<exploration_id>'
 )
@@ -1364,8 +1366,7 @@ FIREBASE_ROLE_SUPER_ADMIN = 'super_admin'
 # use alpha-numeric characters, hence the tighter restriction.
 FIREBASE_AUTH_ID_REGEX = '^[A-Za-z0-9]{1,128}$'
 
-# TODO(#18260): Change this when we permanently move to the Dockerized Setup.
-CLOUD_DATASTORE_EMULATOR_HOST = os.environ.get('DATASTORE_HOST', 'localhost')
+CLOUD_DATASTORE_EMULATOR_HOST = 'localhost'
 CLOUD_DATASTORE_EMULATOR_PORT = 8089
 
 FIREBASE_EMULATOR_CONFIG_PATH = '.firebase.json'
