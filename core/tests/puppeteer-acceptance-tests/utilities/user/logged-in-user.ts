@@ -126,7 +126,6 @@ const issueTypeSelector = '.e2e-test-report-exploration-radio-button';
 const addTopicToCurrentGoalsButton =
   '.e2e-test-add-topic-to-current-goals-button';
 const mobileCompletedLessonSection = '.community-lessons-section';
-const currentGoalsSectionSelector = '.e2e-test-current-goals-section';
 const homeSectionGreetingElement = '.greeting';
 const LABEL_FOR_SUBMIT_BUTTON = 'Submit and start contributing';
 const matFormTextSelector = '.oppia-form-text';
