@@ -1,17 +1,3 @@
-// Copyright 2025 The Oppia Authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS-IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 /**
  * @fileoverview Acceptance test for Goals Tab — CUJ (Blue + Purple).
  */
@@ -27,8 +13,9 @@ import {TopicManager} from '../../utilities/user/topic-manager';
 
 const ROLES = testConstants.Roles;
 
-describe('Logged-in User', function () {
+describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
   jest.setTimeout(6000000);
+
   let loggedInUser: LoggedInUser & LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
   let releaseCoordinator: ReleaseCoordinator;
@@ -64,13 +51,14 @@ describe('Logged-in User', function () {
       'Place Values',
       'Place Values'
     );
+
     await curriculumAdmin.addTopicToClassroom('Math', 'Place Values');
     await curriculumAdmin.publishClassroom('Math');
 
     const placeValueChapters = [
       'What are the Place Values',
       'Find the Value of a Number',
-      'Comparing Numbers',
+      'Comparing Numbers'
     ];
 
     const chapterIds: (string | null)[] = [];
@@ -84,6 +72,7 @@ describe('Logged-in User', function () {
       chapterIds.push(id);
     }
 
+    // Extra explorations for modal list (not used in chapters)
     for (let i = 0; i < 6; i++) {
       await curriculumAdmin.createAndPublishExplorationWithCards(
         `Explore Title ${i + 1}`,
@@ -98,21 +87,21 @@ describe('Logged-in User', function () {
       'Place Values'
     );
 
-    for (const [index, id] of chapterIds.entries()) {
-      await curriculumAdmin.addChapter(placeValueChapters[index], id as string);
+    for (const [idx, expId] of chapterIds.entries()) {
+      await curriculumAdmin.addChapter(placeValueChapters[idx], expId as string);
     }
 
     await curriculumAdmin.saveStoryDraft();
     await curriculumAdmin.publishStoryDraft();
     await curriculumAdmin.closeBrowser();
-
     loggedInUser = await UserFactory.createNewUser(
       'loggedInUser1',
       'logged_in_user1@example.com'
     );
   });
 
-  it('should display empty Goals tab with title and add goals button', async function () {
+
+  it('should display empty Goals tab with title and Add Goals button', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
     await loggedInUser.navigateToGoalsSection();
 
@@ -124,44 +113,44 @@ describe('Logged-in User', function () {
     );
   });
 
-  it('should open add goals modal with topic checkboxes and cancel button', async function () {
+  it('should open add goals modal with topic checkbox and cancel', async function () {
     await loggedInUser.clickOnAddGoalsButtonInRedesignedLearnerDashboard();
-
     await loggedInUser.expectAddGoalsModalToBeDisplayed();
 
     await loggedInUser.expectGoalCheckboxToBeVisible('Place Values');
+
     await loggedInUser.expectScreenshotToMatch(
-      'addGoalsModalWithTopicCheckboxesDisplayed',
+      'addGoalsModalInitial',
       __dirname
     );
 
     await loggedInUser.cancelGoalModalInRedesignedLearnerDashboard();
   });
 
-  it('should add Place Values goal and display in In Progress section with progress 0', async function () {
+  it('should add Place Values goal and display In Progress card (0%)', async function () {
     await loggedInUser.clickOnAddGoalsButtonInRedesignedLearnerDashboard();
+
     await loggedInUser.clickOnGoalCheckboxInRedesignedLearnerDashboard(
       'Place Values',
       true
     );
+
     await loggedInUser.submitGoalInRedesignedLearnerDashboard();
 
     await loggedInUser.expectToastMessage(
       "Successfully added to your 'Current Goals' list."
     );
 
-    await loggedInUser.expectRedesignedGoalsSectionToContainHeading(
-      'In Progress'
-    );
+    await loggedInUser.expectRedesignedGoalsSectionToContainHeading('In Progress');
     await loggedInUser.expectGoalCardToBeVisible('Place Values');
 
     await loggedInUser.expectScreenshotToMatch(
-      'goalsTabWithPlaceValuesInProgressCardDisplayed',
+      'goalsTabInProgressCardZeroPercent',
       __dirname
     );
   });
 
-  it('should uncheck goal and show remove confirmation modal with trash button', async function () {
+  it('should prompt for goal removal when unchecked in modal', async function () {
     await loggedInUser.clickOnAddGoalsButtonInRedesignedLearnerDashboard();
 
     await loggedInUser.clickOnGoalCheckboxInRedesignedLearnerDashboard(
@@ -174,31 +163,31 @@ describe('Logged-in User', function () {
       "Remove from 'Current Goals' list?",
       "Are you sure you want to remove 'Place Values' from your 'Current Goals' list?"
     );
+
     await loggedInUser.expectScreenshotToMatch(
       'removeGoalConfirmationModal',
       __dirname
     );
 
     await loggedInUser.clickButtonInRemoveActivityModal('Remove');
-
     await loggedInUser.expectGoalCardToBeVisible('Place Values', false);
   });
 
-  it('should return to empty state after confirming goal removal', async function () {
+  it('should return to empty state after removal', async function () {
     await loggedInUser.clickOnAddGoalsButtonInRedesignedLearnerDashboard();
 
     await loggedInUser.expectGoalCheckboxToBeVisible('Place Values');
-
     await loggedInUser.cancelGoalModalInRedesignedLearnerDashboard();
 
     await loggedInUser.expectRedesignedGoalsSectionToContainHeading(
       'In Progress',
       false
     );
+
     await loggedInUser.expectAddGoalsButtonToBeVisible();
   });
 
-  it('should not save changes when canceling goal modal after selecting checkbox', async function () {
+  it('should not save checkbox selection when closing modal', async function () {
     await loggedInUser.clickOnAddGoalsButtonInRedesignedLearnerDashboard();
     await loggedInUser.clickOnGoalCheckboxInRedesignedLearnerDashboard(
       'Place Values',
@@ -207,69 +196,146 @@ describe('Logged-in User', function () {
 
     await loggedInUser.cancelGoalModalInRedesignedLearnerDashboard();
 
-    await loggedInUser.expectRedesignedGoalsSectionToContainHeading(
-      'In Progress',
-      false
-    );
+    await loggedInUser.expectRedesignedGoalsSectionToContainHeading('In Progress', false);
   });
 
-  it('should display goal card with 0 progress and Start button in In Progress section', async function () {
-    await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
+  it('should show goal card with 0% and Start button after adding goal', async function () {
+    await loggedInUser.navigateToLearnerDashboard();
     await loggedInUser.navigateToGoalsSection();
 
     await loggedInUser.addGoalInRedesignedLearnerDashboard('Place Values');
 
     await loggedInUser.expectGoalCardToBeVisible('Place Values');
     await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 0);
-
     await loggedInUser.expectGoalCardButtonLabel('Place Values', 'Start');
   });
 
-  it('should expand goal and display all chapters with Start button and percentage', async function () {
+  it('should expand Place Values and show all lessons with Start buttons', async function () {
     await loggedInUser.clickOnGoalCard('Place Values');
 
     await loggedInUser.expectGoalDetailPageToBeDisplayed('Place Values');
 
     await loggedInUser.expectLessonCardToBeVisible('What are the Place Values');
-    await loggedInUser.expectLessonCardToBeVisible(
-      'Find the Value of a Number'
-    );
+    await loggedInUser.expectLessonCardToBeVisible('Find the Value of a Number');
+    await loggedInUser.expectLessonCardToBeVisible('Comparing Numbers');
 
     await loggedInUser.expectLessonCardButtonLabel(
       'What are the Place Values',
       'Start'
     );
+
     await loggedInUser.expectScreenshotToMatch(
-      'placeValuesGoalDetailWithChaptersDisplayed',
+      'goalDetailExpandedLessonList',
       __dirname
     );
   });
 
-  it('should highlight Goals tab button with green active state in sidebar', async function () {
+
+
+  it('should start and complete Chapter 1, then show updated progress (33%)', async function () {
+    await loggedInUser.navigateToLearnerDashboard();
+    await loggedInUser.navigateToGoalsSection();
+    await loggedInUser.clickOnGoalCard('Place Values');
+
+    await loggedInUser.clickLessonCardButton('What are the Place Values');
+
+    await loggedInUser.expectContinueToNextCardButtonToBePresent(true);
+    await loggedInUser.continueToNextCard();
+    await loggedInUser.continueToNextCard();
+
+    await loggedInUser.expectExplorationCompletionToastMessage(
+      'Congratulations for completing this lesson!'
+    );
+
+    await loggedInUser.navigateToLearnerDashboard();
+    await loggedInUser.navigateToGoalsSection();
+    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 33);
+  });
+
+
+
+  it('should complete Chapter 2 and update progress to 66%', async function () {
+    await loggedInUser.navigateToLearnerDashboard();
+    await loggedInUser.navigateToGoalsSection();
+    await loggedInUser.clickOnGoalCard('Place Values');
+
+    await loggedInUser.clickLessonCardButton('Find the Value of a Number');
+
+    await loggedInUser.expectContinueToNextCardButtonToBePresent(true);
+    await loggedInUser.continueToNextCard();
+    await loggedInUser.continueToNextCard();
+
+    await loggedInUser.expectExplorationCompletionToastMessage(
+      'Congratulations for completing this lesson!'
+    );
+
+    await loggedInUser.navigateToLearnerDashboard();
+    await loggedInUser.navigateToGoalsSection();
+
+    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 66);
+  });
+
+
+
+  it('should complete final chapter and move goal to Completed section', async function () {
+    await loggedInUser.navigateToLearnerDashboard();
+    await loggedInUser.navigateToGoalsSection();
+    await loggedInUser.clickOnGoalCard('Place Values');
+
+    await loggedInUser.expectLessonCardToBeVisible('Comparing Numbers');
+    await loggedInUser.clickLessonCardButton('Comparing Numbers');
+
+    await loggedInUser.expectContinueToNextCardButtonToBePresent(true);
+    await loggedInUser.continueToNextCard();
+    await loggedInUser.continueToNextCard();
+
+    await loggedInUser.expectExplorationCompletionToastMessage(
+      'Congratulations for completing this lesson!'
+    );
+
+    await loggedInUser.navigateToLearnerDashboard();
+    await loggedInUser.navigateToGoalsSection();
+
+    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 100);
+
+    await loggedInUser.expectCompletedGoalsSectionInRedesignedDashboardToContain(
+      "Place Values: Jamie's Adventures in the Arcade"
+    );
+
+    await loggedInUser.expectScreenshotToMatch(
+      'goalCompletedSectionWithPlaceValues',
+      __dirname
+    );
+  });
+
+
+
+  it('should highlight Goals tab in sidebar', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
 
     await loggedInUser.expectGoalsTabButtonToBeVisible();
     await loggedInUser.navigateToGoalsSection();
-
     await loggedInUser.expectGoalsTabButtonToBeActive();
 
     await loggedInUser.expectScreenshotToMatch(
-      'goalsTabSidebarHighlightedWithActiveState',
+      'goalsTabSidebarHighlighted',
       __dirname
     );
   });
 
-  it('should display goals correctly on mobile viewport with responsive layout', async function () {
+  it('should display correctly on mobile viewport', async function () {
     await loggedInUser.setMobileViewport();
 
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
     await loggedInUser.navigateToGoalsSection();
 
     await loggedInUser.expectGoalCardToBeVisible('Place Values');
+    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 100);
+
     await loggedInUser.expectMobileLayoutToBeCorrect();
 
     await loggedInUser.expectScreenshotToMatch(
-      'goalsTabMobileViewportWithResponsiveLayout',
+      'goalsTabMobileView',
       __dirname
     );
 
