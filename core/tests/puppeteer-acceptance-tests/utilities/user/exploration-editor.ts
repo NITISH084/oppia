@@ -4536,7 +4536,9 @@ export class ExplorationEditor extends BaseUser {
 
     // Use direct page.evaluate click to avoid viewport/bounding box issues.
     await this.page.evaluate(() => {
-      const button = document.querySelector('.e2e-test-next-card-button') as HTMLElement;
+      const button = document.querySelector(
+        '.e2e-test-next-card-button'
+      ) as HTMLElement;
       if (button) {
         button.scrollIntoView({behavior: 'auto', block: 'center'});
         button.click();

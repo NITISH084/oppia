@@ -58,7 +58,7 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
     const placeValueChapters = [
       'What are the Place Values',
       'Find the Value of a Number',
-      'Comparing Numbers'
+      'Comparing Numbers',
     ];
 
     const chapterIds: (string | null)[] = [];
@@ -88,7 +88,10 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
     );
 
     for (const [idx, expId] of chapterIds.entries()) {
-      await curriculumAdmin.addChapter(placeValueChapters[idx], expId as string);
+      await curriculumAdmin.addChapter(
+        placeValueChapters[idx],
+        expId as string
+      );
     }
 
     await curriculumAdmin.saveStoryDraft();
@@ -99,7 +102,6 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
       'logged_in_user1@example.com'
     );
   });
-
 
   it('should display empty Goals tab with title and Add Goals button', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
@@ -141,7 +143,9 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
       "Successfully added to your 'Current Goals' list."
     );
 
-    await loggedInUser.expectRedesignedGoalsSectionToContainHeading('In Progress');
+    await loggedInUser.expectRedesignedGoalsSectionToContainHeading(
+      'In Progress'
+    );
     await loggedInUser.expectGoalCardToBeVisible('Place Values');
 
     await loggedInUser.expectScreenshotToMatch(
@@ -196,7 +200,10 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
 
     await loggedInUser.cancelGoalModalInRedesignedLearnerDashboard();
 
-    await loggedInUser.expectRedesignedGoalsSectionToContainHeading('In Progress', false);
+    await loggedInUser.expectRedesignedGoalsSectionToContainHeading(
+      'In Progress',
+      false
+    );
   });
 
   it('should show goal card with 0% and Start button after adding goal', async function () {
@@ -216,7 +223,9 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
     await loggedInUser.expectGoalDetailPageToBeDisplayed('Place Values');
 
     await loggedInUser.expectLessonCardToBeVisible('What are the Place Values');
-    await loggedInUser.expectLessonCardToBeVisible('Find the Value of a Number');
+    await loggedInUser.expectLessonCardToBeVisible(
+      'Find the Value of a Number'
+    );
     await loggedInUser.expectLessonCardToBeVisible('Comparing Numbers');
 
     await loggedInUser.expectLessonCardButtonLabel(
@@ -229,8 +238,6 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
       __dirname
     );
   });
-
-
 
   it('should start and complete Chapter 1, then show updated progress (33%)', async function () {
     await loggedInUser.navigateToLearnerDashboard();
@@ -252,8 +259,6 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
     await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 33);
   });
 
-
-
   it('should complete Chapter 2 and update progress to 66%', async function () {
     await loggedInUser.navigateToLearnerDashboard();
     await loggedInUser.navigateToGoalsSection();
@@ -274,8 +279,6 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
 
     await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 66);
   });
-
-
 
   it('should complete final chapter and move goal to Completed section', async function () {
     await loggedInUser.navigateToLearnerDashboard();
@@ -308,8 +311,6 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
     );
   });
 
-
-
   it('should highlight Goals tab in sidebar', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
 
@@ -334,10 +335,7 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
 
     await loggedInUser.expectMobileLayoutToBeCorrect();
 
-    await loggedInUser.expectScreenshotToMatch(
-      'goalsTabMobileView',
-      __dirname
-    );
+    await loggedInUser.expectScreenshotToMatch('goalsTabMobileView', __dirname);
 
     await loggedInUser.setDesktopViewport();
   });
