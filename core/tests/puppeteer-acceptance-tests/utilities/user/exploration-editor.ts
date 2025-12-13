@@ -4532,18 +4532,16 @@ export class ExplorationEditor extends BaseUser {
    * @param skipVerification - Whether to skip verification of the card content.
    */
   async continueToNextCard(skipVerification: boolean = false): Promise<void> {
-    await this.page.waitForSelector(nextCardButton, {timeout: 8000});
-
-    // Use direct page.evaluate click to avoid viewport/bounding box issues.
-    await this.page.evaluate(() => {
-      const button = document.querySelector(
-        '.e2e-test-next-card-button'
-      ) as HTMLElement;
-      if (button) {
-        button.scrollIntoView({behavior: 'auto', block: 'center'});
-        button.click();
+    try {
+      await this.page.waitForSelector(nextCardButton, {timeout: 7000});
+      await this.clickOnElementWithSelector(nextCardButton);
+    } catch (error) {
+      if (error instanceof puppeteer.errors.TimeoutError) {
+        await this.clickOnElementWithSelector(nextCardArrowButton);
+      } else {
+        throw error;
       }
-    });
+    }
 
     if (skipVerification) {
       return;
