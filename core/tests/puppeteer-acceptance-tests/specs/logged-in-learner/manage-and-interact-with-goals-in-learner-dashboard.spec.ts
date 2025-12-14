@@ -13,7 +13,10 @@
 // limitations under the License.
 
 /**
- * @fileoverview Acceptance test for Goals Tab — CUJ (Blue + Purple).
+ * @fileoverview Acceptance test from CUJv3 Doc
+ * https://docs.google.com/document/d/1D7kkFTzg3rxUe3QJ_iPlnxUzBFNElmRkmAWss00nFno/
+ *
+ * EL.LP.  Learner can access the lesson player
  */
 
 import testConstants from '../../utilities/common/test-constants';
@@ -26,10 +29,9 @@ import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
 import {TopicManager} from '../../utilities/user/topic-manager';
 
 const ROLES = testConstants.Roles;
+const DEFAULT_SPEC_TIMEOUT_MSECS = testConstants.DEFAULT_SPEC_TIMEOUT_MSECS;
 
-describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
-  jest.setTimeout(6000000);
-
+describe('Logged-In Learner', function () {
   let loggedInUser: LoggedInUser & LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
   let releaseCoordinator: ReleaseCoordinator;
@@ -115,7 +117,7 @@ describe('Logged-in User - Goals Tab (Blue + Purple CUJ)', function () {
       'loggedInUser1',
       'logged_in_user1@example.com'
     );
-  });
+  }, DEFAULT_SPEC_TIMEOUT_MSECS);
 
   it('should display empty Goals tab with title and Add Goals button', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();

@@ -225,7 +225,7 @@ const learnerGreetingsSelector = '.e2e-test-learner-greetings';
 const addGoalsButtonInRedesignedLearnerDashboard = '.e2e-test-add-goals-button';
 const newGoalsListInRedesignedLearnerDashboard = '.e2e-test-new-goals-list';
 const goalCheckboxInRedesignedLearnerDashboard =
-  '.oppia-learner-dash-goals-checkbox';
+  '.e2e-test-dash-goals-checkbox';
 const addNewGoalButtonSelector = '.e2e-test-add-new-goal-button';
 const goalsHeadingInRedesignedDashbaordSelector = '.e2e-test-goals-heading';
 const continueFromWhereLeftOffSectionInRedesignedDashboardSelector =
