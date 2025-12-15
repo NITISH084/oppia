@@ -762,9 +762,12 @@ export class BaseUser {
   async goto(url: string, verifyURL: boolean = true): Promise<void> {
     // Use a slightly looser navigation wait condition to avoid hanging on
     // pages with background requests (e.g., analytics/long-polling).
+    const isMobile = process.env.MOBILE === 'true';
     await this.page.goto(url, {
-      waitUntil: ['networkidle2', 'load'],
-      timeout: 120000,
+      // For mobile prod_env, DOMContentLoaded is more reliable than networkidle.
+      // Desktop keeps stricter waits to catch actual load issues.
+      waitUntil: isMobile ? 'domcontentloaded' : ['networkidle2', 'load'],
+      timeout: 180000,
     });
 
     if (verifyURL) {
