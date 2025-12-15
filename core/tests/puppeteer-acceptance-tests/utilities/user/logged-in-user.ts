@@ -2696,7 +2696,6 @@ export class LoggedInUser extends BaseUser {
     );
     await this.page.waitForTimeout(500);
     await addButton.click({delay: 100});
-    await this.page.waitForTimeout(1000);
 
     await this.page.waitForSelector(newGoalsListInRedesignedLearnerDashboard, {
       visible: true,
@@ -2746,9 +2745,7 @@ export class LoggedInUser extends BaseUser {
         if (!goalCheckbox) {
           throw new Error(`Could not find goal checkbox for ${goal}`);
         }
-        await this.page.waitForTimeout(200);
         await goalCheckbox.click({delay: 100});
-        await this.page.waitForTimeout(300);
         await this.page.waitForFunction(
           (element: Element, checked: boolean) => {
             const inputElement = (element as HTMLInputElement).querySelector(
@@ -3266,8 +3263,6 @@ export class LoggedInUser extends BaseUser {
       visible: true,
       timeout: 60000,
     });
-    // Give a brief moment for inner lists to render.
-    await this.page.waitForTimeout(500);
     // Wait for the goal cards to render within the goals section.
     await this.page.waitForSelector(goalContainerSelector, {
       visible: true,
@@ -3513,9 +3508,8 @@ export class LoggedInUser extends BaseUser {
       break;
     }
 
-    // Wait for completion/navigation - the lesson completes after all continue clicks.
-    // Wait for the exploration state to persist to backend.
-    await this.page.waitForTimeout(5000);
+    // Post-check: wait for completion toast to appear indicating lesson finished.
+    await this.page.waitForSelector(toastMessage, {timeout: 15000});
   }
 
   /**
@@ -3526,7 +3520,7 @@ export class LoggedInUser extends BaseUser {
       '.e2e-test-conversation-skin-cards-container'
     );
 
-    // Answer one question and click continue once, but don't complete.
+    // Give the first card time to render before interacting.
     await this.page.waitForTimeout(1500);
 
     // Try to submit an answer if there's a submit button.
@@ -3547,7 +3541,18 @@ export class LoggedInUser extends BaseUser {
 
     if (continueButton) {
       await continueButton.click();
-      await this.page.waitForTimeout(2000);
+      // Wait for either the next card or the completion toast to appear.
+      await Promise.race([
+        this.page.waitForSelector('.e2e-test-toast-message', {
+          timeout: 15000,
+        }),
+        this.page.waitForSelector(
+          '.e2e-test-conversation-skin-cards-container',
+          {
+            timeout: 15000,
+          }
+        ),
+      ]);
     }
   }
 
@@ -3575,8 +3580,12 @@ export class LoggedInUser extends BaseUser {
     }
 
     await this.waitForPageToFullyLoad();
-    // Give the dashboard time to settle and persist any exploration progress.
-    await this.page.waitForTimeout(3000);
+    // Post-check: wait for the goals section container to be visible to ensure
+    // the dashboard is ready for subsequent interactions.
+    await this.page.waitForSelector(goalsSectionContainerSelector, {
+      visible: true,
+      timeout: 15000,
+    });
   }
 
   /**
@@ -3643,11 +3652,7 @@ export class LoggedInUser extends BaseUser {
    * Expects the Goals tab button to be visible.
    */
   async expectGoalsTabButtonToBeVisible(): Promise<void> {
-    const goalsTab = await this.page.$('.e2e-test-goals-section');
-
-    if (!goalsTab) {
-      throw new Error('Goals tab button not found.');
-    }
+    await this.expectElementToBeVisible('.e2e-test-goals-section');
   }
 
   /**
@@ -3757,8 +3762,11 @@ export class LoggedInUser extends BaseUser {
           timeout: 30000,
         }
       );
-      // Give the title element time to update after navigation.
-      await this.page.waitForTimeout(1000);
+      // Post-check: wait for the lesson title to be present to confirm the page updated.
+      await this.page.waitForSelector('.e2e-test-current-state-name', {
+        visible: true,
+        timeout: 10000,
+      });
     }
   }
 

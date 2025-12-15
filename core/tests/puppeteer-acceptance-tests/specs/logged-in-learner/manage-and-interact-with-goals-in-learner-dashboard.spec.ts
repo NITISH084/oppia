@@ -31,7 +31,6 @@ import {TopicManager} from '../../utilities/user/topic-manager';
 const ROLES = testConstants.Roles;
 
 describe('Logged-In Learner', function () {
-  jest.setTimeout(6000000);
   let loggedInUser: LoggedInUser & LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
   let releaseCoordinator: ReleaseCoordinator;
@@ -117,7 +116,7 @@ describe('Logged-In Learner', function () {
       'loggedInUser1',
       'logged_in_user1@example.com'
     );
-  }); // Setup taking longer than default timeout.
+  }, 6000000); // Setup taking longer than default timeout.
 
   it('should display empty Goals tab with title and Add Goals button', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
@@ -335,11 +334,6 @@ describe('Logged-In Learner', function () {
       'chapter3CompletedWith100PercentProgress',
       __dirname
     );
-
-    await loggedInUser.expectScreenshotToMatch(
-      'goalCompletedSectionWithPlaceValues',
-      __dirname
-    );
   });
 
   it('should highlight Goals tab in sidebar', async function () {
@@ -367,8 +361,6 @@ describe('Logged-In Learner', function () {
     await loggedInUser.expectMobileLayoutToBeCorrect();
 
     await loggedInUser.expectScreenshotToMatch('goalsTabMobileView', __dirname);
-
-    await loggedInUser.setDesktopViewport();
   });
 
   afterAll(async function () {

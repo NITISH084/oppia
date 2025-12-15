@@ -117,6 +117,7 @@ export class BaseUser {
          * every test passes on both modes. */
         headless,
         args,
+        timeout: 60000,
       })
       .then(async browser => {
         this.startTimeInMilliseconds = Date.now();
