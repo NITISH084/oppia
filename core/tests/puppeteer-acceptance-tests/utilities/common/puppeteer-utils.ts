@@ -764,7 +764,7 @@ export class BaseUser {
     // pages with background requests (e.g., analytics/long-polling).
     await this.page.goto(url, {
       waitUntil: ['networkidle2', 'load'],
-      timeout: 60000,
+      timeout: 120000,
     });
 
     if (verifyURL) {
