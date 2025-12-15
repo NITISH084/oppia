@@ -16,7 +16,7 @@
  * @fileoverview Acceptance test from CUJv3 Doc
  * https://docs.google.com/document/d/1D7kkFTzg3rxUe3QJ_iPlnxUzBFNElmRkmAWss00nFno/
  *
- * EL.LP.  Learner can access the lesson player
+ * LI.2. Set goals on the Learner Dashboard
  */
 
 import testConstants from '../../utilities/common/test-constants';
@@ -29,9 +29,9 @@ import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
 import {TopicManager} from '../../utilities/user/topic-manager';
 
 const ROLES = testConstants.Roles;
-const DEFAULT_SPEC_TIMEOUT_MSECS = testConstants.DEFAULT_SPEC_TIMEOUT_MSECS;
 
 describe('Logged-In Learner', function () {
+  jest.setTimeout(6000000);
   let loggedInUser: LoggedInUser & LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
   let releaseCoordinator: ReleaseCoordinator;
@@ -117,7 +117,7 @@ describe('Logged-In Learner', function () {
       'loggedInUser1',
       'logged_in_user1@example.com'
     );
-  }, DEFAULT_SPEC_TIMEOUT_MSECS);
+  }); // Setup taking longer than default timeout.
 
   it('should display empty Goals tab with title and Add Goals button', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
