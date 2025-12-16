@@ -116,8 +116,7 @@ export class BaseUser {
          * headless mode. As per the expected behavior we need to make sure
          * every test passes on both modes. */
         headless,
-        args,
-        timeout: 60000,
+        args
       })
       .then(async browser => {
         this.startTimeInMilliseconds = Date.now();
@@ -762,12 +761,9 @@ export class BaseUser {
   async goto(url: string, verifyURL: boolean = true): Promise<void> {
     // Use a slightly looser navigation wait condition to avoid hanging on
     // pages with background requests (e.g., analytics/long-polling).
-    const isMobile = process.env.MOBILE === 'true';
     await this.page.goto(url, {
-      // For mobile prod_env, DOMContentLoaded is more reliable than networkidle.
-      // Desktop keeps stricter waits to catch actual load issues.
-      waitUntil: isMobile ? 'domcontentloaded' : ['networkidle2', 'load'],
-      timeout: 180000,
+      waitUntil: ['networkidle2', 'load'],
+      timeout: 60000,
     });
 
     if (verifyURL) {
