@@ -116,7 +116,7 @@ export class BaseUser {
          * headless mode. As per the expected behavior we need to make sure
          * every test passes on both modes. */
         headless,
-        args
+        args,
       })
       .then(async browser => {
         this.startTimeInMilliseconds = Date.now();
