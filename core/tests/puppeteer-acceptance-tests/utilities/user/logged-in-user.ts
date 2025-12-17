@@ -655,10 +655,6 @@ export class LoggedInUser extends BaseUser {
       await this.goto(learnerDashboardUrl);
       await this.waitForPageToFullyLoad();
     }
-    if (this.isViewportAtMobileWidth()) {
-      await this.page.waitForSelector(goalsSectionSelector);
-      await this.clickOnElementWithSelector(goalsSectionSelector);
-    }
 
     const clickDesktopGoals = async (): Promise<boolean> => {
       try {
