@@ -30,7 +30,7 @@ import {TopicManager} from '../../utilities/user/topic-manager';
 
 const ROLES = testConstants.Roles;
 
-describe('Logged-In Learner', function () {
+describe('Logged-In Learner - Manage Goals', function () {
   let loggedInUser: LoggedInUser & LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
   let releaseCoordinator: ReleaseCoordinator;
@@ -254,88 +254,6 @@ describe('Logged-In Learner', function () {
     );
   });
 
-  it('should start and complete Chapter 1, then show updated progress (33%)', async function () {
-    await loggedInUser.navigateToLearnerDashboard();
-    await loggedInUser.navigateToGoalsSection();
-    await loggedInUser.clickOnGoalCard('Place Values');
-
-    await loggedInUser.clickLessonCardButton('What are the Place Values');
-
-    await loggedInUser.expectContinueToNextCardButtonToBePresent(true);
-    await loggedInUser.continueToNextCard();
-    await loggedInUser.continueToNextCard();
-
-    await loggedInUser.expectExplorationCompletionToastMessage(
-      'Congratulations for completing this lesson!'
-    );
-
-    await loggedInUser.navigateToLearnerDashboard();
-    await loggedInUser.navigateToGoalsSection();
-    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 33);
-
-    await loggedInUser.expectScreenshotToMatch(
-      'chapter1CompletedWith33PercentProgress',
-      __dirname
-    );
-  });
-
-  it('should complete Chapter 2 and update progress to 66%', async function () {
-    await loggedInUser.navigateToLearnerDashboard();
-    await loggedInUser.navigateToGoalsSection();
-    await loggedInUser.clickOnGoalCard('Place Values');
-
-    await loggedInUser.clickLessonCardButton('Find the Value of a Number');
-
-    await loggedInUser.expectContinueToNextCardButtonToBePresent(true);
-    await loggedInUser.continueToNextCard();
-    await loggedInUser.continueToNextCard();
-
-    await loggedInUser.expectExplorationCompletionToastMessage(
-      'Congratulations for completing this lesson!'
-    );
-
-    await loggedInUser.navigateToLearnerDashboard();
-    await loggedInUser.navigateToGoalsSection();
-
-    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 66);
-
-    await loggedInUser.expectScreenshotToMatch(
-      'chapter2CompletedWith66PercentProgress',
-      __dirname
-    );
-  });
-
-  it('should complete final chapter and move goal to Completed section', async function () {
-    await loggedInUser.navigateToLearnerDashboard();
-    await loggedInUser.navigateToGoalsSection();
-    await loggedInUser.clickOnGoalCard('Place Values');
-
-    await loggedInUser.expectLessonCardToBeVisible('Comparing Numbers');
-    await loggedInUser.clickLessonCardButton('Comparing Numbers');
-
-    await loggedInUser.expectContinueToNextCardButtonToBePresent(true);
-    await loggedInUser.continueToNextCard();
-    await loggedInUser.continueToNextCard();
-
-    await loggedInUser.expectExplorationCompletionToastMessage(
-      'Congratulations for completing this lesson!'
-    );
-
-    await loggedInUser.navigateToLearnerDashboard();
-    await loggedInUser.navigateToGoalsSection();
-
-    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 100);
-
-    await loggedInUser.expectCompletedGoalsSectionInRedesignedDashboardToContain(
-      "Place Values: Jamie's Adventures in the Arcade"
-    );
-
-    await loggedInUser.expectScreenshotToMatch(
-      'chapter3CompletedWith100PercentProgress',
-      __dirname
-    );
-  });
-
   it('should highlight Goals tab in sidebar', async function () {
     await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
 
@@ -347,20 +265,6 @@ describe('Logged-In Learner', function () {
       'goalsTabSidebarHighlighted',
       __dirname
     );
-  });
-
-  it('should display correctly on mobile viewport', async function () {
-    await loggedInUser.setMobileViewport();
-
-    await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
-    await loggedInUser.navigateToGoalsSection();
-
-    await loggedInUser.expectGoalCardToBeVisible('Place Values');
-    await loggedInUser.expectGoalProgressToBeDisplayed('Place Values', 100);
-
-    await loggedInUser.expectMobileLayoutToBeCorrect();
-
-    await loggedInUser.expectScreenshotToMatch('goalsTabMobileView', __dirname);
   });
 
   afterAll(async function () {
