@@ -3107,20 +3107,6 @@ export class LoggedInUser extends BaseUser {
   }
 
   /**
-   * Expects the toast message to display the given text.
-   * @param expectedMessage - The expected toast message text.
-   */
-  async expectToastMessage(expectedMessage: string): Promise<void> {
-    await this.page.waitForSelector(toastMessage);
-
-    const messageText = await this.page.$eval(toastMessage, el =>
-      el.textContent?.trim()
-    );
-
-    expect(messageText).toBe(expectedMessage);
-  }
-
-  /**
    * Expects a goal card to be visible for the given topic.
    * @param topicName - The name of the topic.
    * @param shouldBeVisible - Whether the card should be visible.
