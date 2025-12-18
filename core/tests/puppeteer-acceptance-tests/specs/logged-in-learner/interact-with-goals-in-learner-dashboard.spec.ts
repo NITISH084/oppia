@@ -223,7 +223,7 @@ describe('Logged-In Learner', function () {
 
   afterAll(async function () {
     await loggedInUser.waitForNetworkIdle();
-    await loggedInUser.closeBrowser();
+    await UserFactory.closeBrowserForUser(loggedInUser);
 
     await UserFactory.closeAllBrowsers();
   });

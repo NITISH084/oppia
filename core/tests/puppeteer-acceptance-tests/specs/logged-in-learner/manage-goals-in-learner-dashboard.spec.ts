@@ -270,7 +270,7 @@ describe('Logged-In Learner - Manage Goals', function () {
 
   afterAll(async function () {
     await loggedInUser.waitForNetworkIdle();
-    await loggedInUser.closeBrowser();
+    await UserFactory.closeBrowserForUser(loggedInUser);
 
     await UserFactory.closeAllBrowsers();
   });
