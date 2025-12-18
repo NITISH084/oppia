@@ -210,7 +210,7 @@ describe('Logged-In Learner', function () {
   it('should display correctly on mobile viewport', async function () {
     await loggedInUser.setMobileViewport();
 
-    await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
+    await loggedInUser.navigateToLearnerDashboard();
     await loggedInUser.navigateToGoalsSection();
 
     await loggedInUser.expectGoalCardToBeVisible('Place Values');
@@ -222,9 +222,7 @@ describe('Logged-In Learner', function () {
   });
 
   afterAll(async function () {
-    await loggedInUser.waitForNetworkIdle();
     await UserFactory.closeBrowserForUser(loggedInUser);
-
     await UserFactory.closeAllBrowsers();
   });
 });

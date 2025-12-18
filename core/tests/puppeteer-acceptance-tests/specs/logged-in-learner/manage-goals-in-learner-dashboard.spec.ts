@@ -120,7 +120,7 @@ describe('Logged-In Learner - Manage Goals', function () {
   }, 6000000); // Setup taking longer than default timeout.
 
   it('should display empty Goals tab with title and Add Goals button', async function () {
-    await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
+    await loggedInUser.navigateToLearnerDashboard();
     await loggedInUser.navigateToGoalsSection();
 
     await loggedInUser.expectLearnerGreetingsToBe("loggedInUser1's Goals");
@@ -256,7 +256,7 @@ describe('Logged-In Learner - Manage Goals', function () {
   });
 
   it('should highlight Goals tab in sidebar', async function () {
-    await loggedInUser.navigateToLearnerDashboardUsingProfileDropdown();
+    await loggedInUser.navigateToLearnerDashboard();
 
     await loggedInUser.expectGoalsTabButtonToBeVisible();
     await loggedInUser.navigateToGoalsSection();
@@ -269,9 +269,7 @@ describe('Logged-In Learner - Manage Goals', function () {
   });
 
   afterAll(async function () {
-    await loggedInUser.waitForNetworkIdle();
     await UserFactory.closeBrowserForUser(loggedInUser);
-
     await UserFactory.closeAllBrowsers();
   });
 });

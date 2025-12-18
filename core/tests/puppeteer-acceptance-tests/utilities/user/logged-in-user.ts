@@ -134,6 +134,7 @@ const issueTypeSelector = '.e2e-test-report-exploration-radio-button';
 const addTopicToCurrentGoalsButton =
   '.e2e-test-add-topic-to-current-goals-button';
 const mobileCompletedLessonSection = '.community-lessons-section';
+const currentGoalsSectionSelector = '.e2e-test-current-goals-section';
 const homeSectionGreetingElement = '.greeting';
 const LABEL_FOR_SUBMIT_BUTTON = 'Submit and start contributing';
 const matFormTextSelector = '.oppia-form-text';
@@ -523,27 +524,15 @@ export class LoggedInUser extends BaseUser {
    */
   async navigateToLearnerDashboardUsingProfileDropdown(): Promise<void> {
     await this.waitForPageToFullyLoad();
-    const dropdown = await this.page.waitForSelector(profileDropdown, {
+    await this.page.waitForSelector(profileDropdown, {
       visible: true,
     });
-    if (!dropdown) {
-      throw new Error('Profile dropdown not found.');
-    }
-    await dropdown.evaluate(
-      el => el instanceof HTMLElement && el.scrollIntoView({block: 'center'})
-    );
-    await dropdown.click({delay: 50});
+    await this.clickOnElementWithSelector(profileDropdown);
 
-    const menuLink = await this.page.waitForSelector(learnerDashboardMenuLink, {
+    await this.page.waitForSelector(learnerDashboardMenuLink, {
       visible: true,
     });
-    if (!menuLink) {
-      throw new Error('Learner dashboard link not found in profile menu.');
-    }
-    await menuLink.evaluate(
-      el => el instanceof HTMLElement && el.scrollIntoView({block: 'center'})
-    );
-    await menuLink.click({delay: 50});
+    await this.clickOnElementWithSelector(learnerDashboardMenuLink);
 
     await this.waitForPageToFullyLoad();
     await this.page.waitForSelector(homeTabSectionInLearnerDashboard, {
@@ -650,23 +639,14 @@ export class LoggedInUser extends BaseUser {
    * Navigates to the goals section of the learner dashboard.
    */
   async navigateToGoalsSection(): Promise<void> {
-    // Ensure we are on the learner dashboard before looking for the goals tab.
-    if (!this.page.url().includes('/learner-dashboard')) {
-      await this.goto(learnerDashboardUrl);
-      await this.waitForPageToFullyLoad();
-    }
+    if (this.isViewportAtMobileWidth()) {
+      await this.page.waitForSelector(goalsSectionSelector);
+      await this.clickOnElementWithSelector(goalsSectionSelector);
 
-    const clickDesktopGoals = async (): Promise<boolean> => {
       try {
-        await this.page.waitForSelector(goalsSectionSelector, {
-          timeout: 20000,
-          visible: true,
+        await this.page.waitForSelector(currentGoalsSectionSelector, {
+          timeout: 5000,
         });
-        const goalSectionElement = await this.page.$(goalsSectionSelector);
-        if (goalSectionElement) {
-          await goalSectionElement.click();
-          return true;
-        }
       } catch (error) {
         if (error instanceof puppeteer.errors.TimeoutError) {
           // Try clicking again if does not opens the expected page.
@@ -675,65 +655,19 @@ export class LoggedInUser extends BaseUser {
           throw error;
         }
       }
-      return false;
-    };
 
-    const clickMobileGoals = async (): Promise<boolean> => {
-      // Only try the mobile selector when we are actually on a mobile viewport.
-      if (!this.isViewportAtMobileWidth()) {
-        return false;
+      await this.expectElementToBeVisible(goalsSectionContainerSelector);
+    } else {
+      await this.page.waitForSelector(goalsSectionSelector);
+      const goalSectionElement = await this.page.$(goalsSectionSelector);
+      if (!goalSectionElement) {
+        throw new Error('Progress section not found.');
       }
-      try {
-        await this.page.waitForSelector(mobileGoalsSectionSelector, {
-          timeout: 10000,
-          visible: true,
-        });
-        await this.clickOnElementWithSelector(mobileGoalsSectionSelector);
-        return true;
-      } catch (error) {
-        if (!(error instanceof puppeteer.errors.TimeoutError)) {
-          throw error;
-        }
-      }
-      return false;
-    };
-
-    // Give the dashboard a moment to settle after navigation.
-    await this.page.waitForTimeout(1000);
-
-    // If container already visible, no need to click anything.
-    const alreadyVisible = await this.page.$(goalsSectionContainerSelector);
-    if (!alreadyVisible) {
-      const desktopClicked = await clickDesktopGoals();
-      const mobileClicked = desktopClicked ? false : await clickMobileGoals();
-
-      if (!desktopClicked && !mobileClicked) {
-        // Last resort: retry desktop once more after short wait.
-        showMessage(
-          'Goals section button not found, retrying after longer wait...'
-        );
-        await this.page.waitForTimeout(3000);
-        const retryClicked = await clickDesktopGoals();
-        if (!retryClicked) {
-          // Force navigate to learner dashboard and try one final time.
-          await this.goto(learnerDashboardUrl);
-          await this.waitForPageToFullyLoad();
-          const finalAttempt = await clickDesktopGoals();
-          if (!finalAttempt) {
-            throw new Error(
-              'Goals section navigation failed: button not found.'
-            );
-          }
-        }
-      }
+      await goalSectionElement.click();
     }
 
     await this.waitForPageToFullyLoad();
-    // Final hard wait for the container so downstream calls don't race on it.
-    await this.page.waitForSelector(goalsSectionContainerSelector, {
-      visible: true,
-      timeout: 60000,
-    });
+    await this.expectElementToBeVisible(goalsSectionContainerSelector);
   }
 
   /**
@@ -2806,36 +2740,19 @@ export class LoggedInUser extends BaseUser {
    * Function to click on the add goals button in the redesigned learner dashboard.
    */
   async clickOnAddGoalsButtonInRedesignedLearnerDashboard(): Promise<void> {
-    await this.waitForPageToFullyLoad();
-
-    // Check if modal is already open.
-    const modalAlreadyOpen = await this.page.$(
-      newGoalsListInRedesignedLearnerDashboard
-    );
-    if (modalAlreadyOpen) {
-      showMessage('Goals modal is already open, skipping button click.');
-      return;
-    }
-
-    const addButton = await this.page.waitForSelector(
+    await this.page.waitForSelector(
       addGoalsButtonInRedesignedLearnerDashboard,
       {
         visible: true,
       }
     );
-    if (!addButton) {
-      throw new Error('Add Goals button not found.');
-    }
-
-    await addButton.evaluate(
-      el => el instanceof HTMLElement && el.scrollIntoView({block: 'center'})
+    await this.clickOnElementWithSelector(
+      addGoalsButtonInRedesignedLearnerDashboard
     );
-    await this.page.waitForTimeout(500);
-    await addButton.click({delay: 100});
 
+    await this.waitForPageToFullyLoad();
     await this.page.waitForSelector(newGoalsListInRedesignedLearnerDashboard, {
       visible: true,
-      timeout: 10000,
     });
   }
 
@@ -2849,39 +2766,32 @@ export class LoggedInUser extends BaseUser {
     checked: boolean = true
   ): Promise<void> {
     await this.waitForPageToFullyLoad();
-    await this.page.waitForSelector(newGoalsListInRedesignedLearnerDashboard, {
-      visible: true,
-    });
-    await this.page.waitForTimeout(500);
 
     const newGoalsCheckboxes = await this.page.$$(
       goalCheckboxInRedesignedLearnerDashboard
     );
 
     for (const checkbox of newGoalsCheckboxes) {
-      const checkboxText = await checkbox.$eval(
-        '.oppia-learner-dash-goals-checkbox-text',
-        el => el.textContent?.trim()
+      const checkboxText = await checkbox.evaluate(el =>
+        el.textContent?.trim()
       );
 
+      const isChecked = await checkbox.$eval(
+        'input',
+        el => (el as HTMLInputElement).checked
+      );
+
+      if (isChecked === checked) {
+        showMessage(`Skipped: Add ${goal} to goals.`);
+        break;
+      }
+
       if (checkboxText === goal) {
-        const isChecked = await checkbox.$eval(
-          'input',
-          el => (el as HTMLInputElement).checked
-        );
-
-        if (isChecked === checked) {
-          showMessage(
-            `Goal "${goal}" is already ${checked ? 'checked' : 'unchecked'}, skipping.`
-          );
-          break;
-        }
-
         const goalCheckbox = await checkbox.$('label');
         if (!goalCheckbox) {
           throw new Error(`Could not find goal checkbox for ${goal}`);
         }
-        await goalCheckbox.click({delay: 100});
+        await goalCheckbox.click();
         await this.page.waitForFunction(
           (element: Element, checked: boolean) => {
             const inputElement = (element as HTMLInputElement).querySelector(
@@ -2889,7 +2799,7 @@ export class LoggedInUser extends BaseUser {
             );
             return inputElement?.checked === checked;
           },
-          {timeout: 5000},
+          {},
           goalCheckbox,
           checked
         );
