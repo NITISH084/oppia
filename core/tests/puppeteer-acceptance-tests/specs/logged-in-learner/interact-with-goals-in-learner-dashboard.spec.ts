@@ -51,7 +51,7 @@ describe('Logged-In Learner', function () {
     await releaseCoordinator.enableFeatureFlag(
       'show_redesigned_learner_dashboard'
     );
-    await releaseCoordinator.closeBrowser();
+    await UserFactory.closeBrowserForUser(releaseCoordinator);
 
     await curriculumAdmin.createNewClassroom('Math', 'math');
     await curriculumAdmin.updateClassroom(
@@ -111,11 +111,13 @@ describe('Logged-In Learner', function () {
 
     await curriculumAdmin.saveStoryDraft();
     await curriculumAdmin.publishStoryDraft();
-    await curriculumAdmin.closeBrowser();
+    await UserFactory.closeBrowserForUser(curriculumAdmin);
     loggedInUser = await UserFactory.createNewUser(
       'loggedInUser1',
       'logged_in_user1@example.com'
     );
+
+    await UserFactory.closeSuperAdminBrowser();
 
     // Add the Place Values goal after user creation so tests can use it.
     await loggedInUser.navigateToLearnerDashboard();
@@ -220,6 +222,9 @@ describe('Logged-In Learner', function () {
   });
 
   afterAll(async function () {
+    await loggedInUser.waitForNetworkIdle();
+    await loggedInUser.closeBrowser();
+
     await UserFactory.closeAllBrowsers();
   });
 });

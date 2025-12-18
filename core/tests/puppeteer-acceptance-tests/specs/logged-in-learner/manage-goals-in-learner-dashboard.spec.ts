@@ -51,7 +51,7 @@ describe('Logged-In Learner - Manage Goals', function () {
     await releaseCoordinator.enableFeatureFlag(
       'show_redesigned_learner_dashboard'
     );
-    await releaseCoordinator.closeBrowser();
+    await UserFactory.closeBrowserForUser(releaseCoordinator);
 
     await curriculumAdmin.createNewClassroom('Math', 'math');
     await curriculumAdmin.updateClassroom(
@@ -111,11 +111,12 @@ describe('Logged-In Learner - Manage Goals', function () {
 
     await curriculumAdmin.saveStoryDraft();
     await curriculumAdmin.publishStoryDraft();
-    await curriculumAdmin.closeBrowser();
+    await UserFactory.closeBrowserForUser(curriculumAdmin);
     loggedInUser = await UserFactory.createNewUser(
       'loggedInUser1',
       'logged_in_user1@example.com'
     );
+    await UserFactory.closeSuperAdminBrowser();
   }, 6000000); // Setup taking longer than default timeout.
 
   it('should display empty Goals tab with title and Add Goals button', async function () {
@@ -268,6 +269,9 @@ describe('Logged-In Learner - Manage Goals', function () {
   });
 
   afterAll(async function () {
+    await loggedInUser.waitForNetworkIdle();
+    await loggedInUser.closeBrowser();
+
     await UserFactory.closeAllBrowsers();
   });
 });
