@@ -761,6 +761,8 @@ export class BaseUser {
    * This function navigates to the given URL.
    */
   async goto(url: string, verifyURL: boolean = true): Promise<void> {
+    await this.page.goto(url, {waitUntil: ['networkidle0', 'load']});
+
     if (verifyURL) {
       await this.page.waitForFunction(
         (url: string) => {
