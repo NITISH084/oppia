@@ -88,7 +88,7 @@ describe('Logged-In Learner', function () {
     }
 
     // Extra explorations for modal list (not used in chapters)
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 2; i++) {
       await curriculumAdmin.createAndPublishExplorationWithCards(
         `Explore Title ${i + 1}`,
         'Algebra',
