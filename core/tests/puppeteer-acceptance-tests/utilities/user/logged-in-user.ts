@@ -77,7 +77,6 @@ const communityLessonChevronUp =
   '.e2e-test-toggle-community-lesson-button .fa-chevron-up';
 const communityLessonChevronDown =
   '.e2e-test-toggle-community-lesson-button .fa-chevron-down';
-const mobileGoalsSectionSelector = '.e2e-test-mobile-goals-section';
 const communityLessonsExpanded =
   '.e2e-test-card-display-content.card-display-content-shown';
 const communityLessonsCollapsed =
