@@ -3117,7 +3117,6 @@ export class LoggedInUser extends BaseUser {
     if (shouldBeVisible) {
       await this.page.waitForSelector(goalContainerSelector, {
         visible: true,
-        timeout: 15000,
       });
     }
 
@@ -3333,7 +3332,6 @@ export class LoggedInUser extends BaseUser {
     await this.page.waitForSelector(goalContainerSelector, {visible: true});
     await this.page.waitForSelector('.goal-list-story-nodes', {
       visible: true,
-      timeout: 10000,
     });
     // Also verify the expanded card title includes the topic name.
     const expandedTitle = await this.page.$eval(goalTitleSelector, el =>
