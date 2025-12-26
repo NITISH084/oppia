@@ -1196,6 +1196,7 @@ HANDLER_TYPE_DOWNLOADABLE = 'downloadable'
 # Following are the constants for the role IDs.
 # TODO(#13388): The role id variable name doesn't match the string value,
 # write a one-off job to update the string value in the datastore.
+ROLE_ID_ANDROID_RELEASE_COORDINATOR = 'ANDROD RELEASE COORDINATOR'
 ROLE_ID_CURRICULUM_ADMIN = 'ADMIN'
 ROLE_ID_BLOG_ADMIN = 'BLOG_ADMIN'
 ROLE_ID_BLOG_POST_EDITOR = 'BLOG_POST_EDITOR'
@@ -1218,6 +1219,7 @@ ALLOWED_DEFAULT_USER_ROLES_ON_REGISTRATION = [
 ]
 
 ALLOWED_USER_ROLES = [
+    ROLE_ID_ANDROID_RELEASE_COORDINATOR,
     ROLE_ID_CURRICULUM_ADMIN,
     ROLE_ID_BLOG_ADMIN,
     ROLE_ID_BLOG_POST_EDITOR,

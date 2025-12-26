@@ -109,12 +109,14 @@ ACTION_VISIT_ANY_TOPIC_EDITOR_PAGE = 'VISIT_ANY_TOPIC_EDITOR_PAGE'
 ACTION_CAN_MANAGE_VOICE_ARTIST = 'CAN_MANAGE_VOICE_ARTIST'
 ACTION_ACCESS_LEARNER_GROUPS = 'ACCESS_LEARNER_GROUPS'
 ACTION_ACCESS_VOICEOVER_ADMIN_PAGE = 'ACCESS_VOICEOVER_ADMIN_PAGE'
+ACTION_ACCESS_ANDROID_ADMIN_PAGE = 'ACCESS_ANDROID_ADMIN_PAGE'
 
 # Users can be updated to the following list of role IDs via admin interface.
 #
 # NOTE: LEARNER role should not be updated to any other role, hence do not
 #   add it to the following list.
 UPDATABLE_ROLES = [
+    feconf.ROLE_ID_ANDROID_RELEASE_COORDINATOR,
     feconf.ROLE_ID_BLOG_ADMIN,
     feconf.ROLE_ID_CURRICULUM_ADMIN,
     feconf.ROLE_ID_COLLECTION_EDITOR,
@@ -134,6 +136,7 @@ UPDATABLE_ROLES = [
 # NOTE: Do not include MOBILE_LEARNER role in this list as it does not represent
 #   role for a separate user account, but rather a profile within the account.
 VIEWABLE_ROLES = [
+    feconf.ROLE_ID_ANDROID_RELEASE_COORDINATOR,
     feconf.ROLE_ID_BLOG_ADMIN,
     feconf.ROLE_ID_BLOG_POST_EDITOR,
     feconf.ROLE_ID_COLLECTION_EDITOR,
@@ -150,6 +153,7 @@ VIEWABLE_ROLES = [
 
 # The string corresponding to role IDs that should be visible to admin.
 HUMAN_READABLE_ROLES = {
+    feconf.ROLE_ID_ANDROID_RELEASE_COORDINATOR: 'android release coordinator',
     feconf.ROLE_ID_BLOG_ADMIN: 'blog admin',
     feconf.ROLE_ID_BLOG_POST_EDITOR: 'blog post editor',
     feconf.ROLE_ID_COLLECTION_EDITOR: 'collection editor',
@@ -275,6 +279,9 @@ _ROLE_ACTIONS = {
         ACTION_ACCESS_NEW_CONTRIBUTOR_DASHBOARD_ADMIN_PAGE,
         ACTION_ACCESS_CONTRIBUTOR_DASHBOARD_ADMIN_PAGE,
         ACTION_MANAGE_QUESTION_CONTRIBUTOR_ROLES,
+    ],
+    feconf.ROLE_ID_ANDROID_RELEASE_COORDINATOR: [
+        ACTION_ACCESS_ANDROID_ADMIN_PAGE
     ],
 }
 
