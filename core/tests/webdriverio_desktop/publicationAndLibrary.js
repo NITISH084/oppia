@@ -49,10 +49,10 @@ describe('Library index page', function () {
     );
     await adminPage.get();
     await adminPage.addRole('superUser', 'release coordinator');
-    await releaseCoordinatorPage.getFeaturesTab();
+    await webReleaseCoordinatorPage.getFeaturesTab();
     improvementsTabFeature =
-      await releaseCoordinatorPage.getImprovementsTabFeatureElement();
-    await releaseCoordinatorPage.enableFeature(improvementsTabFeature);
+      await webReleaseCoordinatorPage.getImprovementsTabFeatureElement();
+    await webReleaseCoordinatorPage.enableFeature(improvementsTabFeature);
     await users.logout();
   });
 

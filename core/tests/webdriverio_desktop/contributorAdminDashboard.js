@@ -287,10 +287,10 @@ describe('Contributor Admin Dashboard', function () {
     // The below lines enable the cd_admin_dashboard_new_ui flag in dev mode.
     // They should be removed after the cd_admin_dashboard_new_ui flag is
     // deprecated.
-    await releaseCoordinatorPage.getFeaturesTab();
+    await webReleaseCoordinatorPage.getFeaturesTab();
     let CdAdminDashboardNewUiFlag =
-      await releaseCoordinatorPage.getCdAdminDashboardNewUiFeatureElement();
-    await releaseCoordinatorPage.enableFeature(CdAdminDashboardNewUiFlag);
+      await webReleaseCoordinatorPage.getCdAdminDashboardNewUiFeatureElement();
+    await webReleaseCoordinatorPage.enableFeature(CdAdminDashboardNewUiFlag);
 
     await users.logout();
   });
