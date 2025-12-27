@@ -841,5 +841,5 @@ export class WebReleaseCoordinator extends BaseUser {
   }
 }
 
-export let ReleaseCoordinatorFactory = (): ReleaseCoordinator =>
-  new ReleaseCoordinator();
+export let ReleaseCoordinatorFactory = (): WebReleaseCoordinator =>
+  new WebReleaseCoordinator();

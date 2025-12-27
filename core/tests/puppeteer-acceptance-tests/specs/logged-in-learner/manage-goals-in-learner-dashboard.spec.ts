@@ -45,7 +45,7 @@ describe('Logged-In Learner - Manage Goals', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'release_coordinator@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
 
     await releaseCoordinator.enableFeatureFlag(

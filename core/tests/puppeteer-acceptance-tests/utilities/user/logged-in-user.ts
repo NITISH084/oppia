@@ -30,7 +30,7 @@ const learnerDashboardUrl = testConstants.URLs.LearnerDashboard;
 const feedbackUpdatesUrl = testConstants.URLs.FeedbackUpdates;
 const moderatorPageUrl = testConstants.URLs.ModeratorPage;
 const topicsAndSkillsDashboardUrl = testConstants.URLs.TopicAndSkillsDashboard;
-const releaseCoordinatorPageUrl = testConstants.URLs.ReleaseCoordinator;
+const releaseCoordinatorPageUrl = testConstants.URLs.WebReleaseCoordinator;
 const contributorDashboardAdminUrl =
   testConstants.URLs.ContributorDashboardAdmin;
 const siteAdminPageUrl = testConstants.URLs.AdminPage;
