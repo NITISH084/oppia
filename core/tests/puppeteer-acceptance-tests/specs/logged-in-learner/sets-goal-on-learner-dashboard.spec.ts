@@ -25,7 +25,7 @@ import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
 import {LoggedInUser} from '../../utilities/user/logged-in-user';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 import {TopicManager} from '../../utilities/user/topic-manager';
 
 const ROLES = testConstants.Roles;
@@ -33,7 +33,7 @@ const ROLES = testConstants.Roles;
 describe('Logged-In Learner', function () {
   let loggedInLearner: LoggedOutUser & LoggedInUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let explorationId1: string;
   let explorationId2: string;
 
@@ -52,7 +52,7 @@ describe('Logged-In Learner', function () {
       releaseCoordinator = await UserFactory.createNewUser(
         'releaseCoordinator',
         'releaseCoordinator@example.com',
-        [ROLES.RELEASE_COORDINATOR]
+        [ROLES.WEB_RELEASE_COORDINATOR]
       );
 
       // Enable redesigned learner dashboard.

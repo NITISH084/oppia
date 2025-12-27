@@ -25,7 +25,7 @@ import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
 import {LoggedInUser} from '../../utilities/user/logged-in-user';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 import {TopicManager} from '../../utilities/user/topic-manager';
 
 const ROLES = testConstants.Roles;
@@ -35,7 +35,7 @@ describe('Logged In Learner', function () {
     new LoggedInUser(),
     new LoggedOutUser()
   );
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor & TopicManager;
   let explorationId: string;
 
@@ -44,7 +44,7 @@ describe('Logged In Learner', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'release_coordinator@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
     await releaseCoordinator.enableFeatureFlag(
       'show_redesigned_learner_dashboard'

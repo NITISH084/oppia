@@ -21,21 +21,21 @@
 
 import testConstants from '../../utilities/common/test-constants';
 import {UserFactory} from '../../utilities/common/user-factory';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 
 describe('Release Coordinator', function () {
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
 
   beforeAll(async function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'releaseCoordinator@example.com',
-      [testConstants.Roles.RELEASE_COORDINATOR]
+      [testConstants.Roles.WEB_RELEASE_COORDINATOR]
     );
   });
 
   it('should be able to flush the memory cache', async function () {
-    await releaseCoordinator.navigateToReleaseCoordinatorPage();
+    await releaseCoordinator.navigateToWebReleaseCoordinatorPage();
     await releaseCoordinator.navigateToMiscTab();
     await releaseCoordinator.getMemoryCacheProfile();
     await releaseCoordinator.expectTotalKeysStoredToBeInRange(undefined, 10); // Min value is 10.

@@ -21,7 +21,7 @@ import {ExplorationEditor} from '../../utilities/user/exploration-editor';
 import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ConsoleReporter} from '../../utilities/common/console-reporter';
 import {TopicManager} from '../../utilities/user/topic-manager';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 
 const DEFAULT_SPEC_TIMEOUT_MSECS = testConstants.DEFAULT_SPEC_TIMEOUT_MSECS;
 const ROLES = testConstants.Roles;
@@ -48,7 +48,7 @@ ConsoleReporter.setConsoleErrorsToIgnore([
 describe('Exploration Editor', function () {
   let explorationEditor: ExplorationEditor & TopicManager;
   let curriculumAdmin: CurriculumAdmin & TopicManager;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let explorationId: string | null;
 
   beforeAll(async function () {
@@ -69,7 +69,7 @@ describe('Exploration Editor', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'release_coordinator@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
 
     // Enable the feature flag.

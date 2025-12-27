@@ -920,14 +920,14 @@ def can_access_moderator_page(
 def can_access_web_release_coordinator_page(
     handler: Callable[..., _GenericHandlerFunctionReturnType],
 ) -> Callable[..., _GenericHandlerFunctionReturnType]:
-    """Decorator to check whether user can access release coordinator page.
+    """Decorator to check whether user can access web release coordinator page.
 
     Args:
         handler: function. The function to be decorated.
 
     Returns:
         function. The newly decorated function that now checks if the user has
-        permission to access the release coordinator page.
+        permission to access the web release coordinator page.
     """
 
     # Here we use type Any because this method can accept arbitrary number of
@@ -936,7 +936,7 @@ def can_access_web_release_coordinator_page(
     def test_can_access_web_release_coordinator_page(
         self: _SelfBaseHandlerType, **kwargs: Any
     ) -> _GenericHandlerFunctionReturnType:
-        """Checks if the user is logged in and can access release coordinator
+        """Checks if the user is logged in and can access web release coordinator
         page.
 
         Args:
@@ -948,7 +948,7 @@ def can_access_web_release_coordinator_page(
         Raises:
             NotLoggedInException. The user is not logged in.
             UnauthorizedUserException. The user does not have credentials to
-                access the release coordinator page.
+                access the web release coordinator page.
         """
         if not self.user_id:
             raise base.UserFacingExceptions.NotLoggedInException
@@ -959,7 +959,7 @@ def can_access_web_release_coordinator_page(
             return handler(self, **kwargs)
 
         raise self.UnauthorizedUserException(
-            'You do not have credentials to access release coordinator page.'
+            'You do not have credentials to access web release coordinator page.'
         )
 
     return test_can_access_web_release_coordinator_page

@@ -736,10 +736,10 @@ class SubtopicViewerPageAccessValidationHandlerTests(
         )
 
 
-class ReleaseCoordinatorAccessValidationHandlerTests(
+class WebReleaseCoordinatorAccessValidationHandlerTests(
     test_utils.GenericTestBase
 ):
-    """Test for release coordinator access validation."""
+    """Test for web release coordinator access validation."""
 
     def setUp(self) -> None:
         """Complete the signup process for self.WEB_RELEASE_COORDINATOR_EMAIL."""

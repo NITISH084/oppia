@@ -49,7 +49,7 @@ describe('Logged-in Learner', function () {
 
   // The logged-in user cannot access the release coordinator page.
   it('should be restricted from accessing the release coordinator page', async function () {
-    await loggedInUser.navigateToReleaseCoordinatorPage();
+    await loggedInUser.navigateToWebReleaseCoordinatorPage();
     await loggedInUser.expectErrorPage(404); // Expect a 404 Not Found error.
   });
 

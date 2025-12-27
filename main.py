@@ -283,7 +283,7 @@ URLS = [
     get_redirect_route(
         r'%s/can_access_web_release_coordinator_page'
         % feconf.ACCESS_VALIDATION_HANDLER_PREFIX,
-        access_validators.ReleaseCoordinatorAccessValidationHandler,
+        access_validators.WebReleaseCoordinatorAccessValidationHandler,
     ),
     get_redirect_route(
         r'%s/can_access_facilitator_dashboard_page'

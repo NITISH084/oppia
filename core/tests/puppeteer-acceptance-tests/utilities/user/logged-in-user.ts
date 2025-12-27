@@ -2221,7 +2221,7 @@ export class LoggedInUser extends BaseUser {
   /**
    * Navigates to the Release Coordinator page.
    */
-  async navigateToReleaseCoordinatorPage(): Promise<void> {
+  async navigateToWebReleaseCoordinatorPage(): Promise<void> {
     await this.goto(releaseCoordinatorPageUrl);
   }
 

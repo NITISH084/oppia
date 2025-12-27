@@ -27,7 +27,7 @@ import {
   INTERACTION_TYPES,
 } from '../../utilities/user/exploration-editor';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 import {VoiceoverAdmin} from '../../utilities/user/voiceover-admin';
 
 const ROLES = testConstants.Roles;
@@ -39,7 +39,7 @@ describe('Logged-Out Learner', function () {
   let explorationId: string;
   let loggedOutLearner: LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & ExplorationEditor;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let voiceoverAdmin: VoiceoverAdmin;
 
   beforeAll(
@@ -49,7 +49,7 @@ describe('Logged-Out Learner', function () {
       releaseCoordinator = await UserFactory.createNewUser(
         'releaseCoordinator',
         'release_coordinator@example.com',
-        [ROLES.RELEASE_COORDINATOR]
+        [ROLES.WEB_RELEASE_COORDINATOR]
       );
 
       curriculumAdmin = await UserFactory.createNewUser(

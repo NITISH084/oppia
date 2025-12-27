@@ -24,7 +24,7 @@ import {UserFactory} from '../../utilities/common/user-factory';
 import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 import {VoiceoverAdmin} from '../../utilities/user/voiceover-admin';
 import {VoiceoverSubmitter} from '../../utilities/user/voiceover-submitter';
 
@@ -35,7 +35,7 @@ describe('Voiceover Submitter', function () {
     ExplorationEditor &
     LoggedOutUser;
   let curriculumAdm: CurriculumAdmin & ExplorationEditor & VoiceoverAdmin;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let explorationId: string;
 
   beforeAll(async function () {
@@ -49,7 +49,7 @@ describe('Voiceover Submitter', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'release_coordinator@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
 
     await releaseCoordinator.enableFeatureFlag(

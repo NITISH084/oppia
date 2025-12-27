@@ -25,10 +25,10 @@ import {
   ExplorationEditor,
   INTERACTION_TYPES,
 } from '../../utilities/user/exploration-editor';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 
 describe('Release Coordinator', function () {
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let explorationEditor: ExplorationEditor;
   let explorationId: string;
 
@@ -36,7 +36,7 @@ describe('Release Coordinator', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'releaseCoordinator@example.com',
-      [testConstants.Roles.RELEASE_COORDINATOR]
+      [testConstants.Roles.WEB_RELEASE_COORDINATOR]
     );
 
     explorationEditor = await UserFactory.createNewUser(
@@ -61,7 +61,7 @@ describe('Release Coordinator', function () {
   });
 
   it('should be able to visit release coordinator page', async function () {
-    await releaseCoordinator.navigateToReleaseCoordinatorPage();
+    await releaseCoordinator.navigateToWebReleaseCoordinatorPage();
     await releaseCoordinator.expectScreenshotToMatch(
       'releaseCoordinatorPage',
       __dirname

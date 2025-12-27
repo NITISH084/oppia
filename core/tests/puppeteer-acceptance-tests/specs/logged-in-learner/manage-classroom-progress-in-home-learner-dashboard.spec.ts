@@ -28,7 +28,7 @@ import {LoggedOutUser} from '../../utilities/user/logged-out-user';
 import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
 import {TopicManager} from '../../utilities/user/topic-manager';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 import {showMessage} from '../../utilities/common/show-message';
 
 const ROLES = testConstants.Roles;
@@ -37,7 +37,7 @@ const DEFAULT_SPEC_TIMEOUT_MSECS = testConstants.DEFAULT_SPEC_TIMEOUT_MSECS;
 describe('Logged-In Learner', function () {
   let loggedInLearner: LoggedInUser & LoggedOutUser;
   let curriculumAdmin: CurriculumAdmin & TopicManager & ExplorationEditor;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   const chapterIds: string[] = [];
 
   beforeAll(async function () {
@@ -50,7 +50,7 @@ describe('Logged-In Learner', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseAdm',
       'releaseAdm@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
 
     await releaseCoordinator.enableFeatureFlag(

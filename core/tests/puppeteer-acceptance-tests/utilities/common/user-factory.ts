@@ -42,7 +42,7 @@ import {
 import {TopicManager, TopicManagerFactory} from '../user/topic-manager';
 import {LoggedInUserFactory, LoggedInUser} from '../user/logged-in-user';
 import {ModeratorFactory} from '../user/moderator';
-import {ReleaseCoordinatorFactory} from '../user/release-coordinator';
+import {ReleaseCoordinatorFactory} from '../user/web-release-coordinator';
 import testConstants, {BLOG_RIGHTS} from './test-constants';
 import {showMessage} from './show-message';
 import {
@@ -84,7 +84,7 @@ const USER_ROLE_MAPPING = {
   [ROLES.VOICEOVER_ADMIN]: VoiceoverAdminFactory,
   [ROLES.TOPIC_MANAGER]: TopicManagerFactory,
   [ROLES.MODERATOR]: ModeratorFactory,
-  [ROLES.RELEASE_COORDINATOR]: ReleaseCoordinatorFactory,
+  [ROLES.WEB_RELEASE_COORDINATOR]: ReleaseCoordinatorFactory,
   [ROLES.TRANSLATION_REVIEWER]: TranslationReviewerFactory,
   [ROLES.VOICEOVER_SUBMITTER]: VoiceoverSubmitterFactory,
 } as const;

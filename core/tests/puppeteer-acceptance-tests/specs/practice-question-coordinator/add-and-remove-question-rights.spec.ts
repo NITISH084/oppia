@@ -24,14 +24,14 @@ import {UserFactory} from '../../utilities/common/user-factory';
 import {ContributorAdmin} from '../../utilities/user/contributor-admin';
 import {LoggedInUser} from '../../utilities/user/logged-in-user';
 import {QuestionCoordinator} from '../../utilities/user/practice-question-coordinator';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 
 const ROLES = testConstants.Roles;
 
 describe('Practice Question Coordinator', function () {
   let questionCoordinator: QuestionCoordinator & ContributorAdmin;
   let loggedInUser1: LoggedInUser;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
 
   beforeAll(async function () {
     questionCoordinator = await UserFactory.createNewUser(
@@ -43,7 +43,7 @@ describe('Practice Question Coordinator', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'releaseCoordinator@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
 
     loggedInUser1 = await UserFactory.createNewUser(

@@ -19,7 +19,7 @@ import {UserFactory} from '../../utilities/common/user-factory';
 import testConstants from '../../utilities/common/test-constants';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ConsoleReporter} from '../../utilities/common/console-reporter';
 import {VoiceoverAdmin} from '../../utilities/user/voiceover-admin';
@@ -45,7 +45,7 @@ ConsoleReporter.setConsoleErrorsToIgnore([
 describe('Exploration Editor', function () {
   let explorationEditor: ExplorationEditor;
   let curriculumAdmin: CurriculumAdmin;
-  let releaseCoordinator: ReleaseCoordinator;
+  let releaseCoordinator: WebReleaseCoordinator;
   let loggedOutUser: LoggedOutUser;
   let voiceoverAdmin: VoiceoverAdmin;
   let explorationId: string | null;
@@ -65,7 +65,7 @@ describe('Exploration Editor', function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'release_coordinator@example.com',
-      [ROLES.RELEASE_COORDINATOR]
+      [ROLES.WEB_RELEASE_COORDINATOR]
     );
 
     voiceoverAdmin = await UserFactory.createNewUser(

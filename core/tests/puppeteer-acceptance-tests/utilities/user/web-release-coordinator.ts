@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @fileoverview Release coordinator users utility file.
+ * @fileoverview Web Release coordinator users utility file.
  */
 
 import puppeteer, {ElementHandle} from 'puppeteer';
@@ -22,7 +22,7 @@ import testConstants from '../common/test-constants';
 import {showMessage} from '../common/show-message';
 
 // URLs.
-const releaseCoordinatorUrl = testConstants.URLs.ReleaseCoordinator;
+const webReleaseCoordinatorUrl = testConstants.URLs.WebReleaseCoordinator;
 
 // Selectors for buttons.
 const copyOutputButton = '.e2e-test-copy-output-button';
@@ -77,12 +77,12 @@ const removeUserGroupButtonSelector = '.e2e-test-remove-user-group-button';
 const beamJobsTableSelector = '.e2e-test-beam-jobs-table';
 const beamJobStatusSelectorPrefix = '.e2e-test-job-status-';
 
-export class ReleaseCoordinator extends BaseUser {
+export class WebReleaseCoordinator extends BaseUser {
   /**
    * Navigate to the release coordinator page.
    */
-  async navigateToReleaseCoordinatorPage(): Promise<void> {
-    await this.goto(releaseCoordinatorUrl);
+  async navigateToWebReleaseCoordinatorPage(): Promise<void> {
+    await this.goto(webReleaseCoordinatorUrl);
   }
 
   /**
@@ -154,7 +154,7 @@ export class ReleaseCoordinator extends BaseUser {
     percentage: number
   ): Promise<void> {
     try {
-      await this.goto(releaseCoordinatorUrl);
+      await this.goto(webReleaseCoordinatorUrl);
 
       if (this.isViewportAtMobileWidth()) {
         await this.page.waitForSelector(mobileNavBar);
@@ -259,7 +259,7 @@ export class ReleaseCoordinator extends BaseUser {
     enable: boolean = true
   ): Promise<void> {
     try {
-      await this.goto(releaseCoordinatorUrl);
+      await this.goto(webReleaseCoordinatorUrl);
 
       if (this.isViewportAtMobileWidth()) {
         await this.page.waitForSelector(mobileNavBar);
@@ -707,7 +707,7 @@ export class ReleaseCoordinator extends BaseUser {
    * @param {boolean} enabled - Expected status of the Dummy Handler.
    */
   async verifyDummyHandlerStatusInFeaturesTab(enabled: boolean): Promise<void> {
-    await this.navigateToReleaseCoordinatorPage();
+    await this.navigateToWebReleaseCoordinatorPage();
     await this.navigateToFeaturesTab();
 
     try {

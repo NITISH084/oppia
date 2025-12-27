@@ -22,16 +22,16 @@
 import testConstants from '../../utilities/common/test-constants';
 import {UserFactory} from '../../utilities/common/user-factory';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
-import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {WebReleaseCoordinator} from '../../utilities/user/web-release-coordinator';
 
 describe('Release Coordinator', function () {
-  let releaseCoordinator: ReleaseCoordinator & LoggedOutUser;
+  let releaseCoordinator: WebReleaseCoordinator & LoggedOutUser;
 
   beforeAll(async function () {
     releaseCoordinator = await UserFactory.createNewUser(
       'releaseCoordinator',
       'releaseCoordinator@example.com',
-      [testConstants.Roles.RELEASE_COORDINATOR]
+      [testConstants.Roles.WEB_RELEASE_COORDINATOR]
     );
   });
 
@@ -40,7 +40,7 @@ describe('Release Coordinator', function () {
     await releaseCoordinator.expectPromoBarToBeVisible(false);
 
     // Enable the promo bar.
-    await releaseCoordinator.navigateToReleaseCoordinatorPage();
+    await releaseCoordinator.navigateToWebReleaseCoordinatorPage();
     await releaseCoordinator.navigateToMiscTab();
     await releaseCoordinator.enterPromoBarMessage('testing');
     await releaseCoordinator.togglePromoBar();
@@ -54,7 +54,7 @@ describe('Release Coordinator', function () {
 
   it('should be able to disable the promo bar', async function () {
     // Disable the promo bar.
-    await releaseCoordinator.navigateToReleaseCoordinatorPage();
+    await releaseCoordinator.navigateToWebReleaseCoordinatorPage();
     await releaseCoordinator.navigateToMiscTab();
     await releaseCoordinator.togglePromoBar('disabled');
     await releaseCoordinator.savePromoBarMessage();
