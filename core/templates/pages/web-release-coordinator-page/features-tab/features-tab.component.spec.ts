@@ -39,7 +39,7 @@ import {
   FeatureFlagBackendApiService,
   FeatureFlagsResponse,
 } from 'domain/feature-flag/feature-flag-backend-api.service';
-import {UserGroup} from 'domain/release_coordinator/user-group.model';
+import {UserGroup} from 'domain/web_release_coordinator/user-group.model';
 import {WindowRef} from 'services/contextual/window-ref.service';
 import {FeatureStage} from 'domain/platform-parameter/platform-parameter.model';
 import {FeatureFlag} from 'domain/feature-flag/feature-flag.model';

@@ -36,7 +36,7 @@ import {
 } from './services/release-coordinator-backend-api.service';
 import {ReleaseCoordinatorPageConstants} from 'pages/web-release-coordinator-page/release-coordinator-page.constants';
 import {ReleaseCoordinatorPageComponent} from 'pages/web-release-coordinator-page/release-coordinator-page.component';
-import {UserGroup} from 'domain/release_coordinator/user-group.model';
+import {UserGroup} from 'domain/web_release_coordinator/user-group.model';
 import {PromoBar} from 'domain/promo_bar/promo-bar.model';
 
 class MockWindowRef {
