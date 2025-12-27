@@ -575,7 +575,7 @@
 /.gcloudignore @oppia/release-workflow-reviewers
 /core/controllers/release_coordinator*.py @oppia/release-workflow-reviewers
 /core/templates/pages/web-release-coordinator-page/ @oppia/release-workflow-reviewers
-/core/templates/domain/web-release_coordinator/ @oppia/release-workflow-reviewers
+/core/templates/domain/web_release_coordinator/ @oppia/release-workflow-reviewers
 /scripts/release_scripts/ @oppia/release-workflow-reviewers
 /assets/release_constants.json @oppia/release-workflow-reviewers
 
@@ -740,7 +740,7 @@
 /core/domain/feature_flag*.py @oppia/core-reviewers
 /core/templates/domain/platform-parameter/ @oppia/core-reviewers
 /core/templates/domain/feature-flag/ @oppia/core-reviewers
-/core/templates/pages/release-coordinator-page/features-tab/ @oppia/core-reviewers
+/core/templates/pages/web-release-coordinator-page/features-tab/ @oppia/core-reviewers
 /core/templates/services/platform-feature*.ts @oppia/core-reviewers
 
 # Acceptance Tests.

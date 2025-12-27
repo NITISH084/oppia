@@ -28,8 +28,8 @@ import {
   FeatureFlag,
   FeatureFlagBackendDict,
 } from 'domain/feature-flag/feature-flag.model';
-import {UserGroupBackendDict} from 'domain/release_coordinator/user-group.model';
-import {UserGroup} from 'domain/release_coordinator/user-group.model';
+import {UserGroupBackendDict} from 'domain/web_release_coordinator/user-group.model';
+import {UserGroup} from 'domain/web_release_coordinator/user-group.model';
 
 export interface FeatureFlagsDicts {
   feature_flags: FeatureFlagBackendDict[];

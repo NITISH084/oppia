@@ -34,7 +34,7 @@ import {ReleaseCoordinatorPageConstants} from '../release-coordinator-page.const
 import {
   UserGroup,
   UserGroupBackendDict,
-} from 'domain/release_coordinator/user-group.model';
+} from 'domain/web_release_coordinator/user-group.model';
 
 interface MemoryCacheProfileResponse {
   peak_allocation: string;

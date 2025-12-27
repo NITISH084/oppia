@@ -39,7 +39,7 @@ import {ReleaseCoordinatorPageConstants} from 'pages/web-release-coordinator-pag
 import {WindowRef} from 'services/contextual/window-ref.service';
 import {DeleteUserGroupConfirmModalComponent} from 'pages/web-release-coordinator-page/modals/delete-user-group-confirm-modal.component';
 import {LoaderService} from 'services/loader.service';
-import {UserGroup} from 'domain/release_coordinator/user-group.model';
+import {UserGroup} from 'domain/web_release_coordinator/user-group.model';
 
 interface MemoryCacheProfile {
   totalAllocatedInBytes: string;
