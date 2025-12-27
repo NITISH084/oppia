@@ -671,11 +671,12 @@ class MaintenanceModeTests(test_utils.GenericTestBase):
     def setUp(self) -> None:
         super(MaintenanceModeTests, self).setUp()
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
         with contextlib.ExitStack() as context_stack:
             context_stack.enter_context(
@@ -717,7 +718,7 @@ class MaintenanceModeTests(test_utils.GenericTestBase):
         self,
     ) -> None:
         self.context_stack.enter_context(
-            self.login_context(self.RELEASE_COORDINATOR_EMAIL)
+            self.login_context(self.WEB_RELEASE_COORDINATOR_EMAIL)
         )
         destroy_auth_session_call_counter = self.context_stack.enter_context(
             self.swap_with_call_counter(auth_services, 'destroy_auth_session')

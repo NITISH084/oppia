@@ -47,16 +47,17 @@ class MemoryCacheHandlerTest(test_utils.GenericTestBase):
         super().setUp()
         self.signup(self.CURRICULUM_ADMIN_EMAIL, self.CURRICULUM_ADMIN_USERNAME)
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
     def test_get_memory_cache_data(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         response = self.get_json('/memorycachehandler')
         self.assertEqual(response['total_allocation'], 0)
@@ -70,7 +71,7 @@ class MemoryCacheHandlerTest(test_utils.GenericTestBase):
         )
 
     def test_flush_memory_cache(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         response = self.get_json('/memorycachehandler')
         # Cache contains csrf secret and all platform parameters. Platform
@@ -100,7 +101,8 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
         super().setUp()
         self.signup(self.CURRICULUM_ADMIN_EMAIL, self.CURRICULUM_ADMIN_USERNAME)
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
         self.signup('user1@email.com', 'user1')
         self.signup('user2@email.com', 'user2')
@@ -114,12 +116,12 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
         user_services.create_new_user_group('USERGROUP2', ['user1', 'user4'])
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
     def test_get_user_group_data(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         response_dict = self.get_json(feconf.USER_GROUPS_HANDLER_URL)
         response_dict_user_groups = response_dict['user_group_dicts']
@@ -129,7 +131,7 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
     def test_deleting_user_group_successfully_updates_user_groups_data(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         response_dict = self.get_json(feconf.USER_GROUPS_HANDLER_URL)
         response_dict_user_groups = response_dict['user_group_dicts']
@@ -150,7 +152,7 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
         self.logout()
 
     def test_deleting_invalid_user_group_results_in_error(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         assert_raises_regex_error = self.assertRaisesRegex(
             Exception, 'User group with id USER_GROUP_5_ID does not exist.'
@@ -163,7 +165,7 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
         self.logout()
 
     def test_updating_invalid_user_group_results_in_error(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         response_dict = self.get_json(feconf.USER_GROUPS_HANDLER_URL)
@@ -190,7 +192,7 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
     def test_user_group_changes_correctly_updates_returned_by_getter(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         response_dict = self.get_json(feconf.USER_GROUPS_HANDLER_URL)
@@ -218,7 +220,7 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
         self.logout()
 
     def test_create_new_user_group(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         response_dict = self.get_json(feconf.USER_GROUPS_HANDLER_URL)
@@ -243,7 +245,7 @@ class UserGroupHandlerTest(test_utils.GenericTestBase):
     def test_create_new_user_group_with_invalid_users_raises_error(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         with self.assertRaisesRegex(
@@ -268,7 +270,8 @@ class FeatureFlagsHandlerTest(test_utils.GenericTestBase):
         super().setUp()
         self.signup(self.CURRICULUM_ADMIN_EMAIL, self.CURRICULUM_ADMIN_USERNAME)
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
         self.signup('user1@email.com', 'user1')
         self.signup('user2@email.com', 'user2')
@@ -281,14 +284,14 @@ class FeatureFlagsHandlerTest(test_utils.GenericTestBase):
         user_services.create_new_user_group('USERGROUP2', ['user1', 'user4'])
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
     def test_without_feature_flag_name_update_feature_flag_is_not_performed(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         prod_mode_swap = self.swap(constants, 'DEV_MODE', False)
@@ -309,7 +312,7 @@ class FeatureFlagsHandlerTest(test_utils.GenericTestBase):
     def test_get_handler_includes_all_feature_flags_and_user_groups(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         swap_name_to_description_feature_stage_dict = self.swap(
             feature_flag_services,
             'FEATURE_FLAG_NAME_TO_DESCRIPTION_AND_FEATURE_STAGE',
@@ -352,7 +355,7 @@ class FeatureFlagsHandlerTest(test_utils.GenericTestBase):
         self.logout()
 
     def test_post_with_flag_changes_updates_feature_flags(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
         swap_name_to_description_feature_stage_dict = self.swap(
             feature_flag_registry,
@@ -411,7 +414,7 @@ class FeatureFlagsHandlerTest(test_utils.GenericTestBase):
     def test_update_flag_with_unknown_feature_flag_name_returns_400(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         feature_list_ctx = self.swap(
@@ -452,7 +455,7 @@ class FeatureFlagsHandlerTest(test_utils.GenericTestBase):
         self.logout()
 
     def test_update_flag_with_invalid_values_returns_400(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
         csrf_token = self.get_new_csrf_token()
 
         swap_name_to_description_feature_stage_dict = self.swap(

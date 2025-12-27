@@ -2424,12 +2424,13 @@ class CanRunAnyJobDecoratorTests(test_utils.GenericTestBase):
         self.signup(self.user_email, self.username)
 
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
         self.mock_testapp = webtest.TestApp(
@@ -2470,7 +2471,7 @@ class CanRunAnyJobDecoratorTests(test_utils.GenericTestBase):
         self.logout()
 
     def test_release_coordinator_can_run_any_job(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         with self.swap(self, 'testapp', self.mock_testapp):
             response = self.get_json('/run-anny-job')
@@ -2568,12 +2569,13 @@ class CanManageMemcacheDecoratorTests(test_utils.GenericTestBase):
         self.signup(self.user_email, self.username)
 
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
         self.mock_testapp = webtest.TestApp(
@@ -2620,7 +2622,7 @@ class CanManageMemcacheDecoratorTests(test_utils.GenericTestBase):
         self.logout()
 
     def test_release_coordinator_can_run_any_job(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         with self.swap(self, 'testapp', self.mock_testapp):
             response = self.get_json('/manage-memcache')

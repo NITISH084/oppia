@@ -42,13 +42,14 @@ class BeamHandlerTestBase(test_utils.GenericTestBase):
     def setUp(self) -> None:
         super().setUp()
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
-        self.login(self.RELEASE_COORDINATOR_EMAIL, is_super_admin=True)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL, is_super_admin=True)
 
     def tearDown(self) -> None:
         self.logout()

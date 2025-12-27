@@ -742,7 +742,7 @@ class ReleaseCoordinatorAccessValidationHandlerTests(
     """Test for release coordinator access validation."""
 
     def setUp(self) -> None:
-        """Complete the signup process for self.RELEASE_COORDINATOR_EMAIL."""
+        """Complete the signup process for self.WEB_RELEASE_COORDINATOR_EMAIL."""
         super().setUp()
         self.signup(
             self.WEB_RELEASE_COORDINATOR_EMAIL,
@@ -771,7 +771,7 @@ class ReleaseCoordinatorAccessValidationHandlerTests(
         )
 
     def test_release_coordinator_passes_validation(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         self.get_html_response(
             '%s/can_access_web_release_coordinator_page'
@@ -783,7 +783,7 @@ class ExplorationPlayerAccessValidationPageTests(test_utils.GenericTestBase):
     """Test for exploration player access validation."""
 
     def setUp(self) -> None:
-        """Complete the signup process for self.RELEASE_COORDINATOR_EMAIL."""
+        """Complete the signup process for self.WEB_RELEASE_COORDINATOR_EMAIL."""
         super().setUp()
         self.signup(self.OWNER_EMAIL, self.OWNER_USERNAME)
         self.owner_id = self.get_user_id_from_email(self.OWNER_EMAIL)

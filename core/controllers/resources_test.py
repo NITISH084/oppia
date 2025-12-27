@@ -1001,12 +1001,13 @@ class PromoBarHandlerTest(test_utils.GenericTestBase):
     def setUp(self) -> None:
         super().setUp()
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
     def test_get_promo_bar_data(self) -> None:
@@ -1016,7 +1017,7 @@ class PromoBarHandlerTest(test_utils.GenericTestBase):
         )
 
     def test_release_coordinator_able_to_update_promo_bar_config(self) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         csrf_token = self.get_new_csrf_token()
 
