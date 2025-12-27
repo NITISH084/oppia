@@ -88,7 +88,7 @@ class UserGroupHandler(
         'DELETE': {'user_group_id': {'schema': {'type': 'basestring'}}},
     }
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def get(self) -> None:
         """Populates the data for user groups."""
         user_groups = user_services.get_all_user_groups()
@@ -98,7 +98,7 @@ class UserGroupHandler(
 
         self.render_json({'user_group_dicts': user_groups_dict_list})
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def post(self) -> None:
         """Performs series of action based on action parameter for user
         groups.
@@ -109,7 +109,7 @@ class UserGroupHandler(
         user_group = user_services.create_new_user_group(name, member_usernames)
         self.render_json({'user_group_dict': user_group.to_dict()})
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def put(self) -> None:
         """Updates the specified user group."""
         assert self.normalized_payload is not None
@@ -120,7 +120,7 @@ class UserGroupHandler(
         user_services.update_user_group(user_group_id, name, member_usernames)
         self.render_json(self.values)
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def delete(self) -> None:
         """Performs deletion on the specified user group."""
         assert self.normalized_request is not None
@@ -183,7 +183,7 @@ class FeatureFlagsHandler(
         },
     }
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def get(self) -> None:
         """Handles GET requests."""
         feature_flags = feature_services.get_all_feature_flags()
@@ -202,7 +202,7 @@ class FeatureFlagsHandler(
             }
         )
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def put(self) -> None:
         """Handles PUT requests."""
         assert self.normalized_payload is not None

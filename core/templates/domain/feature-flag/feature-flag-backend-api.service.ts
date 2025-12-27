@@ -66,7 +66,7 @@ export class FeatureFlagBackendApiService {
   }
 
   /**
-   * Gets the feature flags to display on release-coordinator page.
+   * Gets the feature flags to display on web-release-coordinator page.
    *
    * @returns {Promise<FeatureFlagsResponse>} - A promise that resolves to
    * the feature flag response.
@@ -96,7 +96,7 @@ export class FeatureFlagBackendApiService {
   }
 
   /**
-   * Update feature flag present on release-coordinator page.
+   * Update feature flag present on web-release-coordinator page.
    */
   async updateFeatureFlag(
     name: string,

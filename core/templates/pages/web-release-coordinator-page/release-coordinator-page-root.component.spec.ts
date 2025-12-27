@@ -157,12 +157,14 @@ describe('Release Coordinator Page Root', () => {
     component.setPageTitleAndMetaTags();
 
     expect(translateService.instant).toHaveBeenCalledWith(
-      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.RELEASE_COORDINATOR_PAGE.TITLE
+      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.WEB_RELEASE_COORDINATOR_PAGE
+        .TITLE
     );
     expect(pageHeadService.updateTitleAndMetaTags).toHaveBeenCalledWith(
-      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.RELEASE_COORDINATOR_PAGE
+      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.WEB_RELEASE_COORDINATOR_PAGE
         .TITLE,
-      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.RELEASE_COORDINATOR_PAGE.META
+      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.WEB_RELEASE_COORDINATOR_PAGE
+        .META
     );
   });
 

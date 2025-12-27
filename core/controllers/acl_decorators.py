@@ -917,7 +917,7 @@ def can_access_moderator_page(
     return test_can_access_moderator_page
 
 
-def can_access_release_coordinator_page(
+def can_access_web_release_coordinator_page(
     handler: Callable[..., _GenericHandlerFunctionReturnType],
 ) -> Callable[..., _GenericHandlerFunctionReturnType]:
     """Decorator to check whether user can access release coordinator page.
@@ -933,7 +933,7 @@ def can_access_release_coordinator_page(
     # Here we use type Any because this method can accept arbitrary number of
     # arguments with different types.
     @functools.wraps(handler)
-    def test_can_access_release_coordinator_page(
+    def test_can_access_web_release_coordinator_page(
         self: _SelfBaseHandlerType, **kwargs: Any
     ) -> _GenericHandlerFunctionReturnType:
         """Checks if the user is logged in and can access release coordinator
@@ -953,7 +953,7 @@ def can_access_release_coordinator_page(
         if not self.user_id:
             raise base.UserFacingExceptions.NotLoggedInException
 
-        if role_services.ACTION_ACCESS_RELEASE_COORDINATOR_PAGE in (
+        if role_services.ACTION_ACCESS_WEB_RELEASE_COORDINATOR_PAGE in (
             self.user.actions
         ):
             return handler(self, **kwargs)
@@ -962,7 +962,7 @@ def can_access_release_coordinator_page(
             'You do not have credentials to access release coordinator page.'
         )
 
-    return test_can_access_release_coordinator_page
+    return test_can_access_web_release_coordinator_page
 
 
 def can_access_translation_stats(

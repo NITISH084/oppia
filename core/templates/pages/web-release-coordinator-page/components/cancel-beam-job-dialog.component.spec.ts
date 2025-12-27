@@ -27,8 +27,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 import {of, throwError} from 'rxjs';
 
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
-import {CancelBeamJobDialogComponent} from 'pages/release-coordinator-page/components/cancel-beam-job-dialog.component';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
+import {CancelBeamJobDialogComponent} from 'pages/web-release-coordinator-page/components/cancel-beam-job-dialog.component';
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AlertsService} from 'services/alerts.service';

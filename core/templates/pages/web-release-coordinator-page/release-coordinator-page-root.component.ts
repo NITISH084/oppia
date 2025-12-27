@@ -43,7 +43,7 @@ export class ReleaseCoordinatorPageRootComponent implements OnDestroy {
 
   setPageTitleAndMetaTags(): void {
     const releaseCoordinatorPage =
-      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.RELEASE_COORDINATOR_PAGE;
+      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.WEB_RELEASE_COORDINATOR_PAGE;
     const translatedTitle = this.translateService.instant(
       releaseCoordinatorPage.TITLE
     );

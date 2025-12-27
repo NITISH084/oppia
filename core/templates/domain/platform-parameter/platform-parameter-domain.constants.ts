@@ -17,7 +17,7 @@
  */
 
 export const PlatformParameterDomainConstants = {
-  // Action name for request to the release-coordinator handler that updates
+  // Action name for request to the web-release-coordinator handler that updates
   // the rules of feature flags.
   UPDATE_PLATFORM_PARAMETER_RULES_ACTION: 'update_platform_parameter_rules',
 } as const;

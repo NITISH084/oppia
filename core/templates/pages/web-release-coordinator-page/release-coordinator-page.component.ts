@@ -34,10 +34,10 @@ import {Subscription} from 'rxjs';
 
 import {PromoBarBackendApiService} from 'services/promo-bar-backend-api.service';
 
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
-import {ReleaseCoordinatorPageConstants} from 'pages/release-coordinator-page/release-coordinator-page.constants';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
+import {ReleaseCoordinatorPageConstants} from 'pages/web-release-coordinator-page/release-coordinator-page.constants';
 import {WindowRef} from 'services/contextual/window-ref.service';
-import {DeleteUserGroupConfirmModalComponent} from 'pages/release-coordinator-page/modals/delete-user-group-confirm-modal.component';
+import {DeleteUserGroupConfirmModalComponent} from 'pages/web-release-coordinator-page/modals/delete-user-group-confirm-modal.component';
 import {LoaderService} from 'services/loader.service';
 import {UserGroup} from 'domain/release_coordinator/user-group.model';
 

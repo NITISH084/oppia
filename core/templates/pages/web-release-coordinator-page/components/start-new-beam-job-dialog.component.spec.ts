@@ -30,8 +30,8 @@ import {of, throwError} from 'rxjs';
 
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
 import {BeamJob} from 'domain/jobs/beam-job.model';
-import {StartNewBeamJobDialogComponent} from 'pages/release-coordinator-page/components/start-new-beam-job-dialog.component';
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
+import {StartNewBeamJobDialogComponent} from 'pages/web-release-coordinator-page/components/start-new-beam-job-dialog.component';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
 import {AlertsService} from 'services/alerts.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 

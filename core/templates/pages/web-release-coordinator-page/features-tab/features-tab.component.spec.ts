@@ -33,7 +33,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 import cloneDeep from 'lodash/cloneDeep';
 
-import {FeaturesTabComponent} from 'pages/release-coordinator-page/features-tab/features-tab.component';
+import {FeaturesTabComponent} from 'pages/web-release-coordinator-page/features-tab/features-tab.component';
 import {FeatureFlagDummyBackendApiService} from 'domain/feature-flag/feature-flag-dummy-backend-api.service';
 import {
   FeatureFlagBackendApiService,

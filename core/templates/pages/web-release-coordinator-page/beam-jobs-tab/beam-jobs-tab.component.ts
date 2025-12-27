@@ -41,10 +41,10 @@ import {
 
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
 import {BeamJob} from 'domain/jobs/beam-job.model';
-import {CancelBeamJobDialogComponent} from 'pages/release-coordinator-page/components/cancel-beam-job-dialog.component';
-import {StartNewBeamJobDialogComponent} from 'pages/release-coordinator-page/components/start-new-beam-job-dialog.component';
-import {ViewBeamJobOutputDialogComponent} from 'pages/release-coordinator-page/components/view-beam-job-output-dialog.component';
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
+import {CancelBeamJobDialogComponent} from 'pages/web-release-coordinator-page/components/cancel-beam-job-dialog.component';
+import {StartNewBeamJobDialogComponent} from 'pages/web-release-coordinator-page/components/start-new-beam-job-dialog.component';
+import {ViewBeamJobOutputDialogComponent} from 'pages/web-release-coordinator-page/components/view-beam-job-output-dialog.component';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
 import {AlertsService} from 'services/alerts.service';
 
 @Component({

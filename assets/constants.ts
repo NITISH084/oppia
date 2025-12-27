@@ -7429,8 +7429,8 @@ export default {
       "MANUALLY_REGISTERED_WITH_BACKEND": true,
       "META": []
     },
-    "RELEASE_COORDINATOR_PAGE": {
-      "ROUTE": "release-coordinator",
+    "WEB_RELEASE_COORDINATOR_PAGE": {
+      "ROUTE": "web-release-coordinator",
       "TITLE": "I18N_RELEASE_COORDINATOR_PAGE_TITLE",
       "META": [
         {

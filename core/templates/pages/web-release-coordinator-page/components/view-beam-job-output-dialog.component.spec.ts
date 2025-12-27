@@ -33,8 +33,8 @@ import {marbles} from 'rxjs-marbles';
 
 import {BeamJobRunResult} from 'domain/jobs/beam-job-run-result.model';
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
-import {ViewBeamJobOutputDialogComponent} from 'pages/release-coordinator-page/components/view-beam-job-output-dialog.component';
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
+import {ViewBeamJobOutputDialogComponent} from 'pages/web-release-coordinator-page/components/view-beam-job-output-dialog.component';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
 import {AlertsService} from 'services/alerts.service';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';

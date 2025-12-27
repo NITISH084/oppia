@@ -372,14 +372,14 @@ class DiagnosticTestPlayerAccessValidationHandler(
 class ReleaseCoordinatorAccessValidationHandler(
     base.BaseHandler[Dict[str, str], Dict[str, str]]
 ):
-    """Validates access to release coordinator page."""
+    """Validates access to web release coordinator page."""
 
     GET_HANDLER_ERROR_RETURN_TYPE = feconf.HANDLER_TYPE_JSON
 
     URL_PATH_ARGS_SCHEMAS: Dict[str, str] = {}
     HANDLER_ARGS_SCHEMAS: Dict[str, Dict[str, str]] = {'GET': {}}
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def get(self) -> None:
         """Handles GET requests."""
         pass

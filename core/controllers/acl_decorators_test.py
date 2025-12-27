@@ -1871,7 +1871,7 @@ class SendModeratorEmailsTests(test_utils.GenericTestBase):
 
 
 class CanAccessReleaseCoordinatorPageDecoratorTests(test_utils.GenericTestBase):
-    """Tests for can_access_release_coordinator_page decorator."""
+    """Tests for can_access_web_release_coordinator_page decorator."""
 
     username = 'user'
     user_email = 'user@example.com'
@@ -1881,7 +1881,7 @@ class CanAccessReleaseCoordinatorPageDecoratorTests(test_utils.GenericTestBase):
         URL_PATH_ARGS_SCHEMAS: Dict[str, str] = {}
         HANDLER_ARGS_SCHEMAS: Dict[str, Dict[str, str]] = {'GET': {}}
 
-        @acl_decorators.can_access_release_coordinator_page
+        @acl_decorators.can_access_web_release_coordinator_page
         def get(self) -> None:
             self.render_json({'success': 1})
 
@@ -1892,17 +1892,18 @@ class CanAccessReleaseCoordinatorPageDecoratorTests(test_utils.GenericTestBase):
         self.signup(self.user_email, self.username)
 
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
         self.mock_testapp = webtest.TestApp(
             webapp2.WSGIApplication(
-                [webapp2.Route('/release-coordinator', self.MockHandler)],
+                [webapp2.Route('/web-release-coordinator', self.MockHandler)],
                 debug=feconf.DEBUG,
             )
         )
@@ -1911,19 +1912,19 @@ class CanAccessReleaseCoordinatorPageDecoratorTests(test_utils.GenericTestBase):
         self.login(self.user_email)
         with self.swap(self, 'testapp', self.mock_testapp):
             response = self.get_json(
-                '/release-coordinator', expected_status_int=401
+                '/web-release-coordinator', expected_status_int=401
             )
 
         self.assertEqual(
             response['error'],
-            'You do not have credentials to access release coordinator page.',
+            'You do not have credentials to access web release coordinator page.',
         )
         self.logout()
 
     def test_guest_user_cannot_access_release_coordinator_page(self) -> None:
         with self.swap(self, 'testapp', self.mock_testapp):
             response = self.get_json(
-                '/release-coordinator', expected_status_int=401
+                '/web-release-coordinator', expected_status_int=401
             )
 
         self.assertEqual(
@@ -1936,22 +1937,22 @@ class CanAccessReleaseCoordinatorPageDecoratorTests(test_utils.GenericTestBase):
 
         with self.swap(self, 'testapp', self.mock_testapp):
             response = self.get_json(
-                '/release-coordinator', expected_status_int=401
+                '/web-release-coordinator', expected_status_int=401
             )
 
         self.assertEqual(
             response['error'],
-            'You do not have credentials to access release coordinator page.',
+            'You do not have credentials to access web release coordinator page.',
         )
         self.logout()
 
-    def test_release_coordinator_can_access_release_coordinator_page(
+    def test_release_coordinator_can_access_web_release_coordinator_page(
         self,
     ) -> None:
-        self.login(self.RELEASE_COORDINATOR_EMAIL)
+        self.login(self.WEB_RELEASE_COORDINATOR_EMAIL)
 
         with self.swap(self, 'testapp', self.mock_testapp):
-            response = self.get_json('/release-coordinator')
+            response = self.get_json('/web-release-coordinator')
 
         self.assertEqual(response['success'], 1)
         self.logout()

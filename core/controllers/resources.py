@@ -203,7 +203,7 @@ class PromoBarHandler(
             }
         )
 
-    @acl_decorators.can_access_release_coordinator_page
+    @acl_decorators.can_access_web_release_coordinator_page
     def put(self) -> None:
         """Updates the configuration values for a promotional bar."""
         assert self.user_id is not None

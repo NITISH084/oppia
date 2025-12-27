@@ -24,7 +24,7 @@ import {catchError, first} from 'rxjs/operators';
 
 import {BeamJobRunResult} from 'domain/jobs/beam-job-run-result.model';
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
 import {AlertsService} from 'services/alerts.service';
 
 @Component({

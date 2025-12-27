@@ -40,7 +40,7 @@ export class AccessValidationBackendApiService {
     '/access_validation_handler/does_profile_exist/<username>';
 
   RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR =
-    '/access_validation_handler/can_access_release_coordinator_page';
+    '/access_validation_handler/can_access_web_release_coordinator_page';
 
   LEARNER_GROUP_EDITOR_PAGE_ACCESS_VALIDATOR =
     '/access_validation_handler/can_access_edit_learner_group_page/' +

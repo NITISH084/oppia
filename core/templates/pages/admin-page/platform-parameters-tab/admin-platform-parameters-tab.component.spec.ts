@@ -32,7 +32,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import {AdminPageData} from 'domain/admin/admin-backend-api.service';
 import {AdminDataService} from 'pages/admin-page/services/admin-data.service';
 import {AdminTaskManagerService} from 'pages/admin-page/services/admin-task-manager.service';
-import {AdminFeaturesTabConstants} from 'pages/release-coordinator-page/features-tab/features-tab.constants';
+import {AdminFeaturesTabConstants} from 'pages/web-release-coordinator-page/features-tab/features-tab.constants';
 import {PlatformParameterAdminBackendApiService} from 'domain/platform-parameter/platform-parameter-admin-backend-api.service';
 import {
   AdminPlatformParametersTabComponent,

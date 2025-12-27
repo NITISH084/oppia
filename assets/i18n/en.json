@@ -1412,7 +1412,7 @@
     "I18N_REFRESHER_EXPLORATION_MODAL_TITLE": "Would you like a refresher?",
     "I18N_REGISTRATION_SESSION_EXPIRED_HEADING": "Registration Session Expired",
     "I18N_REGISTRATION_SESSION_EXPIRED_MESSAGE": "Sorry, your registration session has expired. Please click \"Continue Registration\" to restart the process.",
-    "I18N_RELEASE_COORDINATOR_PAGE_TITLE": "Oppia Release Coordinator Panel",
+    "I18N_RELEASE_COORDINATOR_PAGE_TITLE": "Oppia Web Release Coordinator Panel",
     "I18N_RESET_CODE": "Reset Code",
     "I18N_RESTART_EXPLORATION_BUTTON": "Restart lesson",
     "I18N_REVIEW_TEST_PAGE_BREADCRUMB": "Review Test",

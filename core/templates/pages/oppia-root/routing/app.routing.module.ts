@@ -306,11 +306,11 @@ const routes: Route[] = [
       ),
   },
   {
-    path: AppConstants.PAGES_REGISTERED_WITH_FRONTEND.RELEASE_COORDINATOR_PAGE
-      .ROUTE,
+    path: AppConstants.PAGES_REGISTERED_WITH_FRONTEND
+      .WEB_RELEASE_COORDINATOR_PAGE.ROUTE,
     loadChildren: () =>
       import(
-        'pages/release-coordinator-page/release-coordinator-page.module'
+        'pages/web-release-coordinator-page/release-coordinator-page.module'
       ).then(m => m.ReleaseCoordinatorPageModule),
   },
   {

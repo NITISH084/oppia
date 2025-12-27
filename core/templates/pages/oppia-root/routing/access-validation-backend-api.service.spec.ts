@@ -200,7 +200,7 @@ describe('Access validation backend api service', () => {
     avbas.validateAccessToReleaseCoordinatorPage().then(successSpy, failSpy);
 
     const req = httpTestingController.expectOne(
-      '/access_validation_handler/can_access_release_coordinator_page'
+      '/access_validation_handler/can_access_web_release_coordinator_page'
     );
     expect(req.request.method).toEqual('GET');
     req.flush({});

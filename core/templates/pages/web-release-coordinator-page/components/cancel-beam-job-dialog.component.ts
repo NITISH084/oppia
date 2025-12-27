@@ -21,7 +21,7 @@ import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {catchError, take} from 'rxjs/operators';
 
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
 import {AlertsService} from 'services/alerts.service';
 import {of} from 'rxjs';
 

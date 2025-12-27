@@ -745,18 +745,19 @@ class ReleaseCoordinatorAccessValidationHandlerTests(
         """Complete the signup process for self.RELEASE_COORDINATOR_EMAIL."""
         super().setUp()
         self.signup(
-            self.RELEASE_COORDINATOR_EMAIL, self.RELEASE_COORDINATOR_USERNAME
+            self.WEB_RELEASE_COORDINATOR_EMAIL,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
         )
         self.signup(self.EDITOR_EMAIL, self.EDITOR_USERNAME)
 
         self.add_user_role(
-            self.RELEASE_COORDINATOR_USERNAME,
-            feconf.ROLE_ID_RELEASE_COORDINATOR,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
+            feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
     def test_guest_user_does_not_pass_validation(self) -> None:
         self.get_json(
-            '%s/can_access_release_coordinator_page'
+            '%s/can_access_web_release_coordinator_page'
             % ACCESS_VALIDATION_HANDLER_PREFIX,
             expected_status_int=401,
         )
@@ -764,7 +765,7 @@ class ReleaseCoordinatorAccessValidationHandlerTests(
     def test_exploration_editor_does_not_pass_validation(self) -> None:
         self.login(self.EDITOR_EMAIL)
         self.get_json(
-            '%s/can_access_release_coordinator_page'
+            '%s/can_access_web_release_coordinator_page'
             % ACCESS_VALIDATION_HANDLER_PREFIX,
             expected_status_int=401,
         )
@@ -773,7 +774,7 @@ class ReleaseCoordinatorAccessValidationHandlerTests(
         self.login(self.RELEASE_COORDINATOR_EMAIL)
 
         self.get_html_response(
-            '%s/can_access_release_coordinator_page'
+            '%s/can_access_web_release_coordinator_page'
             % ACCESS_VALIDATION_HANDLER_PREFIX
         )
 

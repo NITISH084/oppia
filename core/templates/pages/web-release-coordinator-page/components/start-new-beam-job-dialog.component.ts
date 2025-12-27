@@ -22,7 +22,7 @@ import {catchError, take} from 'rxjs/operators';
 
 import {BeamJob} from 'domain/jobs/beam-job.model';
 import {BeamJobRun} from 'domain/jobs/beam-job-run.model';
-import {ReleaseCoordinatorBackendApiService} from 'pages/release-coordinator-page/services/release-coordinator-backend-api.service';
+import {ReleaseCoordinatorBackendApiService} from 'pages/web-release-coordinator-page/services/release-coordinator-backend-api.service';
 import {AlertsService} from 'services/alerts.service';
 import {of} from 'rxjs';
 import {AppConstants} from 'app.constants';

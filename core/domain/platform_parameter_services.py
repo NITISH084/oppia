@@ -79,7 +79,7 @@ def get_all_platform_parameters_dicts() -> (
 ):
     """Returns dict representations of all platform parameters. This method
     is used for providing detailed platform parameters information to the
-    release-coordinator page.
+    web-release-coordinator page.
 
     Returns:
         list(dict). A list containing the dict mappings of all fields of the
