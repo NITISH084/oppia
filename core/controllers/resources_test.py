@@ -1006,7 +1006,7 @@ class PromoBarHandlerTest(test_utils.GenericTestBase):
         )
 
         self.add_user_role(
-            self.WEB_WEB_RELEASE_COORDINATOR_USERNAME,
+            self.WEB_RELEASE_COORDINATOR_USERNAME,
             feconf.ROLE_ID_WEB_RELEASE_COORDINATOR,
         )
 
