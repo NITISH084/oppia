@@ -30,7 +30,7 @@ import {BeamJobRunResult} from 'domain/jobs/beam-job-run-result.model';
 import {
   UserGroup,
   UserGroupBackendDict,
-} from 'domain/release_coordinator/user-group.model';
+} from 'domain/web_release_coordinator/user-group.model';
 import {
   ReleaseCoordinatorBackendApiService,
   UserGroupsResponse,

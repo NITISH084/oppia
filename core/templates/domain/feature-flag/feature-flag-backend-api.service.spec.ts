@@ -27,7 +27,7 @@ import {FeatureFlagDomainConstants} from 'domain/feature-flag/feature-flag-domai
 import {FeatureFlag} from 'domain/feature-flag/feature-flag.model';
 import {FeatureStage} from 'domain/platform-parameter/platform-parameter.model';
 import {FeatureStatusSummary} from 'domain/feature-flag/feature-status-summary.model';
-import {UserGroup} from 'domain/release_coordinator/user-group.model';
+import {UserGroup} from 'domain/web_release_coordinator/user-group.model';
 
 describe('FeatureFlagBackendApiService', () => {
   let httpTestingController: HttpTestingController;
