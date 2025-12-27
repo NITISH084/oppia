@@ -369,7 +369,7 @@ class DiagnosticTestPlayerAccessValidationHandler(
         pass
 
 
-class WebWebReleaseCoordinatorAccessValidationHandler(
+class WebReleaseCoordinatorAccessValidationHandler(
     base.BaseHandler[Dict[str, str], Dict[str, str]]
 ):
     """Validates access to web release coordinator page."""
