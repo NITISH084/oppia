@@ -23,26 +23,26 @@ var workflow = require('../webdriverio_utils/workflow.js');
 
 var AdminPage = require('../webdriverio_utils/AdminPage.js');
 var ExplorationEditorPage = require('../webdriverio_utils/ExplorationEditorPage.js');
-var ReleaseCoordinatorPage = require('../webdriverio_utils/ReleaseCoordinatorPage.js');
+var WebReleaseCoordinatorPage = require('../webdriverio_utils/WebReleaseCoordinatorPage.js');
 
 describe('Improvements tab', function () {
   let explorationEditorPage = null;
   let explorationEditorImprovementsTab = null;
-  let releaseCoordinatorPage = null;
+  let webReleaseCoordinatorPage = null;
   let improvementsTabFeature = null;
   let adminPage = null;
 
   beforeAll(async () => {
     adminPage = new AdminPage.AdminPage();
     explorationEditorPage = new ExplorationEditorPage.ExplorationEditorPage();
-    releaseCoordinatorPage =
-      new ReleaseCoordinatorPage.ReleaseCoordinatorPage();
+    webReleaseCoordinatorPage =
+      new WebReleaseCoordinatorPage.WebReleaseCoordinatorPage();
     await users.createAndLoginCurriculumAdminUser(
       'superUser@improvementsTab.com',
       'superUser'
     );
     await adminPage.get();
-    await adminPage.addRole('superUser', 'release coordinator');
+    await adminPage.addRole('superUser', 'web release coordinator');
     await releaseCoordinatorPage.getFeaturesTab();
     improvementsTabFeature =
       await releaseCoordinatorPage.getImprovementsTabFeatureElement();

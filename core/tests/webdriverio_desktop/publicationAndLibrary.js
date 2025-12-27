@@ -25,13 +25,13 @@ var AdminPage = require('../webdriverio_utils/AdminPage.js');
 var ExplorationEditorPage = require('../webdriverio_utils/ExplorationEditorPage.js');
 var ExplorationPlayerPage = require('../webdriverio_utils/ExplorationPlayerPage.js');
 var LibraryPage = require('../webdriverio_utils/LibraryPage.js');
-var ReleaseCoordinatorPage = require('../webdriverio_utils/ReleaseCoordinatorPage.js');
+var WebReleaseCoordinatorPage = require('../webdriverio_utils/WebReleaseCoordinatorPage.js');
 
 describe('Library index page', function () {
   var adminPage = null;
   var libraryPage = null;
   var explorationEditorPage = null;
-  let releaseCoordinatorPage = null;
+  let webReleaseCoordinatorPage = null;
 
   beforeAll(async function () {
     adminPage = new AdminPage.AdminPage();
@@ -40,8 +40,8 @@ describe('Library index page', function () {
     explorationEditorMainTab = explorationEditorPage.getMainTab();
     explorationEditorSettingsTab = explorationEditorPage.getSettingsTab();
     explorationPlayerPage = new ExplorationPlayerPage.ExplorationPlayerPage();
-    releaseCoordinatorPage =
-      new ReleaseCoordinatorPage.ReleaseCoordinatorPage();
+    webReleaseCoordinatorPage =
+      new WebReleaseCoordinatorPage.WebReleaseCoordinatorPage();
 
     await users.createAndLoginSuperAdminUser(
       'superUser@publicationAndLibrary.com',

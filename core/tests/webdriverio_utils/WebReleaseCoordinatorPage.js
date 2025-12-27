@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @fileoverview Page object for the release-coordinator page, for use in
+ * @fileoverview Page object for the web-release-coordinator page, for use in
  * WebdriverIO tests.
  */
 
@@ -21,8 +21,8 @@ var action = require('./action.js');
 var general = require('./general.js');
 var waitFor = require('./waitFor.js');
 
-var ReleaseCoordinatorPage = function () {
-  var RELEASE_COORDINATOR_URL_SUFFIX = '/release-coordinator';
+var WebReleaseCoordinatorPage = function () {
+  var RELEASE_COORDINATOR_URL_SUFFIX = '/web-release-coordinator';
   var featureFlagElementsSelector = function () {
     return $$('.e2e-test-feature-flag');
   };
@@ -150,4 +150,4 @@ var ReleaseCoordinatorPage = function () {
   };
 };
 
-exports.ReleaseCoordinatorPage = ReleaseCoordinatorPage;
+exports.WebReleaseCoordinatorPage = WebReleaseCoordinatorPage;
