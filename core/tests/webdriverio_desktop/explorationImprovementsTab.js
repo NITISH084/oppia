@@ -43,10 +43,10 @@ describe('Improvements tab', function () {
     );
     await adminPage.get();
     await adminPage.addRole('superUser', 'web release coordinator');
-    await releaseCoordinatorPage.getFeaturesTab();
+    await webReleaseCoordinatorPage.getFeaturesTab();
     improvementsTabFeature =
-      await releaseCoordinatorPage.getImprovementsTabFeatureElement();
-    await releaseCoordinatorPage.enableFeature(improvementsTabFeature);
+      await webReleaseCoordinatorPage.getImprovementsTabFeatureElement();
+    await webReleaseCoordinatorPage.enableFeature(improvementsTabFeature);
     explorationEditorImprovementsTab =
       explorationEditorPage.getImprovementsTab();
     await users.logout();
