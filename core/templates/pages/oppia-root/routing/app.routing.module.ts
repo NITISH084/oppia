@@ -314,6 +314,14 @@ const routes: Route[] = [
       ).then(m => m.ReleaseCoordinatorPageModule),
   },
   {
+    path: AppConstants.PAGES_REGISTERED_WITH_FRONTEND
+      .ANDROID_RELEASE_COORDINATOR_PAGE.ROUTE,
+    loadChildren: () =>
+      import(
+        'pages/android-release-coordinator-page/release-coordinator-page.module'
+      ).then(m => m.ReleaseCoordinatorPageModule),
+  },
+  {
     path: AppConstants.PAGES_REGISTERED_WITH_FRONTEND.LIBRARY_INDEX.ROUTE,
     pathMatch: 'full',
     loadChildren: () =>

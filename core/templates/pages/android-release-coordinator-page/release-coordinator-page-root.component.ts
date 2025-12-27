@@ -1,4 +1,4 @@
-// Copyright 2021 The Oppia Authors. All Rights Reserved.
+// Copyright 2026 The Oppia Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @fileoverview Root component for Release Coordinator Page.
+ * @fileoverview Root component for Android Release Coordinator Page.
  */
 
 import {Component, OnDestroy} from '@angular/core';
@@ -43,7 +43,8 @@ export class ReleaseCoordinatorPageRootComponent implements OnDestroy {
 
   setPageTitleAndMetaTags(): void {
     const releaseCoordinatorPage =
-      AppConstants.PAGES_REGISTERED_WITH_FRONTEND.WEB_RELEASE_COORDINATOR_PAGE;
+      AppConstants.PAGES_REGISTERED_WITH_FRONTEND
+        .ANDROID_RELEASE_COORDINATOR_PAGE;
     const translatedTitle = this.translateService.instant(
       releaseCoordinatorPage.TITLE
     );
@@ -62,7 +63,7 @@ export class ReleaseCoordinatorPageRootComponent implements OnDestroy {
 
     this.loaderService.showLoadingScreen('Loading');
     this.accessValidationBackendApiService
-      .validateAccessToWebReleaseCoordinatorPage()
+      .validateAccessToAndroidReleaseCoordinatorPage()
       .then(
         resp => {
           this.pageIsShown = true;

@@ -233,6 +233,7 @@
     "I18N_ANDROID_PAGE_UPDATES_MAIN_TEXT": "Subscribe to receive updates on Oppia’s Android app",
     "I18N_ANDROID_PAGE_UPDATES_SUBMIT_BUTTON_TEXT": "Subscribe",
     "I18N_ANDROID_PAGE_UPDATES_SUBTEXT": "We promise not to send spam, and you will only receive the occasional email. You can unsubscribe at any time.",
+    "I18N_ANDROID_RELEASE_COORDINATOR_PAGE_TITLE": "Oppia Android Release Coordinator Panel",
     "I18N_ANSWER_MISSPELLED_RESPONSE_TEXT_0": "You're headed in the right direction, but you need to recheck your spelling.",
     "I18N_ANSWER_MISSPELLED_RESPONSE_TEXT_1": "You’re close to the right answer. Could you please correct your spelling?",
     "I18N_ANSWER_MISSPELLED_RESPONSE_TEXT_2": "Please recheck your spelling.",
@@ -1412,7 +1413,6 @@
     "I18N_REFRESHER_EXPLORATION_MODAL_TITLE": "Would you like a refresher?",
     "I18N_REGISTRATION_SESSION_EXPIRED_HEADING": "Registration Session Expired",
     "I18N_REGISTRATION_SESSION_EXPIRED_MESSAGE": "Sorry, your registration session has expired. Please click \"Continue Registration\" to restart the process.",
-    "I18N_RELEASE_COORDINATOR_PAGE_TITLE": "Oppia Web Release Coordinator Panel",
     "I18N_RESET_CODE": "Reset Code",
     "I18N_RESTART_EXPLORATION_BUTTON": "Restart lesson",
     "I18N_REVIEW_TEST_PAGE_BREADCRUMB": "Review Test",
@@ -1930,5 +1930,6 @@
     "I18N_VOLUNTEER_PAGE_WHY_VOLUNTEER_SECTION_HEADING_3_CONTENT": "Your work directly helps underserved students around the world gain access to free, high-quality education.",
     "I18N_WARNING_MODAL_DESCRIPTION": "This will show the full solution. Are you sure?",
     "I18N_WARNING_MODAL_TITLE": "Warning!",
+    "I18N_WEB_RELEASE_COORDINATOR_PAGE_TITLE": "Oppia Web Release Coordinator Panel",
     "I18N_YES": "Yes"
 }

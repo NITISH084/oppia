@@ -7431,7 +7431,25 @@ export default {
     },
     "WEB_RELEASE_COORDINATOR_PAGE": {
       "ROUTE": "web-release-coordinator",
-      "TITLE": "I18N_RELEASE_COORDINATOR_PAGE_TITLE",
+      "TITLE": "I18N_WEB_RELEASE_COORDINATOR_PAGE_TITLE",
+      "META": [
+        {
+          "PROPERTY_TYPE": "itemprop",
+          "PROPERTY_VALUE": "description",
+          // eslint-disable-next-line max-len
+          "CONTENT": "With Oppia, you can access free lessons on math, physics, statistics, chemistry, music, history and more from anywhere in the world. Oppia is a nonprofit with the mission of providing high-quality education to those who lack access to it."
+        },
+        {
+          "PROPERTY_TYPE": "itemprop",
+          "PROPERTY_VALUE": "og:description",
+          // eslint-disable-next-line max-len
+          "CONTENT": "With Oppia, you can access free lessons on math, physics, statistics, chemistry, music, history and more from anywhere in the world. Oppia is a nonprofit with the mission of providing high-quality education to those who lack access to it."
+        }
+      ]
+    },
+    "ANDROID_RELEASE_COORDINATOR_PAGE": {
+      "ROUTE": "android-release-coordinator",
+      "TITLE": "I18N_ANDROID_RELEASE_COORDINATOR_PAGE_TITLE",
       "META": [
         {
           "PROPERTY_TYPE": "itemprop",

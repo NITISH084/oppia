@@ -1,4 +1,4 @@
-// Copyright 2021 The Oppia Authors. All Rights Reserved.
+// Copyright 2026 The Oppia Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @fileoverview Unit tests for the release coordinator root component.
+ * @fileoverview Unit tests for the android release coordinator root component.
  */
 
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -43,7 +43,7 @@ class MockTranslateService {
   }
 }
 
-describe('Release Coordinator Page Root', () => {
+describe('Android Release Coordinator Page Root', () => {
   let fixture: ComponentFixture<ReleaseCoordinatorPageRootComponent>;
   let component: ReleaseCoordinatorPageRootComponent;
   let pageHeadService: PageHeadService;
@@ -85,7 +85,7 @@ describe('Release Coordinator Page Root', () => {
   it('should initialize and show page when access is valid', fakeAsync(() => {
     spyOn(
       accessValidationBackendApiService,
-      'validateAccessToWebReleaseCoordinatorPage'
+      'validateAccessToAndroidReleaseCoordinatorPage'
     ).and.returnValue(Promise.resolve());
     spyOn(loaderService, 'showLoadingScreen');
     spyOn(loaderService, 'hideLoadingScreen');
@@ -95,7 +95,7 @@ describe('Release Coordinator Page Root', () => {
 
     expect(loaderService.showLoadingScreen).toHaveBeenCalled();
     expect(
-      accessValidationBackendApiService.validateAccessToWebReleaseCoordinatorPage
+      accessValidationBackendApiService.validateAccessToAndroidReleaseCoordinatorPage
     ).toHaveBeenCalled();
     expect(component.pageIsShown).toBeTrue();
     expect(component.errorPageIsShown).toBeFalse();
@@ -105,7 +105,7 @@ describe('Release Coordinator Page Root', () => {
   it('should initialize and show error page when server respond with error', fakeAsync(() => {
     spyOn(
       accessValidationBackendApiService,
-      'validateAccessToWebReleaseCoordinatorPage'
+      'validateAccessToAndroidReleaseCoordinatorPage'
     ).and.returnValue(Promise.reject());
     spyOn(loaderService, 'showLoadingScreen');
     spyOn(loaderService, 'hideLoadingScreen');
@@ -115,7 +115,7 @@ describe('Release Coordinator Page Root', () => {
 
     expect(loaderService.showLoadingScreen).toHaveBeenCalled();
     expect(
-      accessValidationBackendApiService.validateAccessToWebReleaseCoordinatorPage
+      accessValidationBackendApiService.validateAccessToAndroidReleaseCoordinatorPage
     ).toHaveBeenCalled();
     expect(component.pageIsShown).toBeFalse();
     expect(component.errorPageIsShown).toBeTrue();
@@ -125,7 +125,7 @@ describe('Release Coordinator Page Root', () => {
   it('should initialize and subscribe to onLangChange', fakeAsync(() => {
     spyOn(
       accessValidationBackendApiService,
-      'validateAccessToWebReleaseCoordinatorPage'
+      'validateAccessToAndroidReleaseCoordinatorPage'
     ).and.returnValue(Promise.resolve());
     spyOn(component.directiveSubscriptions, 'add');
     spyOn(translateService.onLangChange, 'subscribe');
@@ -140,7 +140,7 @@ describe('Release Coordinator Page Root', () => {
   it('should update page title whenever the language changes', () => {
     spyOn(
       accessValidationBackendApiService,
-      'validateAccessToWebReleaseCoordinatorPage'
+      'validateAccessToAndroidReleaseCoordinatorPage'
     ).and.returnValue(Promise.resolve());
     component.ngOnInit();
     spyOn(component, 'setPageTitleAndMetaTags');

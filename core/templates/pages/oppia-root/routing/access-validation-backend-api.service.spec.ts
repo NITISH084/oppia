@@ -197,7 +197,7 @@ describe('Access validation backend api service', () => {
   }));
 
   it('should validate access to release coordinator page', fakeAsync(() => {
-    avbas.validateAccessToReleaseCoordinatorPage().then(successSpy, failSpy);
+    avbas.validateAccessToWebReleaseCoordinatorPage().then(successSpy, failSpy);
 
     const req = httpTestingController.expectOne(
       '/access_validation_handler/can_access_web_release_coordinator_page'

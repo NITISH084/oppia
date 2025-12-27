@@ -23,7 +23,7 @@ let general = require('../webdriverio_utils/general.js');
 let waitFor = require('../webdriverio_utils/waitFor.js');
 let workflow = require('../webdriverio_utils/workflow.js');
 
-let ReleaseCoordinatorPage = require('../webdriverio_utils/ReleaseCoordinatorPage.js');
+let WebReleaseCoordinatorPage = require('../webdriverio_utils/WebReleaseCoordinatorPage.js');
 let AdminPage = require('../webdriverio_utils/AdminPage.js');
 let ContributorDashboardPage = require('../webdriverio_utils/ContributorDashboardPage.js');
 let ContributorDashboardAdminPage = require('../webdriverio_utils/ContributorDashboardAdminPage.js');
@@ -51,7 +51,7 @@ describe('Contributor Admin Dashboard', function () {
   const QUESTION_ADMIN_EMAIL = 'user@contributor.com';
   const ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
-  let releaseCoordinatorPage = null;
+  let webReleaseCoordinatorPage = null;
   let adminPage = null;
   let contributorDashboardAdminPage = null;
   let contributorDashboardPage = null;
@@ -70,8 +70,8 @@ describe('Contributor Admin Dashboard', function () {
     contributorDashboardTranslateTextTab =
       contributorDashboardPage.getTranslateTextTab();
     adminPage = new AdminPage.AdminPage();
-    releaseCoordinatorPage =
-      new ReleaseCoordinatorPage.ReleaseCoordinatorPage();
+    webReleaseCoordinatorPage =
+      new WebReleaseCoordinatorPage.WebReleaseCoordinatorPage();
     contributorDashboardAdminPage =
       new ContributorDashboardAdminPage.ContributorDashboardAdminPage();
     topicsAndSkillsDashboardPage =

@@ -281,6 +281,11 @@ URLS = [
         access_validators.ProfileExistsValidationHandler,
     ),
     get_redirect_route(
+        r'%s/can_access_android_release_coordinator_page'
+        % feconf.ACCESS_VALIDATION_HANDLER_PREFIX,
+        access_validators.AndroidReleaseCoordinatorAccessValidationHandler,
+    ),
+    get_redirect_route(
         r'%s/can_access_web_release_coordinator_page'
         % feconf.ACCESS_VALIDATION_HANDLER_PREFIX,
         access_validators.WebReleaseCoordinatorAccessValidationHandler,

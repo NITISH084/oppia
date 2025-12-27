@@ -39,7 +39,10 @@ export class AccessValidationBackendApiService {
   DOES_PROFILE_EXIST =
     '/access_validation_handler/does_profile_exist/<username>';
 
-  RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR =
+  ANDROID_RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR =
+    '/access_validation_handler/can_access_android_release_coordinator_page';
+
+  WEB_RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR =
     '/access_validation_handler/can_access_web_release_coordinator_page';
 
   LEARNER_GROUP_EDITOR_PAGE_ACCESS_VALIDATOR =
@@ -288,9 +291,15 @@ export class AccessValidationBackendApiService {
     return this.http.get<void>(url).toPromise();
   }
 
-  validateAccessToReleaseCoordinatorPage(): Promise<void> {
+  validateAccessToAndroidReleaseCoordinatorPage(): Promise<void> {
     return this.http
-      .get<void>(this.RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR)
+      .get<void>(this.ANDROID_RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR)
+      .toPromise();
+  }
+
+  validateAccessToWebReleaseCoordinatorPage(): Promise<void> {
+    return this.http
+      .get<void>(this.WEB_RELEASE_COORDINATOR_PAGE_ACCESS_VALIDATOR)
       .toPromise();
   }
 
