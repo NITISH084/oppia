@@ -48,7 +48,7 @@ describe('Library index page', function () {
       'superUser'
     );
     await adminPage.get();
-    await adminPage.addRole('superUser', 'release coordinator');
+    await adminPage.addRole('superUser', 'web release coordinator');
     await webReleaseCoordinatorPage.getFeaturesTab();
     improvementsTabFeature =
       await webReleaseCoordinatorPage.getImprovementsTabFeatureElement();

@@ -92,7 +92,7 @@ describe('Contributor Admin Dashboard', function () {
 
     await users.createAndLoginCurriculumAdminUser(ADMIN_EMAIL, 'management');
     await adminPage.get();
-    await adminPage.addRole('management', 'release coordinator');
+    await adminPage.addRole('management', 'web release coordinator');
     await adminPage.addRole('question', 'question coordinator');
     await adminPage.makeUserTranslationCoordinator('translation', 'English');
     await adminPage.addLanguageToCoordinator('translation', 'shqip (Albanian)');
