@@ -22,6 +22,7 @@ import {Injectable} from '@angular/core';
 import {WindowRef} from 'services/contextual/window-ref.service';
 import {initializeGoogleAnalytics} from 'google-analytics.initializer';
 import {LocalStorageService} from './local-storage.service';
+import {UserService} from './user.service';
 import {AppConstants} from 'app.constants';
 import {NavbarAndFooterGATrackingPages} from 'app.constants';
 
@@ -39,7 +40,8 @@ export class SiteAnalyticsService {
 
   constructor(
     private windowRef: WindowRef,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private userService: UserService
   ) {
     if (!SiteAnalyticsService.googleAnalyticsIsInitialized) {
       // This ensures that google analytics is initialized whenever this
@@ -47,13 +49,52 @@ export class SiteAnalyticsService {
       initializeGoogleAnalytics();
       SiteAnalyticsService.googleAnalyticsIsInitialized = true;
     }
+
+    this._pushLoginStatusToDataLayer();
   }
 
-  _sendEventToGoogleAnalytics(
+  private async _pushLoginStatusToDataLayer(): Promise<void> {
+    const loginStatus = await this._getLoginStatus();
+
+    this.windowRef.nativeWindow.dataLayer =
+      this.windowRef.nativeWindow.dataLayer || [];
+
+    this.windowRef.nativeWindow.dataLayer.push({
+      login_status: loginStatus,
+    });
+  }
+
+  private async _getLoginStatus(): Promise<string> {
+    const userInfo = await this.userService.getUserInfoAsync();
+    return userInfo.isLoggedIn() ? 'logged_in' : 'logged_out';
+  }
+
+  private async _sendEventToGoogleAnalytics(
     eventName: string,
-    eventParameters: Object = {}
-  ): void {
-    this.windowRef.nativeWindow.gtag('event', eventName, eventParameters);
+    eventParameters: any = {}
+  ): Promise<void> {
+    const loginStatus = await this._getLoginStatus();
+
+    const updatedEventParameters = {
+      ...eventParameters,
+      login_status: loginStatus,
+    };
+
+    this.windowRef.nativeWindow.dataLayer =
+      this.windowRef.nativeWindow.dataLayer || [];
+
+    this.windowRef.nativeWindow.dataLayer.push({
+      event: eventName,
+      ...updatedEventParameters,
+    });
+
+    if (typeof this.windowRef.nativeWindow.gtag === 'function') {
+      this.windowRef.nativeWindow.gtag(
+        'event',
+        eventName,
+        updatedEventParameters
+      );
+    }
   }
 
   // The srcElement refers to the element on the page that is clicked.
