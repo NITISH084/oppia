@@ -22,12 +22,12 @@ import {WindowRef} from 'services/contextual/window-ref.service';
 import {LocalStorageService} from 'services/local-storage.service';
 import {UserService} from 'services/user.service';
 import {NavbarAndFooterGATrackingPages} from 'app.constants';
+import jasmine from 'jasmine';
 
 describe('Site Analytics Service', () => {
   let sas: SiteAnalyticsService;
   let ws: WindowRef;
   let gtagSpy: jasmine.Spy;
-  let dataLayerSpy: jasmine.Spy;
   let pathname = 'pathname';
   let localStorageService: jasmine.SpyObj<LocalStorageService>;
   let userService: jasmine.SpyObj<UserService>;
@@ -72,7 +72,7 @@ describe('Site Analytics Service', () => {
 
     userService.getUserInfoAsync.and.resolveTo({
       isLoggedIn: () => true,
-    } as any);
+    } as {isLoggedIn: () => boolean});
   });
 
   it('should initialize google analytics', () => {
@@ -82,7 +82,6 @@ describe('Site Analytics Service', () => {
   describe('when tested using gtag spy', () => {
     beforeEach(() => {
       gtagSpy = spyOn(ws.nativeWindow, 'gtag');
-      dataLayerSpy = spyOn(ws.nativeWindow.dataLayer, 'push');
     });
 
     it('should register start login event', async () => {
@@ -704,13 +703,16 @@ describe('Site Analytics Service', () => {
     });
 
     it('should register classroom page viewed', async () => {
-      spyOn(sas, '_sendEventToGoogleAnalytics' as any);
+      spyOn(
+        sas as unknown as {_sendEventToGoogleAnalytics: Function},
+        '_sendEventToGoogleAnalytics'
+      );
 
       await sas.registerClassroomPageViewed();
-      expect((sas as any)._sendEventToGoogleAnalytics).toHaveBeenCalledWith(
-        'view_classroom',
-        {}
-      );
+      expect(
+        (sas as unknown as {_sendEventToGoogleAnalytics: jasmine.Spy})
+          ._sendEventToGoogleAnalytics
+      ).toHaveBeenCalledWith('view_classroom', {});
     });
 
     it('should register active classroom lesson usage', async () => {

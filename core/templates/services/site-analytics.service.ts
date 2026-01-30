@@ -71,7 +71,7 @@ export class SiteAnalyticsService {
 
   private async _sendEventToGoogleAnalytics(
     eventName: string,
-    eventParameters: any = {}
+    eventParameters: Record<string, unknown> = {}
   ): Promise<void> {
     const loginStatus = await this._getLoginStatus();
 
@@ -88,13 +88,11 @@ export class SiteAnalyticsService {
       ...updatedEventParameters,
     });
 
-    if (typeof this.windowRef.nativeWindow.gtag === 'function') {
-      this.windowRef.nativeWindow.gtag(
-        'event',
-        eventName,
-        updatedEventParameters
-      );
-    }
+    this.windowRef.nativeWindow.gtag(
+      'event',
+      eventName,
+      updatedEventParameters
+    );
   }
 
   // The srcElement refers to the element on the page that is clicked.
