@@ -64,16 +64,15 @@ export class SiteAnalyticsService {
     });
   }
 
-  private async _getLoginStatus(): Promise<string> {
-    const userInfo = await this.userService.getUserInfoAsync();
-    return userInfo.isLoggedIn() ? 'logged_in' : 'logged_out';
+  private _getLoginStatus(): string {
+    return this.userService.isLoggedIn() ? 'logged_in' : 'logged_out';
   }
 
-  private async _sendEventToGoogleAnalytics(
+  private _sendEventToGoogleAnalytics(
     eventName: string,
     eventParameters: Record<string, unknown> = {}
-  ): Promise<void> {
-    const loginStatus = await this._getLoginStatus();
+  ): void {
+    const loginStatus = this._getLoginStatus();
 
     const updatedEventParameters = {
       ...eventParameters,
