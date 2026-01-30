@@ -53,8 +53,8 @@ export class SiteAnalyticsService {
     this._pushLoginStatusToDataLayer();
   }
 
-  private async _pushLoginStatusToDataLayer(): Promise<void> {
-    const loginStatus = await this._getLoginStatus();
+  private _pushLoginStatusToDataLayer(): void {
+    const loginStatus = this._getLoginStatus();
 
     this.windowRef.nativeWindow.dataLayer =
       this.windowRef.nativeWindow.dataLayer || [];

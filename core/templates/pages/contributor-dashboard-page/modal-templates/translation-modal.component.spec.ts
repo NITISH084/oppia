@@ -97,6 +97,7 @@ describe('Translation Modal Component', () => {
   let siteAnalyticsService: SiteAnalyticsService;
   let imageLocalStorageService: ImageLocalStorageService;
   let getUserContributionRightsDataAsyncSpy: jasmine.Spy;
+  let loggedInSpy: jasmine.Spy;
   let userService: UserService;
   let activeModal: NgbActiveModal;
   let httpTestingController: HttpTestingController;
@@ -220,6 +221,7 @@ describe('Translation Modal Component', () => {
         can_review_questions: false,
       })
     );
+    loggedInSpy = spyOn(userService, 'isLoggedIn').and.returnValue(true);
     windowRef = TestBed.inject(WindowRef);
     mockWindow = windowRef.nativeWindow;
   });
