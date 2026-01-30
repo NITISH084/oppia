@@ -22,7 +22,6 @@ import {WindowRef} from 'services/contextual/window-ref.service';
 import {LocalStorageService} from 'services/local-storage.service';
 import {UserService} from 'services/user.service';
 import {NavbarAndFooterGATrackingPages} from 'app.constants';
-import jasmine from 'jasmine';
 
 describe('Site Analytics Service', () => {
   let sas: SiteAnalyticsService;
