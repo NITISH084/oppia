@@ -47,9 +47,7 @@ describe('Site Analytics Service', () => {
       'getLastPageViewTime',
       'setLastPageViewTime',
     ]);
-    const userServiceSpy = jasmine.createSpyObj('UserService', [
-      'getUserInfoAsync',
-    ]);
+    const userServiceSpy = jasmine.createSpyObj('UserService', ['isLoggedIn']);
     TestBed.configureTestingModule({
       providers: [
         SiteAnalyticsService,
@@ -69,9 +67,7 @@ describe('Site Analytics Service', () => {
     ) as jasmine.SpyObj<LocalStorageService>;
     userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
 
-    userService.getUserInfoAsync.and.resolveTo({
-      isLoggedIn: () => true,
-    } as {isLoggedIn: () => boolean});
+    userService.isLoggedIn.and.returnValue(true);
   });
 
   it('should initialize google analytics', () => {
@@ -83,9 +79,9 @@ describe('Site Analytics Service', () => {
       gtagSpy = spyOn(ws.nativeWindow, 'gtag');
     });
 
-    it('should register start login event', async () => {
+    it('should register start login event', () => {
       const element = 'LoginEventButton';
-      await sas.registerStartLoginEvent(element);
+      sas.registerStartLoginEvent(element);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'login', {
         source_element: 'LoginEventButton',
@@ -94,8 +90,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register new signup event', async () => {
-      await sas.registerNewSignupEvent('srcElement');
+    it('should register new signup event', () => {
+      sas.registerNewSignupEvent('srcElement');
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'sign_up', {
         source_element: 'srcElement',
@@ -103,8 +99,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register click browse lessons event', async () => {
-      await sas.registerClickBrowseLessonsButtonEvent();
+    it('should register click browse lessons event', () => {
+      sas.registerClickBrowseLessonsButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -116,8 +112,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register click start learning button event', async () => {
-      await sas.registerClickStartLearningButtonEvent();
+    it('should register click start learning button event', () => {
+      sas.registerClickStartLearningButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -129,8 +125,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register click start contributing button event', async () => {
-      await sas.registerClickStartContributingButtonEvent();
+    it('should register click start contributing button event', () => {
+      sas.registerClickStartContributingButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -142,9 +138,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register go to donation site event', async () => {
+    it('should register go to donation site event', () => {
       const donationSite = 'https://donation.com';
-      await sas.registerGoToDonationSiteEvent(donationSite);
+      sas.registerGoToDonationSiteEvent(donationSite);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'go_to_donation_site', {
         donation_site_name: donationSite,
@@ -152,8 +148,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register apply to teach with oppia event', async () => {
-      await sas.registerApplyToTeachWithOppiaEvent();
+    it('should register apply to teach with oppia event', () => {
+      sas.registerApplyToTeachWithOppiaEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -162,8 +158,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register click create exploration button event', async () => {
-      await sas.registerClickCreateExplorationButtonEvent();
+    it('should register click create exploration button event', () => {
+      sas.registerClickCreateExplorationButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -175,9 +171,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register create new exploration event', async () => {
+    it('should register create new exploration event', () => {
       const explorationId = 'exp123';
-      await sas.registerCreateNewExplorationEvent(explorationId);
+      sas.registerCreateNewExplorationEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'create_new_exploration', {
         exploration_id: explorationId,
@@ -185,9 +181,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register create new exploration in collection event', async () => {
+    it('should register create new exploration in collection event', () => {
       const explorationId = 'exp123';
-      await sas.registerCreateNewExplorationInCollectionEvent(explorationId);
+      sas.registerCreateNewExplorationInCollectionEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -199,9 +195,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register new collection event', async () => {
+    it('should register new collection event', () => {
       const collectionId = 'abc1';
-      await sas.registerCreateNewCollectionEvent(collectionId);
+      sas.registerCreateNewCollectionEvent(collectionId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'create_new_collection', {
         collection_id: collectionId,
@@ -209,9 +205,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register commit changes to private exploration event', async () => {
+    it('should register commit changes to private exploration event', () => {
       const explorationId = 'exp123';
-      await sas.registerCommitChangesToPrivateExplorationEvent(explorationId);
+      sas.registerCommitChangesToPrivateExplorationEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -223,9 +219,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register share exploration event', async () => {
+    it('should register share exploration event', () => {
       const network = 'ShareExplorationNetwork';
-      await sas.registerShareExplorationEvent(network);
+      sas.registerShareExplorationEvent(network);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'share_exploration', {
         network: network,
@@ -234,9 +230,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register share collection event', async () => {
+    it('should register share collection event', () => {
       const network = 'ShareCollectionNetwork';
-      await sas.registerShareCollectionEvent(network);
+      sas.registerShareCollectionEvent(network);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'share_collection', {
         network: network,
@@ -245,9 +241,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register share blog post event', async () => {
+    it('should register share blog post event', () => {
       const network = 'ShareBlogPostNetwork';
-      await sas.registerShareBlogPostEvent(network);
+      sas.registerShareBlogPostEvent(network);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'share_blog_post', {
         network: network,
@@ -256,8 +252,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register open embed info event', async () => {
-      await sas.registerOpenEmbedInfoEvent(explorationId);
+    it('should register open embed info event', () => {
+      sas.registerOpenEmbedInfoEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'open_embed_info_modal', {
         exploration_id: explorationId,
@@ -265,8 +261,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register commit changes to public exploration event', async () => {
-      await sas.registerCommitChangesToPublicExplorationEvent(explorationId);
+    it('should register commit changes to public exploration event', () => {
+      sas.registerCommitChangesToPublicExplorationEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -278,8 +274,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register tutorial modal open event', async () => {
-      await sas.registerTutorialModalOpenEvent(explorationId);
+    it('should register tutorial modal open event', () => {
+      sas.registerTutorialModalOpenEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'tutorial_modal_open', {
         exploration_id: explorationId,
@@ -287,8 +283,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register decline tutorial modal event', async () => {
-      await sas.registerDeclineTutorialModalEvent(explorationId);
+    it('should register decline tutorial modal event', () => {
+      sas.registerDeclineTutorialModalEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'decline_tutorial_modal', {
         exploration_id: explorationId,
@@ -296,8 +292,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register accept tutorial modal event', async () => {
-      await sas.registerAcceptTutorialModalEvent(explorationId);
+    it('should register accept tutorial modal event', () => {
+      sas.registerAcceptTutorialModalEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'accept_tutorial_modal', {
         exploration_id: explorationId,
@@ -305,8 +301,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register click help button event', async () => {
-      await sas.registerClickHelpButtonEvent(explorationId);
+    it('should register click help button event', () => {
+      sas.registerClickHelpButtonEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'click_help_button', {
         exploration_id: explorationId,
@@ -314,8 +310,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register visit help center event', async () => {
-      await sas.registerVisitHelpCenterEvent(explorationId);
+    it('should register visit help center event', () => {
+      sas.registerVisitHelpCenterEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'visit_help_center', {
         exploration_id: explorationId,
@@ -323,8 +319,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register open tutorial from help center event', async () => {
-      await sas.registerOpenTutorialFromHelpCenterEvent(explorationId);
+    it('should register open tutorial from help center event', () => {
+      sas.registerOpenTutorialFromHelpCenterEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -336,8 +332,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register skip tutorial event', async () => {
-      await sas.registerSkipTutorialEvent(explorationId);
+    it('should register skip tutorial event', () => {
+      sas.registerSkipTutorialEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'skip_tutorial', {
         exploration_id: explorationId,
@@ -345,8 +341,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register finish tutorial event', async () => {
-      await sas.registerFinishTutorialEvent(explorationId);
+    it('should register finish tutorial event', () => {
+      sas.registerFinishTutorialEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'finish_tutorial', {
         exploration_id: explorationId,
@@ -354,8 +350,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register editor first entry event', async () => {
-      await sas.registerEditorFirstEntryEvent(explorationId);
+    it('should register editor first entry event', () => {
+      sas.registerEditorFirstEntryEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'editor_first_entry', {
         exploration_id: explorationId,
@@ -363,8 +359,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register first open content box event', async () => {
-      await sas.registerFirstOpenContentBoxEvent(explorationId);
+    it('should register first open content box event', () => {
+      sas.registerFirstOpenContentBoxEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'first_open_content_box', {
         exploration_id: explorationId,
@@ -372,8 +368,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register first save content event', async () => {
-      await sas.registerFirstSaveContentEvent(explorationId);
+    it('should register first save content event', () => {
+      sas.registerFirstSaveContentEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'first_save_content', {
         exploration_id: explorationId,
@@ -381,8 +377,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register first click add interaction event', async () => {
-      await sas.registerFirstClickAddInteractionEvent(explorationId);
+    it('should register first click add interaction event', () => {
+      sas.registerFirstClickAddInteractionEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -394,8 +390,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register select interaction type event', async () => {
-      await sas.registerFirstSelectInteractionTypeEvent(explorationId);
+    it('should register select interaction type event', () => {
+      sas.registerFirstSelectInteractionTypeEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -407,8 +403,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register first save interaction event', async () => {
-      await sas.registerFirstSaveInteractionEvent(explorationId);
+    it('should register first save interaction event', () => {
+      sas.registerFirstSaveInteractionEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'first_save_interaction', {
         exploration_id: explorationId,
@@ -416,8 +412,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register first save rule event', async () => {
-      await sas.registerFirstSaveRuleEvent(explorationId);
+    it('should register first save rule event', () => {
+      sas.registerFirstSaveRuleEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'first_save_rule', {
         exploration_id: explorationId,
@@ -425,8 +421,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register first create second state event', async () => {
-      await sas.registerFirstCreateSecondStateEvent(explorationId);
+    it('should register first create second state event', () => {
+      sas.registerFirstCreateSecondStateEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -438,8 +434,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register save playable exploration event', async () => {
-      await sas.registerSavePlayableExplorationEvent(explorationId);
+    it('should register save playable exploration event', () => {
+      sas.registerSavePlayableExplorationEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -451,8 +447,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register open publish exploration modal event', async () => {
-      await sas.registerOpenPublishExplorationModalEvent(explorationId);
+    it('should register open publish exploration modal event', () => {
+      sas.registerOpenPublishExplorationModalEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -464,8 +460,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register publish exploration event', async () => {
-      await sas.registerPublishExplorationEvent(explorationId);
+    it('should register publish exploration event', () => {
+      sas.registerPublishExplorationEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'publish_exploration', {
         exploration_id: explorationId,
@@ -473,8 +469,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register visit oppia from iframe event', async () => {
-      await sas.registerVisitOppiaFromIframeEvent(explorationId);
+    it('should register visit oppia from iframe event', () => {
+      sas.registerVisitOppiaFromIframeEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'visit_oppia_from_iframe', {
         exploration_id: explorationId,
@@ -482,9 +478,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register new card when card number is less than 10', async () => {
+    it('should register new card when card number is less than 10', () => {
       const cardNumber = 1;
-      await sas.registerNewCard(cardNumber, 'abc1');
+      sas.registerNewCard(cardNumber, 'abc1');
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'new_card_load', {
         exploration_id: 'abc1',
@@ -496,9 +492,9 @@ describe('Site Analytics Service', () => {
     it(
       'should register new card when card number is greater than 10 and' +
         " it's a multiple of 10",
-      async () => {
+      () => {
         const cardNumber = 20;
-        await sas.registerNewCard(cardNumber, 'abc1');
+        sas.registerNewCard(cardNumber, 'abc1');
 
         expect(gtagSpy).toHaveBeenCalledWith('event', 'new_card_load', {
           exploration_id: 'abc1',
@@ -508,15 +504,15 @@ describe('Site Analytics Service', () => {
       }
     );
 
-    it('should not register new card', async () => {
+    it('should not register new card', () => {
       const cardNumber = 35;
-      await sas.registerNewCard(cardNumber, 'abc1');
+      sas.registerNewCard(cardNumber, 'abc1');
 
       expect(gtagSpy).not.toHaveBeenCalled();
     });
 
-    it('should register finish exploration event', async () => {
-      await sas.registerFinishExploration('123');
+    it('should register finish exploration event', () => {
+      sas.registerFinishExploration('123');
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'lesson_completed', {
         exploration_id: '123',
@@ -524,8 +520,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register curated lesson started event', async () => {
-      await sas.registerCuratedLessonStarted('Fractions', '123');
+    it('should register curated lesson started event', () => {
+      sas.registerCuratedLessonStarted('Fractions', '123');
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -538,8 +534,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register curated lesson completed event', async () => {
-      await sas.registerCuratedLessonCompleted(
+    it('should register curated lesson completed event', () => {
+      sas.registerCuratedLessonCompleted(
         'math',
         'Fractions',
         'ch1',
@@ -565,9 +561,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register open collection from landing page event', async () => {
+    it('should register open collection from landing page event', () => {
       const collectionId = 'abc1';
-      await sas.registerOpenCollectionFromLandingPageEvent(collectionId);
+      sas.registerOpenCollectionFromLandingPageEvent(collectionId);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -579,8 +575,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register save recorded audio event', async () => {
-      await sas.registerSaveRecordedAudioEvent(explorationId);
+    it('should register save recorded audio event', () => {
+      sas.registerSaveRecordedAudioEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'save_recorded_audio', {
         exploration_id: explorationId,
@@ -588,8 +584,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register audio recording event', async () => {
-      await sas.registerStartAudioRecordingEvent(explorationId);
+    it('should register audio recording event', () => {
+      sas.registerStartAudioRecordingEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'start_audio_recording', {
         exploration_id: explorationId,
@@ -597,8 +593,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register upload audio event', async () => {
-      await sas.registerUploadAudioEvent(explorationId);
+    it('should register upload audio event', () => {
+      sas.registerUploadAudioEvent(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'upload_recorded_audio', {
         exploration_id: explorationId,
@@ -606,9 +602,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register Contributor Dashboard suggest event', async () => {
+    it('should register Contributor Dashboard suggest event', () => {
       const contributionType = 'Translation';
-      await sas.registerContributorDashboardSuggestEvent(contributionType);
+      sas.registerContributorDashboardSuggestEvent(contributionType);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -620,11 +616,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Contributor Dashboard submit suggestion event', async () => {
+    it('should register Contributor Dashboard submit suggestion event', () => {
       const contributionType = 'Translation';
-      await sas.registerContributorDashboardSubmitSuggestionEvent(
-        contributionType
-      );
+      sas.registerContributorDashboardSubmitSuggestionEvent(contributionType);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -636,11 +630,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Contributor Dashboard view suggestion for review event', async () => {
+    it('should register Contributor Dashboard view suggestion for review event', () => {
       const contributionType = 'Translation';
-      await sas.registerContributorDashboardViewSuggestionForReview(
-        contributionType
-      );
+      sas.registerContributorDashboardViewSuggestionForReview(contributionType);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -652,9 +644,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Contributor Dashboard accept suggestion event', async () => {
+    it('should register Contributor Dashboard accept suggestion event', () => {
       const contributionType = 'Translation';
-      await sas.registerContributorDashboardAcceptSuggestion(contributionType);
+      sas.registerContributorDashboardAcceptSuggestion(contributionType);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -666,9 +658,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Contributor Dashboard reject suggestion event', async () => {
+    it('should register Contributor Dashboard reject suggestion event', () => {
       const contributionType = 'Translation';
-      await sas.registerContributorDashboardRejectSuggestion(contributionType);
+      sas.registerContributorDashboardRejectSuggestion(contributionType);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -680,8 +672,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register active lesson usage', async () => {
-      await sas.registerLessonActiveUse();
+    it('should register active lesson usage', () => {
+      sas.registerLessonActiveUse();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -692,8 +684,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register exploration start', async () => {
-      await sas.registerStartExploration(explorationId);
+    it('should register exploration start', () => {
+      sas.registerStartExploration(explorationId);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'lesson_started', {
         exploration_id: explorationId,
@@ -701,22 +693,22 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register classroom page viewed', async () => {
+    it('should register classroom page viewed', () => {
       spyOn(
         sas as unknown as {_sendEventToGoogleAnalytics: Function},
         '_sendEventToGoogleAnalytics'
       );
 
-      await sas.registerClassroomPageViewed();
+      sas.registerClassroomPageViewed();
       expect(
         (sas as unknown as {_sendEventToGoogleAnalytics: jasmine.Spy})
           ._sendEventToGoogleAnalytics
       ).toHaveBeenCalledWith('view_classroom', {});
     });
 
-    it('should register active classroom lesson usage', async () => {
+    it('should register active classroom lesson usage', () => {
       let explorationId = '123';
-      await sas.registerClassroomLessonEngagedWithEvent(
+      sas.registerClassroomLessonEngagedWithEvent(
         'math',
         'Fractions',
         'ch1',
@@ -742,8 +734,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register community lesson completed event', async () => {
-      await sas.registerCommunityLessonCompleted('exp_id');
+    it('should register community lesson completed event', () => {
+      sas.registerCommunityLessonCompleted('exp_id');
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -755,8 +747,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register community lesson started event', async () => {
-      await sas.registerCommunityLessonStarted('exp_id');
+    it('should register community lesson started event', () => {
+      sas.registerCommunityLessonStarted('exp_id');
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -768,8 +760,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register audio play event', async () => {
-      await sas.registerStartAudioPlayedEvent('exp_id', 0);
+    it('should register audio play event', () => {
+      sas.registerStartAudioPlayedEvent('exp_id', 0);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'audio_played', {
         exploration_id: 'exp_id',
@@ -778,8 +770,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register practice session start event', async () => {
-      await sas.registerPracticeSessionStartEvent('math', 'topic', '1,2,3');
+    it('should register practice session start event', () => {
+      sas.registerPracticeSessionStartEvent('math', 'topic', '1,2,3');
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'practice_session_start', {
         classroom_name: 'math',
@@ -789,14 +781,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register practice session end event', async () => {
-      await sas.registerPracticeSessionEndEvent(
-        'math',
-        'topic',
-        '1,2,3',
-        10,
-        10
-      );
+    it('should register practice session end event', () => {
+      sas.registerPracticeSessionEndEvent('math', 'topic', '1,2,3', 10, 10);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -812,16 +798,16 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register search results viewed event', async () => {
-      await sas.registerSearchResultsViewedEvent();
+    it('should register search results viewed event', () => {
+      sas.registerSearchResultsViewedEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'view_search_results', {
         login_status: 'logged_in',
       });
     });
 
-    it('should register homepage start learning button click event', async () => {
-      await sas.registerClickHomePageStartLearningButtonEvent();
+    it('should register homepage start learning button click event', () => {
+      sas.registerClickHomePageStartLearningButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -832,9 +818,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register submitted answer', async () => {
+    it('should register submitted answer', () => {
       const answerIsCorrect = true;
-      await sas.registerAnswerSubmitted(explorationId, answerIsCorrect);
+      sas.registerAnswerSubmitted(explorationId, answerIsCorrect);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'answer_submitted', {
         exploration_id: explorationId,
@@ -843,9 +829,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register Volunteer CTA button click event', async () => {
+    it('should register Volunteer CTA button click event', () => {
       const srcElement = 'Volunteer with Oppia';
-      await sas.registerClickVolunteerCTAButtonEvent(srcElement);
+      sas.registerClickVolunteerCTAButtonEvent(srcElement);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -858,9 +844,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Partner CTA button click event', async () => {
+    it('should register Partner CTA button click event', () => {
       const srcElement = 'Partner with us at the top of the page';
-      await sas.registerClickPartnerCTAButtonEvent(srcElement);
+      sas.registerClickPartnerCTAButtonEvent(srcElement);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -873,8 +859,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Donate CTA button click event', async () => {
-      await sas.registerClickDonateCTAButtonEvent();
+    it('should register Donate CTA button click event', () => {
+      sas.registerClickDonateCTAButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'donate_cta_button_click', {
         page_path: pathname,
@@ -882,8 +868,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register Get the Android App button click event', async () => {
-      await sas.registerClickGetAndroidAppButtonEvent();
+    it('should register Get the Android App button click event', () => {
+      sas.registerClickGetAndroidAppButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -895,8 +881,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Volunteer Learn more button click event', async () => {
-      await sas.registerClickLearnMoreVolunteerButtonEvent();
+    it('should register Volunteer Learn more button click event', () => {
+      sas.registerClickLearnMoreVolunteerButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -908,8 +894,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Partner Learn more button click event', async () => {
-      await sas.registerClickLearnMorePartnerButtonEvent();
+    it('should register Partner Learn more button click event', () => {
+      sas.registerClickLearnMorePartnerButtonEvent();
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -921,9 +907,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register Navbar button click events', async () => {
+    it('should register Navbar button click events', () => {
       const buttonName = NavbarAndFooterGATrackingPages.ABOUT;
-      await sas.registerClickNavbarButtonEvent(buttonName);
+      sas.registerClickNavbarButtonEvent(buttonName);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'navbar_button_click', {
         button_name: buttonName,
@@ -932,9 +918,9 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register Footer button click events', async () => {
+    it('should register Footer button click events', () => {
       const buttonName = NavbarAndFooterGATrackingPages.ABOUT;
-      await sas.registerClickFooterButtonEvent(buttonName);
+      sas.registerClickFooterButtonEvent(buttonName);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'footer_button_click', {
         button_name: buttonName,
@@ -943,12 +929,12 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should send first time page view in month event if time difference is more than one month', async () => {
+    it('should send first time page view in month event if time difference is more than one month', () => {
       const thirtyOneDaysInMillis = 31 * 24 * 60 * 60 * 1000;
       const lastPageViewTime = new Date().getTime() - thirtyOneDaysInMillis;
       localStorageService.getLastPageViewTime.and.returnValue(lastPageViewTime);
       const testKey = 'testKey';
-      await sas.registerFirstTimePageViewEvent(testKey);
+      sas.registerFirstTimePageViewEvent(testKey);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -963,12 +949,12 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should send first time page view in week event if time difference is more than one week', async () => {
+    it('should send first time page view in week event if time difference is more than one week', () => {
       const eightDaysInMillis = 8 * 24 * 60 * 60 * 1000;
       const lastPageViewTime = new Date().getTime() - eightDaysInMillis;
       localStorageService.getLastPageViewTime.and.returnValue(lastPageViewTime);
       const testKey = 'testKey';
-      await sas.registerFirstTimePageViewEvent(testKey);
+      sas.registerFirstTimePageViewEvent(testKey);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -983,12 +969,12 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should not send any event if time difference is less than one week', async () => {
+    it('should not send any event if time difference is less than one week', () => {
       const sixDaysInMillis = 6 * 24 * 60 * 60 * 1000;
       const lastPageViewTime = new Date().getTime() - sixDaysInMillis;
       localStorageService.getLastPageViewTime.and.returnValue(lastPageViewTime);
       const testKey = 'testKey';
-      await sas.registerFirstTimePageViewEvent(testKey);
+      sas.registerFirstTimePageViewEvent(testKey);
 
       expect(gtagSpy).not.toHaveBeenCalled();
       expect(localStorageService.setLastPageViewTime).toHaveBeenCalledWith(
@@ -996,10 +982,10 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should set last page view time if lastPageViewTime is null', async () => {
+    it('should set last page view time if lastPageViewTime is null', () => {
       localStorageService.getLastPageViewTime.and.returnValue(null);
       const testKey = 'testKey';
-      await sas.registerFirstTimePageViewEvent(testKey);
+      sas.registerFirstTimePageViewEvent(testKey);
 
       expect(gtagSpy).not.toHaveBeenCalled();
       expect(localStorageService.setLastPageViewTime).toHaveBeenCalledWith(
@@ -1007,9 +993,9 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register classroom card click event', async () => {
+    it('should register classroom card click event', () => {
       const srcElement = 'Classroom card in the navigation dropdown';
-      await sas.registerClickClassroomCardEvent(srcElement, 'Math');
+      sas.registerClickClassroomCardEvent(srcElement, 'Math');
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'classroom_card_click', {
         page_path: pathname,
@@ -1019,8 +1005,8 @@ describe('Site Analytics Service', () => {
       });
     });
 
-    it('should register new classroom lesson card click event', async () => {
-      await sas.registerNewClassroomLessonEngagedWithEvent('Math', 'Addition');
+    it('should register new classroom lesson card click event', () => {
+      sas.registerNewClassroomLessonEngagedWithEvent('Math', 'Addition');
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -1033,11 +1019,8 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register in-progress classroom lesson card click event', async () => {
-      await sas.registerInProgressClassroomLessonEngagedWithEvent(
-        'Math',
-        'Addition'
-      );
+    it('should register in-progress classroom lesson card click event', () => {
+      sas.registerInProgressClassroomLessonEngagedWithEvent('Math', 'Addition');
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -1050,10 +1033,10 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register diagnostic test completion event', async () => {
+    it('should register diagnostic test completion event', () => {
       const classroomName = 'Math101';
 
-      await sas.registerDiagnosticTestCompletionEvent(classroomName);
+      sas.registerDiagnosticTestCompletionEvent(classroomName);
 
       expect(gtagSpy).toHaveBeenCalledWith(
         'event',
@@ -1065,11 +1048,11 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register recommendation accepted event with topic ID', async () => {
+    it('should register recommendation accepted event with topic ID', () => {
       const classroomName = 'Math101';
       const topicId = 'algebra-fundamentals';
 
-      await sas.registerDiagnosticTestRecommendationAcceptedEvent(
+      sas.registerDiagnosticTestRecommendationAcceptedEvent(
         classroomName,
         topicId
       );
@@ -1085,11 +1068,11 @@ describe('Site Analytics Service', () => {
       );
     });
 
-    it('should register diagnostic test started event', async () => {
+    it('should register diagnostic test started event', () => {
       const classroomName = 'Math101';
 
       expect(gtagSpy).not.toHaveBeenCalled();
-      await sas.registerDiagnosticTestStartedEvent(classroomName);
+      sas.registerDiagnosticTestStartedEvent(classroomName);
 
       expect(gtagSpy).toHaveBeenCalledWith('event', 'diagnostic_test_started', {
         classroom_name: classroomName,
