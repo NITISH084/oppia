@@ -70,7 +70,7 @@ export class SiteAnalyticsService {
 
   private _sendEventToGoogleAnalytics(
     eventName: string,
-    eventParameters: Record<string, unknown> = {}
+    eventParameters: Record<string, string | number | boolean> = {}
   ): void {
     const loginStatus = this._getLoginStatus();
 
