@@ -61,6 +61,10 @@ export class AdminPageComponent {
     return this.adminRouterService.isMiscTabOpen();
   }
 
+  isPlatformFeedbackTabOpen(): boolean {
+    return this.adminRouterService.isPlatformFeedbackTabOpen();
+  }
+
   setStatusMessage(statusMessage: string): void {
     this.statusMessage = statusMessage;
     this.changeDetectorRef.detectChanges();

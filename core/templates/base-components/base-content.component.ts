@@ -32,6 +32,8 @@ import {I18nLanguageCodeService} from 'services/i18n-language-code.service';
 import {NavigationEnd, Router} from '@angular/router';
 import './base-content.component.css';
 import {PlatformFeatureService} from 'services/platform-feature.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FeedbackModalComponent} from './feedback-modal.component';
 
 @Component({
   selector: 'oppia-base-content',
@@ -60,7 +62,8 @@ export class BaseContentComponent {
     private urlService: UrlService,
     private cookieService: CookieService,
     private i18nLanguageCodeService: I18nLanguageCodeService,
-    private router: Router
+    private router: Router,
+    private ngbModal: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -162,6 +165,12 @@ export class BaseContentComponent {
     mainContentElement.tabIndex = -1;
     mainContentElement.scrollIntoView();
     mainContentElement.focus();
+  }
+
+  openFeedbackModal(): void {
+    this.ngbModal.open(FeedbackModalComponent, {
+      backdrop: 'static',
+    });
   }
 
   hasAcknowledgedCookies(): boolean {

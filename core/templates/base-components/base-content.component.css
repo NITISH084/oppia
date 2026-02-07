@@ -84,6 +84,32 @@
   width: 168px;
 }
 
+.oppia-feedback-floater {
+  bottom: 40%;
+  position: fixed;
+  right: 0;
+  z-index: 1200;
+}
+
+.oppia-feedback-floater-button {
+  background: #2f6f64;
+  border: 1px solid #24564d;
+  border-radius: 8px 0 0 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 12px 10px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.oppia-feedback-floater-button:focus {
+  outline: 2px solid #1b4d45;
+  outline-offset: 2px;
+}
+
 @media (max-width: 1024px) {
   .oppia-cookie-banner-container .oppia-cookie-banner {
     width: 80vw;

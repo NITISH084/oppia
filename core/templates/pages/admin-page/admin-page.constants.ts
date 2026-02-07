@@ -49,6 +49,7 @@ export const AdminPageConstants = {
     PLATFORM_PARAMETERS: '#/platform-parameters',
     ROLES: '#/roles',
     MISC: '#/misc',
+    PLATFORM_FEEDBACK: '#/platform-feedback',
   },
 
   EXPLORATION_INTERACTIONS_HANDLER: '/interactions',

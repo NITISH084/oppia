@@ -1,0 +1,123 @@
+.oppia-feedback-section {
+  margin-bottom: 18px;
+}
+
+.oppia-feedback-label {
+  color: #1b1f24;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.oppia-feedback-stars {
+  display: flex;
+  gap: 6px;
+}
+
+.oppia-feedback-star-button {
+  background: transparent;
+  border: none;
+  padding: 4px;
+}
+
+.oppia-feedback-category {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.oppia-feedback-chip {
+  background: #f2f4f7;
+  border: 1px solid #e0e4ea;
+  border-radius: 999px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.oppia-feedback-chip-selected {
+  background: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+
+.oppia-feedback-textarea {
+  border: 1px solid #d0d5dd;
+  border-radius: 12px;
+  font-size: 14px;
+  padding: 12px;
+  width: 100%;
+}
+
+.oppia-feedback-textarea:focus,
+.oppia-feedback-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+  outline: none;
+}
+
+.oppia-feedback-input {
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.oppia-feedback-screenshot {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.oppia-feedback-screenshot-help {
+  color: #667085;
+  font-size: 12px;
+}
+
+.oppia-feedback-screenshot-preview {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.oppia-feedback-screenshot-preview img {
+  display: block;
+  max-height: 240px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.oppia-feedback-checkbox {
+  align-items: center;
+  color: #334155;
+  display: flex;
+  font-size: 14px;
+  gap: 8px;
+}
+
+.oppia-feedback-captcha-placeholder {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #64748b;
+  font-size: 12px;
+  padding: 14px;
+}
+
+.oppia-feedback-error-text {
+  color: #b42318;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.oppia-feedback-success-text {
+  color: #027a48;
+  font-size: 12px;
+  margin-top: 8px;
+}

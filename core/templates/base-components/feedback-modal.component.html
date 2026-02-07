@@ -1,0 +1,154 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    {{ 'I18N_FEEDBACK_MODAL_TITLE' | translate }}
+  </h5>
+  <button type="button"
+          class="close"
+          aria-label="Close"
+          (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_RATING_LABEL' | translate }}
+    </div>
+    <div class="oppia-feedback-stars" role="radiogroup" aria-label="Rating">
+      <button *ngFor="let star of ratingStars; index as idx"
+              type="button"
+              class="oppia-feedback-star-button"
+              (click)="setFeedbackRating(star)"
+              (keydown.enter)="setFeedbackRating(star)"
+              [attr.aria-checked]="feedbackRating === star"
+              role="radio"
+              [attr.aria-label]="'Rate ' + (idx + 1) + ' stars'">
+        <span [ngClass]="feedbackRating >= star ? 'fas fa-star oppia-rating-star oppia-rating-star-active' : 'far fa-star oppia-rating-star'">
+          <span class="oppia-icon-accessibility-label">
+            Rate this {{ idx + 1 }} stars
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_CATEGORY_LABEL' | translate }}
+    </div>
+    <div class="oppia-feedback-category">
+      <button type="button"
+              class="oppia-feedback-chip"
+              [class.oppia-feedback-chip-selected]="feedbackCategory === 'platform'"
+              (click)="setFeedbackCategory('platform')">
+        {{ 'I18N_FEEDBACK_CATEGORY_PLATFORM' | translate }}
+      </button>
+      <button type="button"
+              class="oppia-feedback-chip"
+              [class.oppia-feedback-chip-selected]="feedbackCategory === 'lesson'"
+              (click)="setFeedbackCategory('lesson')">
+        {{ 'I18N_FEEDBACK_CATEGORY_LESSON' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <label class="oppia-feedback-label" for="oppia-feedback-description">
+      {{ 'I18N_FEEDBACK_DESCRIPTION_LABEL' | translate }}
+    </label>
+    <textarea id="oppia-feedback-description"
+              class="oppia-feedback-textarea"
+              rows="4"
+              [ngModel]="feedbackDescription"
+              (ngModelChange)="feedbackDescription = $event"
+              [placeholder]="'I18N_FEEDBACK_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+    <div *ngIf="feedbackDescriptionError" class="oppia-feedback-error-text">
+      {{ 'I18N_FEEDBACK_DESCRIPTION_ERROR' | translate }}
+    </div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_SCREENSHOT_LABEL' | translate }}
+    </div>
+    <div class="oppia-feedback-screenshot">
+      <input type="file"
+             accept="image/png,image/jpeg"
+             class="form-control"
+             (change)="onScreenshotFileChange($event)">
+      <div class="oppia-feedback-screenshot-help">
+        {{ 'I18N_FEEDBACK_SCREENSHOT_HELP' | translate }}
+      </div>
+    </div>
+    <div *ngIf="screenshotFileError" class="oppia-feedback-error-text">
+      {{ screenshotFileError | translate }}
+    </div>
+    <div *ngIf="screenshotPreviewUrl" class="oppia-feedback-screenshot-preview">
+      <img [src]="screenshotPreviewUrl"
+           alt="Screenshot preview">
+    </div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <label class="oppia-feedback-checkbox">
+      <input type="checkbox"
+             [checked]="allowContact"
+             (change)="allowContact = !allowContact">
+      {{ 'I18N_FEEDBACK_CONTACT_OPTIN' | translate }}
+    </label>
+    <input *ngIf="allowContact"
+           class="oppia-feedback-input"
+           type="email"
+           [ngModel]="feedbackContactEmail"
+           (ngModelChange)="feedbackContactEmail = $event"
+           [placeholder]="'I18N_FEEDBACK_CONTACT_PLACEHOLDER' | translate">
+  </div>
+
+  <div class="oppia-feedback-section">
+    <label class="oppia-feedback-checkbox">
+      <input type="checkbox"
+             [checked]="includeSessionInfo"
+             (change)="includeSessionInfo = !includeSessionInfo">
+      {{ 'I18N_FEEDBACK_SESSION_OPTIN' | translate }}
+    </label>
+  </div>
+
+  <div *ngIf="!isUserLoggedIn" class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_CAPTCHA_LABEL' | translate }}
+    </div>
+    <input class="oppia-feedback-input"
+           type="text"
+           [ngModel]="captchaToken"
+           (ngModelChange)="captchaToken = $event"
+           [placeholder]="'I18N_FEEDBACK_CAPTCHA_PLACEHOLDER' | translate">
+    <div class="oppia-feedback-captcha-placeholder">
+      {{ 'I18N_FEEDBACK_CAPTCHA_HELP' | translate }}
+    </div>
+  </div>
+
+  <div *ngIf="submitError" class="oppia-feedback-error-text">
+    <span *ngIf="submitErrorIsI18nKey">
+      {{ submitError | translate }}
+    </span>
+    <span *ngIf="!submitErrorIsI18nKey">
+      {{ submitError }}
+    </span>
+  </div>
+  <div *ngIf="submitSuccess" class="oppia-feedback-success-text">
+    {{ 'I18N_FEEDBACK_SUBMIT_SUCCESS' | translate }}
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button"
+          class="btn btn-secondary"
+          (click)="close()">
+    {{ 'I18N_FEEDBACK_CANCEL' | translate }}
+  </button>
+  <button type="button"
+          class="btn btn-primary"
+          [disabled]="isSubmittingFeedback"
+          (click)="submitFeedback()">
+    {{ 'I18N_FEEDBACK_SUBMIT' | translate }}
+  </button>
+</div>

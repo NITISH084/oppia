@@ -1,0 +1,96 @@
+<div class="oppia-admin-page-card oppia-page-card oppia-long-text oppia-platform-feedback-tab">
+  <h3>Platform Feedback</h3>
+
+  <div class="oppia-feedback-filters">
+    <div class="oppia-feedback-filter">
+      <label>Category</label>
+      <select class="form-control" [(ngModel)]="categoryFilter">
+        <option value="">All</option>
+        <option value="platform">Platform</option>
+        <option value="lesson">Lesson</option>
+      </select>
+    </div>
+    <div class="oppia-feedback-filter">
+      <label>Status</label>
+      <select class="form-control" [(ngModel)]="statusFilter">
+        <option value="">All</option>
+        <option value="open">Open</option>
+        <option value="dismissed">Dismissed</option>
+        <option value="deleted">Deleted</option>
+      </select>
+    </div>
+    <div class="oppia-feedback-filter">
+      <label>Date from</label>
+      <input type="date" class="form-control" [(ngModel)]="dateFrom">
+    </div>
+    <div class="oppia-feedback-filter">
+      <label>Date to</label>
+      <input type="date" class="form-control" [(ngModel)]="dateTo">
+    </div>
+    <button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="oppia-feedback-error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="oppia-feedback-grid">
+    <div class="oppia-feedback-list">
+      <div class="oppia-feedback-list-item"
+           *ngFor="let item of filteredItems()"
+           [class.oppia-feedback-list-item-active]="selectedFeedback?.id === item.id"
+           (click)="selectFeedback(item)">
+        <div class="oppia-feedback-list-header">
+          <span class="oppia-feedback-badge">{{ item.category }}</span>
+          <span class="oppia-feedback-status">{{ item.status }}</span>
+        </div>
+        <div class="oppia-feedback-list-title">{{ item.description }}</div>
+        <div class="oppia-feedback-list-meta">
+          {{ formatDate(item.created_on_msecs) }}
+        </div>
+      </div>
+      <button *ngIf="hasMore"
+              class="btn btn-secondary oppia-feedback-load-more"
+              (click)="loadFeedbackPage(false)">
+        Load more
+      </button>
+      <div *ngIf="!isLoading && filteredItems().length === 0" class="oppia-feedback-empty">
+        No feedback found.
+      </div>
+    </div>
+
+    <div class="oppia-feedback-detail" *ngIf="selectedFeedback">
+      <div class="oppia-feedback-detail-header">
+        <div>
+          <h4>Feedback Details</h4>
+          <div class="oppia-feedback-detail-meta">
+            {{ formatDate(selectedFeedback.created_on_msecs) }}
+          </div>
+        </div>
+        <div class="oppia-feedback-detail-actions">
+          <button class="btn btn-outline-secondary" (click)="updateStatus('dismissed')">Dismiss</button>
+          <button class="btn btn-outline-secondary" (click)="updateStatus('open')">Reopen</button>
+          <button class="btn btn-danger" (click)="deleteFeedback()">Delete</button>
+        </div>
+      </div>
+      <p><strong>Category:</strong> {{ selectedFeedback.category }}</p>
+      <p><strong>Status:</strong> {{ selectedFeedback.status }}</p>
+      <p><strong>Rating:</strong> {{ selectedFeedback.rating || 'N/A' }}</p>
+      <p><strong>Language:</strong> {{ selectedFeedback.language_code }}</p>
+      <p><strong>Page URL:</strong> {{ selectedFeedback.page_url }}</p>
+      <p><strong>Description:</strong></p>
+      <p class="oppia-feedback-description">{{ selectedFeedback.description }}</p>
+      <p *ngIf="selectedFeedback.contact_email"><strong>Contact:</strong> {{ selectedFeedback.contact_email }}</p>
+      <div *ngIf="selectedFeedback.session_info">
+        <strong>Session info:</strong>
+        <pre>{{ selectedFeedback.session_info | json }}</pre>
+      </div>
+      <div *ngIf="selectedFeedback.screenshot_filename">
+        <strong>Screenshot:</strong>
+        <div class="oppia-feedback-screenshot-placeholder">
+          {{ selectedFeedback.screenshot_filename }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

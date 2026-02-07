@@ -140,6 +140,16 @@
                   Misc
                 </a>
               </li>
+              <li class="nav-item oppia-clickable-navbar-element float-end">
+                <a class="nav-link oppia-navbar-tab"
+                   [href]="ADMIN_TAB_URLS.PLATFORM_FEEDBACK"
+                   [ngClass]="{'active': isPlatformFeedbackTabOpen()}"
+                   ngbTooltip="Platform Feedback"
+                   placement="bottom"
+                   container="body">
+                  Feedback
+                </a>
+              </li>
             </ul>
           </li>
           <li>

@@ -26,10 +26,13 @@
   <oppia-admin-misc-tab *ngIf="isMiscTabOpen()"
                         (setStatusMessage)="setStatusMessage($event)">
   </oppia-admin-misc-tab>
+
+  <oppia-admin-platform-feedback-tab *ngIf="isPlatformFeedbackTabOpen()">
+  </oppia-admin-platform-feedback-tab>
 </div>
 
 <div *ngIf="inDevMode" class="oppia-dev-mode">
-  Dev Mode
+  Device Mode
 </div>
 
 <style>

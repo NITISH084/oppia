@@ -84,4 +84,14 @@ export class AdminRouterService {
   isMiscTabOpen(): boolean {
     return this.currentTabHash === AdminPageConstants.ADMIN_TAB_URLS.MISC;
   }
+
+  /**
+   * @returns {boolean} Whether the platform feedback tab is open.
+   */
+  isPlatformFeedbackTabOpen(): boolean {
+    return (
+      this.currentTabHash ===
+      AdminPageConstants.ADMIN_TAB_URLS.PLATFORM_FEEDBACK
+    );
+  }
 }

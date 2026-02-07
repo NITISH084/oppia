@@ -72,6 +72,10 @@ export class AdminNavbarComponent implements OnInit {
     return this.adminRouterService.isMiscTabOpen();
   }
 
+  isPlatformFeedbackTabOpen(): boolean {
+    return this.adminRouterService.isPlatformFeedbackTabOpen();
+  }
+
   activateProfileDropdown(): boolean {
     return (this.profileDropdownIsActive = true);
   }

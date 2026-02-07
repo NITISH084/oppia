@@ -37,6 +37,7 @@ import {OppiaAdminProdModeActivitiesTabComponent} from './activities-tab/admin-p
 import {AdminMiscTabComponent} from './misc-tab/admin-misc-tab.component';
 import {AdminRolesTabComponent} from './roles-tab/admin-roles-tab.component';
 import {AdminPageComponent} from './admin-page.component';
+import {AdminPlatformFeedbackTabComponent} from './platform-feedback-tab/admin-platform-feedback-tab.component';
 
 @NgModule({
   imports: [
@@ -63,6 +64,7 @@ import {AdminPageComponent} from './admin-page.component';
     AdminDevModeActivitiesTabComponent,
     TopicManagerRoleEditorModalComponent,
     AdminPlatformParametersTabComponent,
+    AdminPlatformFeedbackTabComponent,
     AdminPageRootComponent,
     TranslationCoordinatorRoleEditorModalComponent,
   ],
@@ -73,6 +75,7 @@ import {AdminPageComponent} from './admin-page.component';
     AdminPageComponent,
     AdminRolesTabComponent,
     AdminDevModeActivitiesTabComponent,
+    AdminPlatformFeedbackTabComponent,
     TopicManagerRoleEditorModalComponent,
     TranslationCoordinatorRoleEditorModalComponent,
   ],

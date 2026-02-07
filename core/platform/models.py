@@ -194,6 +194,12 @@ class _Gae(Platform):
                 )
 
                 returned_models.append(opportunity_models)
+            elif name == Names.PLATFORM_FEEDBACK:
+                from core.storage.platform_feedback import (
+                    gae_models as platform_feedback_models,
+                )
+
+                returned_models.append(platform_feedback_models)
             elif name == Names.QUESTION:
                 from core.storage.question import gae_models as question_models
 

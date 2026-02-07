@@ -57,6 +57,7 @@ from core.controllers import (
     moderator,
     oppia_root,
     pages,
+    platform_feedback,
     practice_sessions,
     profile,
     question_editor,
@@ -1037,6 +1038,26 @@ URLS = [
     get_redirect_route(
         r'%s/<exploration_id>' % feconf.FEEDBACK_STATS_URL_PREFIX,
         feedback.FeedbackStatsHandler,
+    ),
+    get_redirect_route(
+        r'%s' % feconf.PLATFORM_FEEDBACK_SUBMIT_URL,
+        platform_feedback.PlatformFeedbackSubmitHandler,
+    ),
+    get_redirect_route(
+        r'%s' % feconf.PLATFORM_FEEDBACK_LIST_URL,
+        platform_feedback.PlatformFeedbackListHandler,
+    ),
+    get_redirect_route(
+        r'%s/<feedback_id>' % feconf.PLATFORM_FEEDBACK_DETAIL_URL,
+        platform_feedback.PlatformFeedbackDetailHandler,
+    ),
+    get_redirect_route(
+        r'%s/<feedback_id>' % feconf.PLATFORM_FEEDBACK_UPDATE_STATUS_URL,
+        platform_feedback.PlatformFeedbackUpdateStatusHandler,
+    ),
+    get_redirect_route(
+        r'%s/<feedback_id>' % feconf.PLATFORM_FEEDBACK_DELETE_URL,
+        platform_feedback.PlatformFeedbackDeleteHandler,
     ),
     get_redirect_route(
         r'%s/' % feconf.SUGGESTION_URL_PREFIX, suggestion.SuggestionHandler

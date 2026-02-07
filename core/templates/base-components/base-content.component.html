@@ -121,6 +121,15 @@
     </div>
   </div>
 
+  <div *ngIf="!iframed" class="oppia-feedback-floater">
+    <button class="oppia-feedback-floater-button"
+            type="button"
+            (click)="openFeedbackModal()"
+            aria-label="Open feedback form">
+      {{ 'I18N_FEEDBACK_FLOATING_BUTTON' | translate }}
+    </button>
+  </div>
+
   <div *ngIf="DEV_MODE" class="oppia-dev-mode e2e-test-dev-mode">
     Dev Mode
   </div>

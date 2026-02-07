@@ -35,6 +35,7 @@ import {BackgroundMaskService} from 'services/stateful/background-mask.service';
 import {MockTranslatePipe} from 'tests/unit-test-utils';
 import {BaseContentComponent} from './base-content.component';
 import {PlatformFeatureService} from 'services/platform-feature.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 class MockPlatformFeatureService {
   status = {
@@ -116,6 +117,14 @@ describe('Base Content Component', () => {
     }
   }
 
+  class MockNgbModal {
+    open(): {result: Promise<void>} {
+      return {
+        result: Promise.reject(),
+      };
+    }
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [CookieModule.forRoot()],
@@ -147,6 +156,10 @@ describe('Base Content Component', () => {
         {
           provide: PageTitleService,
           useClass: MockPageTitleService,
+        },
+        {
+          provide: NgbModal,
+          useClass: MockNgbModal,
         },
         SidebarStatusService,
       ],
@@ -205,6 +218,13 @@ describe('Base Content Component', () => {
     spyOn(urlService, 'getPathname').and.returnValue('/lesson/123');
     const result = componentInstance.isNewLessonPlayerEnabled();
     expect(result).toBe(true);
+  });
+
+  it('should open feedback modal', () => {
+    const ngbModal = TestBed.inject(NgbModal);
+    const openSpy = spyOn(ngbModal, 'open').and.callThrough();
+    componentInstance.openFeedbackModal();
+    expect(openSpy).toHaveBeenCalled();
   });
 
   it('should get sidebar status', () => {
