@@ -89,6 +89,9 @@
         <strong>Screenshot:</strong>
         <div class="oppia-feedback-screenshot-placeholder">
           {{ selectedFeedback.screenshot_filename }}
+          <div *ngIf="selectedFeedback.screenshot_entity_id">
+            Storage id: {{ selectedFeedback.screenshot_entity_id }}
+          </div>
         </div>
       </div>
     </div>

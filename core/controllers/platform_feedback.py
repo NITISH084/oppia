@@ -19,7 +19,11 @@ from __future__ import annotations
 from core import feconf
 from core.controllers import acl_decorators, base
 from core.domain import html_cleaner
+from core.domain import image_validation_services
 from core.domain import platform_feedback_services
+from core.domain import fs_services
+from core import utils
+import uuid
 
 from typing import Dict, Optional, TypedDict
 
@@ -33,6 +37,7 @@ class PlatformFeedbackSubmitPayloadDict(TypedDict):
     language_code: str
     rating: Optional[int]
     screenshot_filename: Optional[str]
+    screenshot_entity_id: Optional[str]
     contact_email: Optional[str]
     allow_contact: Optional[bool]
     include_session_info: Optional[bool]
@@ -59,6 +64,10 @@ class PlatformFeedbackSubmitHandler(
             'language_code': {'schema': {'type': 'basestring'}},
             'rating': {'schema': {'type': 'int'}, 'default_value': None},
             'screenshot_filename': {
+                'schema': {'type': 'basestring'},
+                'default_value': None,
+            },
+            'screenshot_entity_id': {
                 'schema': {'type': 'basestring'},
                 'default_value': None,
             },
@@ -128,6 +137,9 @@ class PlatformFeedbackSubmitHandler(
         screenshot_filename = (
             payload.get('screenshot_filename') or ''
         ).strip() or None
+        screenshot_entity_id = (
+            payload.get('screenshot_entity_id') or ''
+        ).strip() or None
 
         sanitized_description = html_cleaner.strip_html_tags(description)
         feedback_id = platform_feedback_services.create_platform_feedback(
@@ -137,11 +149,65 @@ class PlatformFeedbackSubmitHandler(
             language_code=language_code,
             rating=rating,
             screenshot_filename=screenshot_filename,
+            screenshot_entity_id=screenshot_entity_id,
             contact_email=contact_email or None,
             session_info=session_info,
             user_id=self.user_id,
         )
         self.render_json({'feedback_id': feedback_id})
+
+
+class PlatformFeedbackImageUploadHandler(
+    base.BaseHandler[Dict[str, str], Dict[str, str]]
+):
+    """Handles screenshot uploads for platform feedback."""
+
+    REQUIRE_PAYLOAD_CSRF_CHECK = False
+    POST_HANDLER_ERROR_RETURN_TYPE = feconf.HANDLER_TYPE_JSON
+    URL_PATH_ARGS_SCHEMAS: Dict[str, str] = {}
+    HANDLER_ARGS_SCHEMAS = {
+        'POST': {
+            'image': {'schema': {'type': 'basestring'}},
+            'filename': {
+                'schema': {
+                    'type': 'basestring',
+                    'validators': [
+                        {
+                            'id': 'is_regex_matched',
+                            'regex_pattern': (
+                                utils.get_image_filename_regex_pattern()
+                            ),
+                        }
+                    ],
+                }
+            },
+        }
+    }
+
+    def post(self) -> None:
+        """Uploads a screenshot and returns its storage identifiers."""
+        assert self.normalized_request is not None
+        assert self.normalized_payload is not None
+        raw = self.normalized_request['image']
+        filename = self.normalized_payload['filename']
+
+        try:
+            image_validation_services.validate_image_and_filename(
+                raw, filename, feconf.ENTITY_TYPE_PLATFORM_FEEDBACK
+            )
+        except utils.ValidationError as e:
+            raise self.InvalidInputException(e)
+
+        # Use a unique storage id to avoid collisions between uploads.
+        entity_id = utils.convert_to_hash(uuid.uuid4().hex, 22)
+        fs_services.validate_and_save_image(
+            raw,
+            filename,
+            'image',
+            feconf.ENTITY_TYPE_PLATFORM_FEEDBACK,
+            entity_id,
+        )
+        self.render_json({'filename': filename, 'entity_id': entity_id})
 
 
 class PlatformFeedbackListHandlerNormalizedRequestDict(TypedDict):

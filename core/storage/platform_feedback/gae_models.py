@@ -99,6 +99,10 @@ class PlatformFeedbackModel(base_models.BaseModel):
     screenshot_filename = datastore_services.StringProperty(
         required=False, indexed=True
     )
+    # Optional storage entity id for screenshot; None if not attached.
+    screenshot_entity_id = datastore_services.StringProperty(
+        required=False, indexed=True
+    )
     # Optional contact email if user opted in.
     contact_email = datastore_services.StringProperty(
         required=False, indexed=True
@@ -133,6 +137,7 @@ class PlatformFeedbackModel(base_models.BaseModel):
                 'language_code': base_models.EXPORT_POLICY.EXPORTED,
                 'status': base_models.EXPORT_POLICY.EXPORTED,
                 'screenshot_filename': base_models.EXPORT_POLICY.EXPORTED,
+                'screenshot_entity_id': base_models.EXPORT_POLICY.EXPORTED,
                 'contact_email': base_models.EXPORT_POLICY.EXPORTED,
                 'session_info': base_models.EXPORT_POLICY.EXPORTED,
                 'user_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
@@ -226,6 +231,7 @@ class PlatformFeedbackModel(base_models.BaseModel):
         language_code: str,
         rating: Optional[int] = None,
         screenshot_filename: Optional[str] = None,
+        screenshot_entity_id: Optional[str] = None,
         contact_email: Optional[str] = None,
         session_info: Optional[Dict[str, Optional[str]]] = None,
         user_id: Optional[str] = None,
@@ -239,6 +245,7 @@ class PlatformFeedbackModel(base_models.BaseModel):
             language_code: str. Language code.
             rating: int|None. Optional 1-5 rating.
             screenshot_filename: str|None. Optional screenshot blob key/filename.
+            screenshot_entity_id: str|None. Optional screenshot entity id.
             contact_email: str|None. Optional contact email.
             session_info: dict|None. Optional session/debug info.
             user_id: str|None. Optional user id if logged in.
@@ -256,6 +263,7 @@ class PlatformFeedbackModel(base_models.BaseModel):
             status=STATUS_OPEN,
             rating=rating,
             screenshot_filename=screenshot_filename,
+            screenshot_entity_id=screenshot_entity_id,
             contact_email=contact_email,
             session_info=session_info,
             user_id=user_id,

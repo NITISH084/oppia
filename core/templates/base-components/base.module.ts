@@ -38,7 +38,6 @@ import {LoadingMessageComponent} from './loading-message.component';
 import {OppiaFooterComponent} from './oppia-footer.component';
 import {ThanksForSubscribingModalComponent} from './thanks-for-subscribing-modal.component';
 import {WarningsAndAlertsComponent} from './warnings-and-alerts.component';
-import {FeedbackModalComponent} from './feedback-modal.component';
 import {ClassroomNavigationLinksComponent} from 'components/common-layout-directives/common-elements/classroom-navigation-links.component';
 import {LanguageBannerComponent} from 'components/language-banner/language-banner.component';
 
@@ -89,7 +88,6 @@ import {RouterModule} from '@angular/router';
     SocialButtonsComponent,
     FooterDonateVolunteerComponent,
     ThanksForSubscribingModalComponent,
-    FeedbackModalComponent,
     TopNavigationBarComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
@@ -109,7 +107,6 @@ import {RouterModule} from '@angular/router';
     SocialButtonsComponent,
     TopNavigationBarComponent,
     ThanksForSubscribingModalComponent,
-    FeedbackModalComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
   ],

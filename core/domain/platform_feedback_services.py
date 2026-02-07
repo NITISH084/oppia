@@ -39,6 +39,7 @@ def create_platform_feedback(
     language_code: str,
     rating: Optional[int] = None,
     screenshot_filename: Optional[str] = None,
+    screenshot_entity_id: Optional[str] = None,
     contact_email: Optional[str] = None,
     session_info: Optional[dict] = None,
     user_id: Optional[str] = None,
@@ -52,6 +53,7 @@ def create_platform_feedback(
         language_code: Language code.
         rating: Optional 1-5 rating.
         screenshot_filename: Optional screenshot blob key.
+        screenshot_entity_id: Optional screenshot entity id.
         contact_email: Optional contact email.
         session_info: Optional session/debug info dict.
         user_id: Optional user id if logged in.
@@ -66,6 +68,7 @@ def create_platform_feedback(
         language_code=language_code,
         rating=rating,
         screenshot_filename=screenshot_filename,
+        screenshot_entity_id=screenshot_entity_id,
         contact_email=contact_email,
         session_info=session_info,
         user_id=user_id,
@@ -167,6 +170,7 @@ def _model_to_domain(
         created_on_msecs=created_on_msecs,
         rating=model.rating,
         screenshot_filename=model.screenshot_filename,
+        screenshot_entity_id=model.screenshot_entity_id,
         contact_email=model.contact_email,
         session_info=model.session_info,
         user_id=model.user_id,

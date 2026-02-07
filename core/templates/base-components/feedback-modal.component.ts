@@ -53,6 +53,7 @@ export class FeedbackModalComponent {
   ratingStars: number[] = [1, 2, 3, 4, 5];
   feedbackRating: number = 0;
   feedbackCategory: 'platform' | 'lesson' = 'platform';
+  feedbackCategoryChoice: 'lesson' | 'platform' | 'unsure' = 'platform';
   allowContact: boolean = false;
   includeSessionInfo: boolean = false;
   feedbackDescription: string = '';
@@ -64,9 +65,12 @@ export class FeedbackModalComponent {
   submitSuccess: boolean = false;
   isUserLoggedIn: boolean = false;
   captchaToken: string = '';
+  captchaChecked: boolean = false;
   screenshotPreviewUrl: string | null = null;
   screenshotFilename: string | null = null;
+  screenshotEntityId: string | null = null;
   screenshotFileError: string | null = null;
+  isUploadingScreenshot: boolean = false;
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -100,6 +104,18 @@ export class FeedbackModalComponent {
     this.feedbackCategory = category;
   }
 
+  setFeedbackCategoryChoice(choice: 'lesson' | 'platform' | 'unsure'): void {
+    this.feedbackCategoryChoice = choice;
+    this.feedbackCategory = choice === 'lesson' ? 'lesson' : 'platform';
+  }
+
+  private buildScreenshotFilename(file: File): string {
+    const extension = file.type === 'image/png' ? 'png' : 'jpg';
+    const timestamp = Date.now();
+    const randomSuffix = Math.random().toString(36).slice(2, 10);
+    return `platform_feedback_${timestamp}_${randomSuffix}.${extension}`;
+  }
+
   onScreenshotFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) {
@@ -111,6 +127,7 @@ export class FeedbackModalComponent {
       this.screenshotFileError = 'I18N_FEEDBACK_SCREENSHOT_FILETYPE_ERROR';
       this.screenshotPreviewUrl = null;
       this.screenshotFilename = null;
+      this.screenshotEntityId = null;
       return;
     }
     const maxBytes = 100 * 1024;
@@ -118,15 +135,32 @@ export class FeedbackModalComponent {
       this.screenshotFileError = 'I18N_FEEDBACK_SCREENSHOT_SIZE_ERROR';
       this.screenshotPreviewUrl = null;
       this.screenshotFilename = null;
+      this.screenshotEntityId = null;
       return;
     }
     this.screenshotFileError = null;
-    this.screenshotFilename = file.name;
+    this.isUploadingScreenshot = true;
     const reader = new FileReader();
     reader.onload = () => {
       this.screenshotPreviewUrl = String(reader.result);
     };
     reader.readAsDataURL(file);
+
+    const filename = this.buildScreenshotFilename(file);
+    this.platformFeedbackBackendApiService
+      .uploadScreenshotAsync(file, filename)
+      .then(response => {
+        this.screenshotFilename = response.filename;
+        this.screenshotEntityId = response.entity_id;
+      })
+      .catch(() => {
+        this.screenshotFileError = 'I18N_FEEDBACK_SCREENSHOT_UPLOAD_ERROR';
+        this.screenshotFilename = null;
+        this.screenshotEntityId = null;
+      })
+      .finally(() => {
+        this.isUploadingScreenshot = false;
+      });
   }
 
   private buildSessionInfo(): SessionInfo {
@@ -170,6 +204,7 @@ export class FeedbackModalComponent {
     const sessionInfo = this.includeSessionInfo
       ? this.buildSessionInfo()
       : null;
+    console.log(sessionInfo);
     const rating = this.feedbackRating > 0 ? this.feedbackRating : null;
 
     this.platformFeedbackBackendApiService
@@ -181,11 +216,16 @@ export class FeedbackModalComponent {
           this.i18nLanguageCodeService.getCurrentI18nLanguageCode(),
         rating: rating,
         screenshot_filename: this.screenshotFilename,
+        screenshot_entity_id: this.screenshotEntityId,
         contact_email: this.allowContact ? this.feedbackContactEmail : null,
         allow_contact: this.allowContact,
         include_session_info: this.includeSessionInfo,
         session_info: sessionInfo,
-        captcha_token: this.isUserLoggedIn ? null : this.captchaToken || null,
+        captcha_token: this.isUserLoggedIn
+          ? null
+          : this.captchaChecked
+            ? this.captchaToken || 'mock'
+            : null,
       })
       .then(() => {
         this.submitSuccess = true;
@@ -215,6 +255,7 @@ export class FeedbackModalComponent {
     this.captchaToken = '';
     this.screenshotPreviewUrl = null;
     this.screenshotFilename = null;
+    this.screenshotEntityId = null;
     this.screenshotFileError = null;
   }
 }

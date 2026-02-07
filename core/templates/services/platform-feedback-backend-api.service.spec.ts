@@ -50,6 +50,7 @@ describe('Platform feedback backend api service', () => {
       language_code: 'en',
       rating: 4,
       screenshot_filename: null,
+      screenshot_entity_id: null,
       contact_email: null,
       allow_contact: false,
       include_session_info: false,
@@ -69,6 +70,27 @@ describe('Platform feedback backend api service', () => {
     flushMicrotasks();
 
     expect(onSuccess).toHaveBeenCalledWith({feedback_id: 'feedback_id'});
+  }));
+
+  it('should upload screenshots', fakeAsync(() => {
+    let onSuccess = jasmine.createSpy('onSuccess');
+    const file = new Blob(['data'], {type: 'image/png'});
+
+    platformFeedbackBackendApiService
+      .uploadScreenshotAsync(file, 'screenshot.png')
+      .then(onSuccess);
+
+    const req = httpTestingController.expectOne(
+      '/platform_feedback_image_upload_handler'
+    );
+    expect(req.request.method).toEqual('POST');
+    req.flush({filename: 'screenshot.png', entity_id: 'entity_123'});
+    flushMicrotasks();
+
+    expect(onSuccess).toHaveBeenCalledWith({
+      filename: 'screenshot.png',
+      entity_id: 'entity_123',
+    });
   }));
 
   it('should fetch feedback list', fakeAsync(() => {

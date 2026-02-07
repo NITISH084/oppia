@@ -26,6 +26,7 @@ export interface PlatformFeedbackSubmitPayload {
   language_code: string;
   rating: number | null;
   screenshot_filename: string | null;
+  screenshot_entity_id: string | null;
   contact_email: string | null;
   allow_contact: boolean;
   include_session_info: boolean;
@@ -65,6 +66,7 @@ export interface PlatformFeedbackListItem {
   created_on_msecs: number;
   rating: number | null;
   screenshot_filename: string | null;
+  screenshot_entity_id: string | null;
   contact_email: string | null;
   session_info: object | null;
 }
@@ -81,6 +83,7 @@ export interface PlatformFeedbackListResponse {
 export class PlatformFeedbackBackendApiService {
   private submitUrl = '/platform_feedback_handler';
   private listUrl = '/platform_feedback_list_handler';
+  private uploadUrl = '/platform_feedback_image_upload_handler';
   private updateStatusUrlTemplate =
     '/platform_feedback_update_status_handler/<feedback_id>';
   private deleteUrlTemplate = '/platform_feedback_delete_handler/<feedback_id>';
@@ -100,6 +103,18 @@ export class PlatformFeedbackBackendApiService {
       }
       throw error;
     }
+  }
+
+  async uploadScreenshotAsync(
+    imageFile: Blob,
+    filename: string
+  ): Promise<{filename: string; entity_id: string}> {
+    const form = new FormData();
+    form.append('image', imageFile);
+    form.append('payload', JSON.stringify({filename: filename}));
+    return this.http
+      .post<{filename: string; entity_id: string}>(this.uploadUrl, form)
+      .toPromise();
   }
 
   async fetchFeedbackListAsync(

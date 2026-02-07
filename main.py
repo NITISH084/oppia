@@ -1044,6 +1044,10 @@ URLS = [
         platform_feedback.PlatformFeedbackSubmitHandler,
     ),
     get_redirect_route(
+        r'%s' % feconf.PLATFORM_FEEDBACK_IMAGE_UPLOAD_URL,
+        platform_feedback.PlatformFeedbackImageUploadHandler,
+    ),
+    get_redirect_route(
         r'%s' % feconf.PLATFORM_FEEDBACK_LIST_URL,
         platform_feedback.PlatformFeedbackListHandler,
     ),

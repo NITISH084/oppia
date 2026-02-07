@@ -117,6 +117,7 @@ import {EndChapterConfettiComponent} from 'pages/exploration-player-page/current
 import {RatingsAndRecommendationsComponent} from 'pages/exploration-player-page/current-lesson-player/learner-experience/ratings-and-recommendations.component';
 import {LearnerAnswerInfoCard} from 'pages/exploration-player-page/current-lesson-player/learner-experience/learner-answer-info-card.component';
 import {FeedbackPopupComponent} from 'pages/exploration-player-page/current-lesson-player/layout-directives/feedback-popup.component';
+import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
 import {ConfirmQuestionExitModalComponent} from './question-directives/modal-templates/confirm-question-exit-modal.component';
 import {QuestionsOpportunitiesSelectDifficultyModalComponent} from 'pages/topic-editor-page/modal-templates/questions-opportunities-select-difficulty-modal.component';
 import {QuestionsListSelectSkillAndDifficultyModalComponent} from 'pages/topic-editor-page/modal-templates/questions-list-select-skill-and-difficulty-modal.component';
@@ -315,6 +316,7 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ExplorationSummaryTileComponent,
     FilteredChoicesFieldComponent,
     FeedbackPopupComponent,
+    FeedbackModalComponent,
     PracticeTabComponent,
     SaveProgressModalComponent,
     CollectionSummaryTileComponent,
@@ -480,6 +482,7 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ExplorationSummaryTileComponent,
     FilteredChoicesFieldComponent,
     FeedbackPopupComponent,
+    FeedbackModalComponent,
     HintSolutionAndConceptCardDisplayComponent,
     MultiSelectionFieldComponent,
     PracticeTabComponent,

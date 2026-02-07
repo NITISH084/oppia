@@ -33,6 +33,7 @@ class PlatformFeedback:
         created_on_msecs: float,
         rating: Optional[int] = None,
         screenshot_filename: Optional[str] = None,
+        screenshot_entity_id: Optional[str] = None,
         contact_email: Optional[str] = None,
         session_info: Optional[Dict[str, Optional[str]]] = None,
         user_id: Optional[str] = None,
@@ -46,6 +47,7 @@ class PlatformFeedback:
         self.created_on_msecs = created_on_msecs
         self.rating = rating
         self.screenshot_filename = screenshot_filename
+        self.screenshot_entity_id = screenshot_entity_id
         self.contact_email = contact_email
         self.session_info = session_info
         self.user_id = user_id
@@ -62,6 +64,7 @@ class PlatformFeedback:
             'created_on_msecs': self.created_on_msecs,
             'rating': self.rating,
             'screenshot_filename': self.screenshot_filename,
+            'screenshot_entity_id': self.screenshot_entity_id,
             'contact_email': self.contact_email,
             'session_info': self.session_info,
         }
