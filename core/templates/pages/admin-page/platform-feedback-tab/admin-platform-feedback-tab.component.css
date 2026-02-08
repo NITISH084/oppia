@@ -9,6 +9,18 @@
   margin-bottom: 16px;
 }
 
+.oppia-feedback-pagination {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+.oppia-feedback-pagination-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .oppia-feedback-filter {
   min-width: 160px;
 }
@@ -53,10 +65,32 @@
   text-transform: capitalize;
 }
 
+.oppia-feedback-badge-lesson {
+  background: #e8f1ff;
+  color: #2f4f9e;
+}
+
+.oppia-feedback-badge-platform {
+  background: #e0f2f1;
+  color: #2f6f64;
+}
+
 .oppia-feedback-status {
   color: #666;
   font-size: 12px;
   text-transform: capitalize;
+}
+
+.oppia-feedback-status-open {
+  color: #1f7a1f;
+}
+
+.oppia-feedback-status-dismissed {
+  color: #946200;
+}
+
+.oppia-feedback-status-deleted {
+  color: #a93232;
 }
 
 .oppia-feedback-list-title {

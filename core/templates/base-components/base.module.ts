@@ -56,6 +56,10 @@ import {NgBootstrapModule} from 'modules/ng-boostrap.module';
 import {FooterDonateVolunteerComponent} from './footer-donate-volunteer.component';
 import {PrimaryButtonComponent} from 'components/button-directives/primary-button.component';
 import {RouterModule} from '@angular/router';
+import {RatingsModule} from 'components/ratings/ratings.module';
+import {FeedbackModalComponent} from './feedback-modal.component';
+import {SharedFormsModule} from 'components/forms/shared-forms.module';
+import {ImageUploaderModule} from 'components/forms/custom-forms-directives/image-uploader.module';
 
 @NgModule({
   imports: [
@@ -69,6 +73,9 @@ import {RouterModule} from '@angular/router';
     NgBootstrapModule,
     RouterModule,
     SharedPipesModule,
+    RatingsModule,
+    SharedFormsModule,
+    ImageUploaderModule,
   ],
 
   declarations: [
@@ -92,6 +99,7 @@ import {RouterModule} from '@angular/router';
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
     LanguageBannerComponent,
+    FeedbackModalComponent,
   ],
 
   entryComponents: [
@@ -109,6 +117,7 @@ import {RouterModule} from '@angular/router';
     ThanksForSubscribingModalComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
+    FeedbackModalComponent,
   ],
 
   exports: [
@@ -136,6 +145,7 @@ import {RouterModule} from '@angular/router';
     TopNavigationBarComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
+    FeedbackModalComponent,
   ],
 })
 export class BaseModule {}

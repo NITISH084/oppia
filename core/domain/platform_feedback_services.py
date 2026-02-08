@@ -149,6 +149,28 @@ def delete_platform_feedback(feedback_id: str) -> bool:
     return True
 
 
+def delete_platform_feedback_older_than(
+    cutoff_datetime: datetime.datetime,
+) -> int:
+    """Deletes platform feedback older than the given cutoff datetime.
+
+    Args:
+        cutoff_datetime: datetime. Any feedback created before this datetime
+            will be deleted.
+
+    Returns:
+        int. Number of deleted feedback models.
+    """
+    old_models = platform_feedback_models.PlatformFeedbackModel.query(
+        platform_feedback_models.PlatformFeedbackModel.created_on
+        < cutoff_datetime
+    ).fetch()
+    if not old_models:
+        return 0
+    platform_feedback_models.PlatformFeedbackModel.delete_multi(old_models)
+    return len(old_models)
+
+
 def _model_to_domain(
     model: platform_feedback_models.PlatformFeedbackModel,
 ) -> platform_feedback_domain.PlatformFeedback:

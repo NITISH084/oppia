@@ -17,6 +17,9 @@ cron:
 - description: daily scrubber to scrub expiring feedback reports
   url: /cron/app_feedback_report/scrub_expiring_reports
   schedule: every day 1:00
+- description: daily cleanup of expired platform feedback
+  url: /cron/platform_feedback/cleanup
+  schedule: every day 02:00
 - description: weekly copy of a user's dashboard statistics
   url: /cron/users/dashboard_stats
   schedule: every monday 09:00

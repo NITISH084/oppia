@@ -20,6 +20,7 @@ import datetime
 
 from core import feconf
 from core.platform import models
+from core.domain import platform_feedback_services
 
 from typing import List, Sequence
 
@@ -53,6 +54,8 @@ MODEL_CLASSES_TO_MARK_AS_DELETED = {
     beam_job_models.BeamJobRunResultModel: datetime.timedelta(days=180),
     job_models.JobModel: datetime.timedelta(days=180),
 }
+
+PLATFORM_FEEDBACK_RETENTION_PERIOD = datetime.timedelta(days=180)
 
 
 def delete_models_marked_as_deleted() -> None:
@@ -101,3 +104,9 @@ def mark_outdated_models_as_deleted() -> None:
         model_to_mark_as_deleted.deleted = True
     datastore_services.update_timestamps_multi(models_to_mark_as_deleted)
     datastore_services.put_multi(models_to_mark_as_deleted)
+
+
+def delete_expired_platform_feedback() -> None:
+    """Deletes platform feedback older than the retention period."""
+    cutoff = datetime.datetime.utcnow() - PLATFORM_FEEDBACK_RETENTION_PERIOD
+    platform_feedback_services.delete_platform_feedback_older_than(cutoff)

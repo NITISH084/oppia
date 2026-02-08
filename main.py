@@ -1562,6 +1562,10 @@ URLS.extend(
             cron.CronAppFeedbackReportsScrubberHandlerPage,
         ),
         get_redirect_route(
+            r'/cron/platform_feedback/cleanup',
+            cron.CronPlatformFeedbackCleanupHandler,
+        ),
+        get_redirect_route(
             r'/cron/explorations/recommendations',
             cron.CronExplorationRecommendationsHandler,
         ),

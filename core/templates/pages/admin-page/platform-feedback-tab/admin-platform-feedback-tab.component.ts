@@ -28,11 +28,13 @@ import {
   styleUrls: ['./admin-platform-feedback-tab.component.css'],
 })
 export class AdminPlatformFeedbackTabComponent {
+  private readonly PAGE_SIZE = 20;
   feedbackItems: PlatformFeedbackListItem[] = [];
   selectedFeedback: PlatformFeedbackListItem | null = null;
   isLoading: boolean = false;
-  cursor: string | null = null;
-  hasMore: boolean = false;
+  cursorHistory: Array<string | null> = [null];
+  currentPageIndex: number = 0;
+  hasNextPage: boolean = false;
   categoryFilter: string = '';
   statusFilter: string = '';
   dateFrom: string = '';
@@ -54,7 +56,8 @@ export class AdminPlatformFeedbackTabComponent {
     this.isLoading = true;
     this.errorMessage = null;
     if (reset) {
-      this.cursor = null;
+      this.cursorHistory = [null];
+      this.currentPageIndex = 0;
       this.feedbackItems = [];
       this.selectedFeedback = null;
     }
@@ -64,18 +67,21 @@ export class AdminPlatformFeedbackTabComponent {
         ? new Date(this.dateFrom).getTime()
         : null;
       const dateToMsecs = this.dateTo ? new Date(this.dateTo).getTime() : null;
+      const cursor = this.cursorHistory[this.currentPageIndex] || null;
       const response =
         await this.platformFeedbackBackendApiService.fetchFeedbackListAsync(
-          this.cursor,
+          cursor,
           this.categoryFilter || null,
           dateFromMsecs,
           dateToMsecs
         );
-      this.cursor = response.cursor;
-      this.hasMore = response.more;
-      this.feedbackItems = this.feedbackItems.concat(response.results);
+      this.hasNextPage = response.more;
+      this.feedbackItems = response.results;
       if (!this.selectedFeedback && this.feedbackItems.length) {
         this.selectedFeedback = this.feedbackItems[0];
+      }
+      if (response.cursor) {
+        this.cursorHistory[this.currentPageIndex + 1] = response.cursor;
       }
     } catch (e) {
       this.errorMessage = 'Failed to load feedback.';
@@ -86,6 +92,22 @@ export class AdminPlatformFeedbackTabComponent {
 
   applyFilters(): void {
     this.loadFeedbackPage(true);
+  }
+
+  async goToNextPage(): Promise<void> {
+    if (!this.hasNextPage || this.isLoading) {
+      return;
+    }
+    this.currentPageIndex += 1;
+    await this.loadFeedbackPage(false);
+  }
+
+  async goToPreviousPage(): Promise<void> {
+    if (this.currentPageIndex === 0 || this.isLoading) {
+      return;
+    }
+    this.currentPageIndex -= 1;
+    await this.loadFeedbackPage(false);
   }
 
   selectFeedback(item: PlatformFeedbackListItem): void {
@@ -113,6 +135,9 @@ export class AdminPlatformFeedbackTabComponent {
 
   async deleteFeedback(): Promise<void> {
     if (!this.selectedFeedback) {
+      return;
+    }
+    if (!confirm('Delete this feedback permanently?')) {
       return;
     }
     const feedbackId = this.selectedFeedback.id;

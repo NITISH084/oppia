@@ -20,6 +20,7 @@ import datetime
 
 from core import feconf
 from core.domain import cron_services
+from core.domain import platform_feedback_services
 from core.platform import models
 from core.tests import test_utils
 
@@ -27,7 +28,9 @@ MYPY = False
 if MYPY:
     from mypy_imports import user_models
 
-(user_models,) = models.Registry.import_models([models.Names.USER])
+(user_models, platform_feedback_models) = models.Registry.import_models(
+    [models.Names.USER, models.Names.PLATFORM_FEEDBACK]
+)
 
 
 class CronServicesTests(test_utils.GenericTestBase):
@@ -88,3 +91,43 @@ class CronServicesTests(test_utils.GenericTestBase):
         cron_services.mark_outdated_models_as_deleted()
 
         self.assertTrue(user_query_model.get_by_id('query_id').deleted)
+
+    def test_delete_expired_platform_feedback(self) -> None:
+        feedback_id = platform_feedback_services.create_platform_feedback(
+            category=platform_feedback_models.CATEGORY_PLATFORM,
+            description='Old feedback',
+            page_url='/',
+            language_code='en',
+        )
+        recent_feedback_id = (
+            platform_feedback_services.create_platform_feedback(
+                category=platform_feedback_models.CATEGORY_PLATFORM,
+                description='Recent feedback',
+                page_url='/',
+                language_code='en',
+            )
+        )
+        old_model = platform_feedback_models.PlatformFeedbackModel.get_by_id(
+            feedback_id
+        )
+        assert old_model is not None
+        old_model.created_on = (
+            datetime.datetime.utcnow()
+            - cron_services.PLATFORM_FEEDBACK_RETENTION_PERIOD
+            - datetime.timedelta(days=1)
+        )
+        old_model.update_timestamps(update_last_updated_time=False)
+        old_model.put()
+
+        cron_services.delete_expired_platform_feedback()
+
+        self.assertIsNone(
+            platform_feedback_models.PlatformFeedbackModel.get_by_id(
+                feedback_id
+            )
+        )
+        self.assertIsNotNone(
+            platform_feedback_models.PlatformFeedbackModel.get_by_id(
+                recent_feedback_id
+            )
+        )

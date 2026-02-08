@@ -27,8 +27,6 @@ export interface PlatformFeedbackSubmitPayload {
   rating: number | null;
   screenshot_filename: string | null;
   screenshot_entity_id: string | null;
-  contact_email: string | null;
-  allow_contact: boolean;
   include_session_info: boolean;
   session_info: {
     client_time_msecs: number;
@@ -111,7 +109,7 @@ export class PlatformFeedbackBackendApiService {
   ): Promise<{filename: string; entity_id: string}> {
     const form = new FormData();
     form.append('image', imageFile);
-    form.append('payload', JSON.stringify({filename: filename}));
+    form.append('filename', filename);
     return this.http
       .post<{filename: string; entity_id: string}>(this.uploadUrl, form)
       .toPromise();

@@ -44,17 +44,23 @@ interface SessionInfo {
   };
 }
 
+interface FeedbackRteConfig {
+  rte_component_config_id: string;
+  hide_complex_extensions: boolean;
+  startupFocusEnabled?: boolean;
+  rows?: number;
+  add_element_text?: string;
+}
+
 @Component({
   selector: 'oppia-feedback-modal',
   templateUrl: './feedback-modal.component.html',
   styleUrls: ['./feedback-modal.component.css'],
 })
 export class FeedbackModalComponent {
-  ratingStars: number[] = [1, 2, 3, 4, 5];
   feedbackRating: number = 0;
   feedbackCategory: 'platform' | 'lesson' = 'platform';
   feedbackCategoryChoice: 'lesson' | 'platform' | 'unsure' = 'platform';
-  allowContact: boolean = false;
   includeSessionInfo: boolean = false;
   feedbackDescription: string = '';
   feedbackContactEmail: string = '';
@@ -66,11 +72,19 @@ export class FeedbackModalComponent {
   isUserLoggedIn: boolean = false;
   captchaToken: string = '';
   captchaChecked: boolean = false;
-  screenshotPreviewUrl: string | null = null;
   screenshotFilename: string | null = null;
   screenshotEntityId: string | null = null;
   screenshotFileError: string | null = null;
   isUploadingScreenshot: boolean = false;
+  allowedScreenshotImageFormats: string[] = ['png', 'jpeg'];
+  maxScreenshotSizeInKB: number = 100;
+  feedbackRteConfig: FeedbackRteConfig = {
+    rte_component_config_id: 'SKILL_AND_STUDY_GUIDE_EDITOR_COMPONENTS',
+    hide_complex_extensions: false,
+    startupFocusEnabled: false,
+    rows: 5,
+    add_element_text: 'Add',
+  };
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -116,36 +130,9 @@ export class FeedbackModalComponent {
     return `platform_feedback_${timestamp}_${randomSuffix}.${extension}`;
   }
 
-  onScreenshotFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
-    const file = input.files[0];
-    const isValidType = file.type === 'image/png' || file.type === 'image/jpeg';
-    if (!isValidType) {
-      this.screenshotFileError = 'I18N_FEEDBACK_SCREENSHOT_FILETYPE_ERROR';
-      this.screenshotPreviewUrl = null;
-      this.screenshotFilename = null;
-      this.screenshotEntityId = null;
-      return;
-    }
-    const maxBytes = 100 * 1024;
-    if (file.size > maxBytes) {
-      this.screenshotFileError = 'I18N_FEEDBACK_SCREENSHOT_SIZE_ERROR';
-      this.screenshotPreviewUrl = null;
-      this.screenshotFilename = null;
-      this.screenshotEntityId = null;
-      return;
-    }
+  onScreenshotFileReceived(file: File): void {
     this.screenshotFileError = null;
     this.isUploadingScreenshot = true;
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.screenshotPreviewUrl = String(reader.result);
-    };
-    reader.readAsDataURL(file);
-
     const filename = this.buildScreenshotFilename(file);
     this.platformFeedbackBackendApiService
       .uploadScreenshotAsync(file, filename)
@@ -217,8 +204,6 @@ export class FeedbackModalComponent {
         rating: rating,
         screenshot_filename: this.screenshotFilename,
         screenshot_entity_id: this.screenshotEntityId,
-        contact_email: this.allowContact ? this.feedbackContactEmail : null,
-        allow_contact: this.allowContact,
         include_session_info: this.includeSessionInfo,
         session_info: sessionInfo,
         captcha_token: this.isUserLoggedIn
@@ -248,12 +233,10 @@ export class FeedbackModalComponent {
   private resetFeedbackForm(): void {
     this.feedbackRating = 0;
     this.feedbackCategory = 'platform';
-    this.allowContact = false;
     this.includeSessionInfo = false;
     this.feedbackDescription = '';
     this.feedbackContactEmail = '';
     this.captchaToken = '';
-    this.screenshotPreviewUrl = null;
     this.screenshotFilename = null;
     this.screenshotEntityId = null;
     this.screenshotFileError = null;

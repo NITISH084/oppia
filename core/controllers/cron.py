@@ -68,6 +68,22 @@ class CronModelsCleanupHandler(
         return self.render_json({})
 
 
+class CronPlatformFeedbackCleanupHandler(
+    base.BaseHandler[Dict[str, str], Dict[str, str]]
+):
+    """Handler for deleting expired platform feedback."""
+
+    GET_HANDLER_ERROR_RETURN_TYPE = feconf.HANDLER_TYPE_JSON
+    URL_PATH_ARGS_SCHEMAS: Dict[str, str] = {}
+    HANDLER_ARGS_SCHEMAS: Dict[str, Dict[str, str]] = {'GET': {}}
+
+    @acl_decorators.can_perform_cron_tasks
+    def get(self) -> None:
+        """Deletes platform feedback older than the retention period."""
+        cron_services.delete_expired_platform_feedback()
+        return self.render_json({})
+
+
 class CronUserDeletionHandler(base.BaseHandler[Dict[str, str], Dict[str, str]]):
     """Handler for running the user deletion one off job."""
 

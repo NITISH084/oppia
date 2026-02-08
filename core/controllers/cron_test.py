@@ -56,19 +56,25 @@ if MYPY:  # pragma: no cover
     from mypy_imports import (
         app_feedback_report_models,
         exp_models,
+        platform_feedback_models,
         suggestion_models,
         user_models,
     )
 
-(app_feedback_report_models, exp_models, suggestion_models, user_models) = (
-    models.Registry.import_models(
-        [
-            models.Names.APP_FEEDBACK_REPORT,
-            models.Names.EXPLORATION,
-            models.Names.SUGGESTION,
-            models.Names.USER,
-        ]
-    )
+(
+    app_feedback_report_models,
+    exp_models,
+    platform_feedback_models,
+    suggestion_models,
+    user_models,
+) = models.Registry.import_models(
+    [
+        models.Names.APP_FEEDBACK_REPORT,
+        models.Names.EXPLORATION,
+        models.Names.PLATFORM_FEEDBACK,
+        models.Names.SUGGESTION,
+        models.Names.USER,
+    ]
 )
 
 
@@ -180,6 +186,30 @@ class CronJobTests(test_utils.GenericTestBase):
             self.get_json('/cron/models/cleanup')
 
         self.assertTrue(user_query_model.get_by_id('query_id').deleted)
+
+    def test_run_cron_to_delete_expired_platform_feedback(self) -> None:
+        self.login(self.CURRICULUM_ADMIN_EMAIL, is_super_admin=True)
+
+        old_model = platform_feedback_models.PlatformFeedbackModel(
+            id='old_feedback_id',
+            category=platform_feedback_models.CATEGORY_PLATFORM,
+            description='Old feedback',
+            page_url='/',
+            language_code='en',
+            status=platform_feedback_models.STATUS_OPEN,
+            created_on=datetime.datetime.utcnow() - self.FOURTEEN_WEEKS,
+        )
+        old_model.update_timestamps(update_last_updated_time=False)
+        old_model.put()
+
+        with self.testapp_swap:
+            self.get_json('/cron/platform_feedback/cleanup')
+
+        self.assertIsNone(
+            platform_feedback_models.PlatformFeedbackModel.get_by_id(
+                'old_feedback_id'
+            )
+        )
 
     def test_run_cron_to_scrub_app_feedback_reports_scrubs_reports(
         self,

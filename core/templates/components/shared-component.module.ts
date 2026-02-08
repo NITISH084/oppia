@@ -28,6 +28,7 @@ import {
   USE_EMULATOR,
 } from '@angular/fire/auth';
 import {CustomFormsComponentsModule} from './forms/custom-forms-directives/custom-form-components.module';
+import {ImageUploaderModule} from './forms/custom-forms-directives/image-uploader.module';
 import {DynamicContentModule} from './interaction-display/dynamic-content.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from 'modules/material.module';
@@ -59,7 +60,6 @@ import {SkillSelectorComponent} from './skill-selector/skill-selector.component'
 import {ProfileLinkImageComponent} from 'components/profile-link-directives/profile-link-image.component';
 import {ProfileLinkTextComponent} from 'components/profile-link-directives/profile-link-text.component';
 import {AudioFileUploaderComponent} from './forms/custom-forms-directives/audio-file-uploader.component';
-import {ThumbnailDisplayComponent} from './forms/custom-forms-directives/thumbnail-display.component';
 import {SkillMasteryViewerComponent} from './skill-mastery/skill-mastery.component';
 import {ExplorationSummaryTileComponent} from './summary-tile/exploration-summary-tile.component';
 import {PracticeTabComponent} from 'pages/topic-viewer-page/practice-tab/practice-tab.component';
@@ -88,8 +88,6 @@ import {ProgressNavComponent} from 'pages/exploration-player-page/current-lesson
 import {QuestionDifficultySelectorComponent} from './question-difficulty-selector/question-difficulty-selector.component';
 import {PreviewThumbnailComponent} from 'pages/topic-editor-page/modal-templates/preview-thumbnail.component';
 import {InputResponsePairComponent} from 'pages/exploration-player-page/current-lesson-player/learner-experience/input-response-pair.component';
-import {ImageUploaderComponent} from './forms/custom-forms-directives/image-uploader.component';
-import {ImageUploaderModalComponent} from './forms/custom-forms-directives/image-uploader-modal.component';
 import {StorySummaryTileComponent} from './summary-tile/story-summary-tile.component';
 import {ExplorationFooterComponent} from 'pages/exploration-player-page/current-lesson-player/layout-directives/exploration-footer.component';
 import {DisplaySolutionModalComponent} from 'pages/exploration-player-page/current-lesson-player/modals/display-solution-modal.component';
@@ -105,7 +103,7 @@ import {ScoreRingComponent} from './score-ring/score-ring.component';
 import {CompletionGraphComponent} from './statistics-directives/completion-graph.component';
 import {TutorCardComponent} from 'pages/exploration-player-page/current-lesson-player/learner-experience/tutor-card.component';
 import {ContentLanguageSelectorComponent} from 'pages/exploration-player-page/current-lesson-player/layout-directives/content-language-selector.component';
-import {RatingDisplayComponent} from './ratings/rating-display/rating-display.component';
+import {RatingsModule} from './ratings/ratings.module';
 import {SupplementalCardComponent} from 'pages/exploration-player-page/new-lesson-player/conversation-skin-components/supplemental-card.component';
 import {AddOrUpdateSolutionModalComponent} from 'pages/exploration-editor-page/editor-tab/templates/modal-templates/add-or-update-solution-modal.component';
 import {SavePendingChangesModalComponent} from './save-pending-changes/save-pending-changes-modal.component';
@@ -117,7 +115,6 @@ import {EndChapterConfettiComponent} from 'pages/exploration-player-page/current
 import {RatingsAndRecommendationsComponent} from 'pages/exploration-player-page/current-lesson-player/learner-experience/ratings-and-recommendations.component';
 import {LearnerAnswerInfoCard} from 'pages/exploration-player-page/current-lesson-player/learner-experience/learner-answer-info-card.component';
 import {FeedbackPopupComponent} from 'pages/exploration-player-page/current-lesson-player/layout-directives/feedback-popup.component';
-import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
 import {ConfirmQuestionExitModalComponent} from './question-directives/modal-templates/confirm-question-exit-modal.component';
 import {QuestionsOpportunitiesSelectDifficultyModalComponent} from 'pages/topic-editor-page/modal-templates/questions-opportunities-select-difficulty-modal.component';
 import {QuestionsListSelectSkillAndDifficultyModalComponent} from 'pages/topic-editor-page/modal-templates/questions-list-select-skill-and-difficulty-modal.component';
@@ -239,6 +236,7 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     DragDropModule,
     MatMenuModule,
     CustomFormsComponentsModule,
+    ImageUploaderModule,
     CommonElementsModule,
     CodeMirrorModule,
     RouterModule,
@@ -264,6 +262,7 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     DynamicComponentModule,
     DirectivesModule,
     NgbModule,
+    RatingsModule,
   ],
 
   providers: [
@@ -316,7 +315,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ExplorationSummaryTileComponent,
     FilteredChoicesFieldComponent,
     FeedbackPopupComponent,
-    FeedbackModalComponent,
     PracticeTabComponent,
     SaveProgressModalComponent,
     CollectionSummaryTileComponent,
@@ -327,8 +325,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     HintEditorComponent,
     InputResponsePairComponent,
     NewInputResponsePairComponent,
-    ImageUploaderComponent,
-    ImageUploaderModalComponent,
     KeyboardShortcutHelpModalComponent,
     LearnerAnswerInfoCard,
     LazyLoadingComponent,
@@ -343,7 +339,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ProgressNavComponent,
     QuestionDifficultySelectorComponent,
     QuestionEditorSaveModalComponent,
-    RatingDisplayComponent,
     RatingsAndRecommendationsComponent,
     NewRatingsAndRecommendationsComponent,
     ResponseHeaderComponent,
@@ -367,7 +362,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ThanksForDonatingModalComponent,
     DonationBoxComponent,
     DonationBoxModalComponent,
-    ThumbnailDisplayComponent,
     ThreadTableComponent,
     TopicsAndSkillsDashboardNavbarBreadcrumbComponent,
     TutorCardComponent,
@@ -482,7 +476,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ExplorationSummaryTileComponent,
     FilteredChoicesFieldComponent,
     FeedbackPopupComponent,
-    FeedbackModalComponent,
     HintSolutionAndConceptCardDisplayComponent,
     MultiSelectionFieldComponent,
     PracticeTabComponent,
@@ -520,13 +513,10 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     HintEditorComponent,
     InputResponsePairComponent,
     NewInputResponsePairComponent,
-    ImageUploaderComponent,
-    ImageUploaderModalComponent,
     KeyboardShortcutHelpModalComponent,
     ProgressNavComponent,
     PreviewThumbnailComponent,
     QuestionDifficultySelectorComponent,
-    RatingDisplayComponent,
     RatingsAndRecommendationsComponent,
     NewRatingsAndRecommendationsComponent,
     ResponseHeaderComponent,
@@ -541,7 +531,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ThanksForDonatingModalComponent,
     DonationBoxComponent,
     DonationBoxModalComponent,
-    ThumbnailDisplayComponent,
     TutorCardComponent,
     ThumbnailUploaderComponent,
     EditThumbnailModalComponent,
@@ -632,6 +621,7 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     FormsModule,
     MaterialModule,
     NgBootstrapModule,
+    ImageUploaderModule,
     CheckpointCelebrationFooterComponent,
     RichTextComponentsModule,
     ObjectComponentsModule,
@@ -692,13 +682,10 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     HintEditorComponent,
     InputResponsePairComponent,
     NewInputResponsePairComponent,
-    ImageUploaderComponent,
-    ImageUploaderModalComponent,
     LazyLoadingComponent,
     ProfileLinkImageComponent,
     ProfileLinkTextComponent,
     PreviewThumbnailComponent,
-    RatingDisplayComponent,
     RatingsAndRecommendationsComponent,
     NewRatingsAndRecommendationsComponent,
     ResponseHeaderComponent,
@@ -728,7 +715,6 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ThanksForDonatingModalComponent,
     DonationBoxComponent,
     DonationBoxModalComponent,
-    ThumbnailDisplayComponent,
     ThumbnailUploaderComponent,
     EditThumbnailModalComponent,
     TopicsAndSkillsDashboardNavbarBreadcrumbComponent,
