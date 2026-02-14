@@ -1,139 +1,889 @@
-<div class="oppia-admin-page-card oppia-page-card oppia-long-text oppia-platform-feedback-tab">
-  <h3>Platform Feedback</h3>
+<div class="container-fluid feedback-tab">
+  <!-- Header Section -->
+  <div class="feedback-header">
+    <h2>Lesson & Platform Feedback Management</h2>
+    <div class="feedback-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{ feedbackItems.length }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getCountByStatus('open') }}</span>
+        <span class="stat-label">Open</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getCountByStatus('dismissed') }}</span>
+        <span class="stat-label">Dismissed</span>
+      </div>
+    </div>
+  </div>
 
-  <div class="oppia-feedback-filters">
-    <div class="oppia-feedback-filter">
+  <!-- Filters Section - Horizontal Layout -->
+  <div class="filters-bar">
+    <div class="filter-group">
       <label>Category</label>
-      <select class="form-control" [(ngModel)]="categoryFilter">
-        <option value="">All</option>
-        <option value="platform">Platform</option>
-        <option value="lesson">Lesson</option>
+      <select class="form-control" [(ngModel)]="categoryFilter" (change)="applyFilters()">
+        <option value="">All Categories</option>
+        <option value="lesson">A Lesson</option>
+        <option value="platform">The Site</option>
+        <option value="not_sure">Not Sure</option>
       </select>
     </div>
-    <div class="oppia-feedback-filter">
+
+    <div class="filter-group">
       <label>Status</label>
-      <select class="form-control" [(ngModel)]="statusFilter">
-        <option value="">All</option>
+      <select class="form-control" [(ngModel)]="statusFilter" (change)="applyFilters()">
+        <option value="">All Status</option>
         <option value="open">Open</option>
         <option value="dismissed">Dismissed</option>
         <option value="deleted">Deleted</option>
       </select>
     </div>
-    <div class="oppia-feedback-filter">
-      <label>Date from</label>
+
+    <div class="filter-group filter-search">
+      <label>Search</label>
+      <input type="text" 
+             class="form-control" 
+             [(ngModel)]="searchQuery" 
+             (input)="applyFilters()" 
+             placeholder="Search by description">
+    </div>
+
+    <div class="filter-group">
+      <label>From Date</label>
       <input type="date" class="form-control" [(ngModel)]="dateFrom">
     </div>
-    <div class="oppia-feedback-filter">
-      <label>Date to</label>
+
+    <div class="filter-group">
+      <label>To Date</label>
       <input type="date" class="form-control" [(ngModel)]="dateTo">
     </div>
-    <button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+
+    <div class="filter-actions">
+      <label>&nbsp;</label>
+      <button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+      <button class="btn btn-secondary" (click)="clearFilters()">Clear</button>
+    </div>
   </div>
 
-  <div *ngIf="errorMessage" class="oppia-feedback-error">
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-error">
     {{ errorMessage }}
   </div>
 
-  <div class="oppia-feedback-pagination">
-    <div class="oppia-feedback-pagination-info">
-      Page {{ currentPageIndex + 1 }}
-    </div>
-    <div class="oppia-feedback-pagination-actions">
-      <button class="btn btn-outline-secondary"
-              [disabled]="currentPageIndex === 0 || isLoading"
-              (click)="goToPreviousPage()">
-        Newer
-      </button>
-      <button class="btn btn-outline-secondary"
-              [disabled]="!hasNextPage || isLoading"
-              (click)="goToNextPage()">
-        Older
-      </button>
-    </div>
-  </div>
-
-  <div class="oppia-feedback-grid">
-    <div class="oppia-feedback-list">
-      <div class="oppia-feedback-list-item"
-           *ngFor="let item of filteredItems()"
-           [class.oppia-feedback-list-item-active]="selectedFeedback?.id === item.id"
-           (click)="selectFeedback(item)">
-        <div class="oppia-feedback-list-header">
-          <span class="oppia-feedback-badge"
-                [class.oppia-feedback-badge-lesson]="item.category === 'lesson'"
-                [class.oppia-feedback-badge-platform]="item.category === 'platform'">
-            {{ item.category }}
-          </span>
-          <span class="oppia-feedback-status"
-                [class.oppia-feedback-status-open]="item.status === 'open'"
-                [class.oppia-feedback-status-dismissed]="item.status === 'dismissed'"
-                [class.oppia-feedback-status-deleted]="item.status === 'deleted'">
-            {{ item.status }}
-          </span>
-        </div>
-        <div class="oppia-feedback-list-title">{{ item.description }}</div>
-        <div class="oppia-feedback-list-meta">
-          {{ formatDate(item.created_on_msecs) }}
+  <!-- Main Content - Split View -->
+  <div class="feedback-content">
+    <!-- Left Panel - Feedback List -->
+    <div class="feedback-list-panel">
+      <div class="panel-header">
+        <h3>Feedback Items ({{ filteredItems().length }})</h3>
+        <div class="pagination-compact">
+          <button class="btn-icon" 
+                  [disabled]="currentPageIndex === 0 || isLoading"
+                  (click)="goToPreviousPage()"
+                  title="Previous page">
+            ←
+          </button>
+          <span class="page-number">Page {{ currentPageIndex + 1 }}</span>
+          <button class="btn-icon"
+                  [disabled]="!hasNextPage || isLoading"
+                  (click)="goToNextPage()"
+                  title="Next page">
+            →
+          </button>
         </div>
       </div>
-      <div *ngIf="!isLoading && filteredItems().length === 0" class="oppia-feedback-empty">
-        No feedback found.
-      </div>
-    </div>
 
-    <div class="oppia-feedback-detail" *ngIf="selectedFeedback">
-      <div class="oppia-feedback-detail-header">
-        <div>
-          <h4>Feedback Details</h4>
-          <div class="oppia-feedback-detail-meta">
-            {{ formatDate(selectedFeedback.created_on_msecs) }}
+      <div class="feedback-list-container">
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading feedback...</p>
+        </div>
+
+        <div *ngIf="!isLoading && filteredItems().length === 0" class="empty-state">
+          <p>No feedback found</p>
+        </div>
+
+        <div class="feedback-item"
+             *ngFor="let item of filteredItems()"
+             [class.active]="selectedFeedback?.id === item.id"
+             (click)="selectFeedback(item)">
+          
+          <div class="item-header">
+            <div class="item-badges">
+              <span class="badge badge-{{ item.category }}">{{ getCategoryLabel(item.category) }}</span>
+              <span class="badge badge-status-{{ item.status }}">{{ item.status }}</span>
+            </div>
+            <span class="item-date">{{ formatDate(item.created_on_msecs) }}</span>
           </div>
-        </div>
-        <div class="oppia-feedback-detail-actions">
-          <button class="btn btn-outline-secondary" (click)="updateStatus('dismissed')">Dismiss</button>
-          <button class="btn btn-outline-secondary" (click)="updateStatus('open')">Reopen</button>
-          <button class="btn btn-danger" (click)="deleteFeedback()">Delete</button>
-        </div>
-      </div>
-      <p><strong>Category:</strong> {{ selectedFeedback.category }}</p>
-      <p><strong>Status:</strong> {{ selectedFeedback.status }}</p>
-      <p><strong>Rating:</strong> {{ selectedFeedback.rating || 'N/A' }}</p>
-      <p><strong>Language:</strong> {{ selectedFeedback.language_code }}</p>
-      <p><strong>Page URL:</strong> {{ selectedFeedback.page_url }}</p>
-      <p><strong>Description:</strong></p>
-      <p class="oppia-feedback-description">{{ selectedFeedback.description }}</p>
-      <p *ngIf="selectedFeedback.contact_email"><strong>Contact:</strong> {{ selectedFeedback.contact_email }}</p>
-      <div *ngIf="selectedFeedback.session_info">
-        <strong>Session info:</strong>
-        <pre>{{ selectedFeedback.session_info | json }}</pre>
-      </div>
-      <div *ngIf="selectedFeedback.screenshot_filename">
-        <strong>Screenshot:</strong>
-        <div class="oppia-feedback-screenshot-placeholder">
-          {{ selectedFeedback.screenshot_filename }}
-          <div *ngIf="selectedFeedback.screenshot_entity_id">
-            Storage id: {{ selectedFeedback.screenshot_entity_id }}
+
+          <div class="item-description">{{ item.description }}</div>
+
+          <div class="item-footer">
+            <span *ngIf="item.rating" class="item-rating">⭐ {{ item.rating }}/5</span>
+            <span *ngIf="item.screenshot_url" class="item-icon" title="Has screenshot">📷</span>
+            <span *ngIf="item.include_session_info" class="item-icon" title="Includes session info">🔍</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="oppia-feedback-pagination">
-    <div class="oppia-feedback-pagination-info">
-      Page {{ currentPageIndex + 1 }}
-    </div>
-    <div class="oppia-feedback-pagination-actions">
-      <button class="btn btn-outline-secondary"
-              [disabled]="currentPageIndex === 0 || isLoading"
-              (click)="goToPreviousPage()">
-        Newer
-      </button>
-      <button class="btn btn-outline-secondary"
-              [disabled]="!hasNextPage || isLoading"
-              (click)="goToNextPage()">
-        Older
-      </button>
+    <!-- Right Panel - Feedback Details -->
+    <div class="feedback-detail-panel">
+      <div *ngIf="!selectedFeedback" class="no-selection">
+        <p>← Select a feedback item to view details</p>
+      </div>
+
+      <div *ngIf="selectedFeedback" class="detail-content">
+        <div class="detail-header">
+          <h3>Feedback Details</h3>
+          <div class="detail-actions">
+            <button class="btn btn-action"
+                    [disabled]="selectedFeedback.status === 'open'"
+                    (click)="updateStatus('open')">
+              ↻ Reopen
+            </button>
+            <button class="btn btn-action"
+                    [disabled]="selectedFeedback.status === 'dismissed'"
+                    (click)="updateStatus('dismissed')">
+              ✓ Dismiss
+            </button>
+            <button class="btn btn-danger"
+                    (click)="deleteFeedback()">
+              🗑 Delete
+            </button>
+          </div>
+        </div>
+
+        <div class="detail-body">
+          <!-- Header Info -->
+          <div class="detail-section">
+            <div class="detail-badges">
+              <span class="badge badge-{{ selectedFeedback.category }}">{{ getCategoryLabel(selectedFeedback.category) }}</span>
+              <span class="badge badge-status-{{ selectedFeedback.status }}">{{ selectedFeedback.status }}</span>
+              <span *ngIf="selectedFeedback.rating" class="badge badge-rating">⭐ {{ selectedFeedback.rating }}/5</span>
+            </div>
+            <div class="detail-date">{{ formatDate(selectedFeedback.created_on_msecs) }}</div>
+          </div>
+
+          <!-- User Description -->
+          <div class="detail-section">
+            <h4>User Feedback</h4>
+            <div class="detail-box">{{ selectedFeedback.description }}</div>
+          </div>
+
+          <!-- Screenshot -->
+          <div class="detail-section" *ngIf="selectedFeedback.screenshot_url">
+            <h4>Screenshot</h4>
+            <div class="screenshot-container">
+              <img [src]="selectedFeedback.screenshot_url" 
+                   [alt]="selectedFeedback.screenshot_filename || 'Feedback screenshot'"
+                   class="screenshot-image">
+              <div class="screenshot-filename">{{ selectedFeedback.screenshot_filename }}</div>
+            </div>
+          </div>
+
+          <!-- Basic Metadata (Always Collected) -->
+          <div class="detail-section">
+            <h4>Metadata (Always Collected)</h4>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <label>Page URL</label>
+                <a [href]="selectedFeedback.page_url" target="_blank" class="url-link">
+                  {{ selectedFeedback.page_url }} ↗
+                </a>
+              </div>
+
+              <div class="detail-field">
+                <label>Site Language</label>
+                <span>{{ selectedFeedback.language_code }}</span>
+              </div>
+
+              <div class="detail-field">
+                <label>Submission Date/Time</label>
+                <span>{{ formatDate(selectedFeedback.created_on_msecs) }}</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Session Info (Optional - User Opt-in) -->
+          <div class="detail-section" *ngIf="selectedFeedback.include_session_info">
+            <h4>Session Information (User Opted-In)</h4>
+            <div class="detail-grid">
+              <div class="detail-field" *ngIf="selectedFeedback.browser">
+                <label>Browser</label>
+                <span>{{ selectedFeedback.browser }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="selectedFeedback.os">
+                <label>Operating System</label>
+                <span>{{ selectedFeedback.os }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="selectedFeedback.device">
+                <label>Device Type</label>
+                <span>{{ selectedFeedback.device }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="selectedFeedback.screen_resolution">
+                <label>Screen Resolution</label>
+                <span>{{ selectedFeedback.screen_resolution }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="selectedFeedback.viewport_size">
+                <label>Viewport Size</label>
+                <span>{{ selectedFeedback.viewport_size }}</span>
+              </div>
+
+              <div class="detail-field full-width" *ngIf="selectedFeedback.user_agent">
+                <label>User Agent</label>
+                <span class="code-text">{{ selectedFeedback.user_agent }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- No Session Info Notice -->
+          <div class="detail-section" *ngIf="!selectedFeedback.include_session_info">
+            <div class="session-info-notice no-session">
+              <span class="info-icon">🔒</span>
+              User did not opt-in to share session logs/metadata
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+/* Base Styles */
+.feedback-tab {
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Header */
+.feedback-header {
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+}
+
+.feedback-header h2 {
+  color: #1565c0;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.feedback-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  color: #1565c0;
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* Filters Bar */
+.filters-bar {
+  align-items: flex-end;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.filter-search {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-group label {
+  color: #666;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-actions label {
+  color: transparent;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.filter-actions button {
+  height: 36px;
+}
+
+/* Alert */
+.alert {
+  border-radius: 6px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+}
+
+.alert-error {
+  background: #ffebee;
+  border: 1px solid #ef5350;
+  color: #c62828;
+}
+
+/* Main Content */
+.feedback-content {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 450px 1fr;
+  height: calc(100vh - 280px);
+  min-height: 500px;
+}
+
+/* Left Panel */
+.feedback-list-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  align-items: center;
+  border-bottom: 2px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.panel-header h3 {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pagination-compact {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  align-items: center;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  height: 32px;
+  justify-content: center;
+  transition: all 0.2s;
+  width: 32px;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: #1565c0;
+  border-color: #1565c0;
+  color: white;
+}
+
+.btn-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.page-number {
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.feedback-list-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.feedback-item {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 14px;
+  transition: all 0.2s;
+}
+
+.feedback-item:hover {
+  border-color: #1565c0;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.1);
+}
+
+.feedback-item.active {
+  background: #e3f2fd;
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+}
+
+.item-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.item-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  text-transform: uppercase;
+}
+
+.badge-platform {
+  background: #bbdefb;
+  color: #0d47a1;
+}
+
+.badge-lesson {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.badge-not_sure {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.badge-status-open {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.badge-status-dismissed {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.badge-status-deleted {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.badge-rating {
+  background: #fff9e6;
+  color: #f57f17;
+}
+
+.item-date {
+  color: #999;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.item-description {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.item-footer {
+  align-items: center;
+  color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 12px;
+}
+
+.item-rating,
+.item-email,
+.item-icon {
+  display: flex;
+  gap: 4px;
+}
+
+.item-icon {
+  cursor: help;
+}
+
+/* Right Panel */
+.feedback-detail-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.no-selection {
+  align-items: center;
+  color: #999;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.detail-header {
+  align-items: center;
+  border-bottom: 2px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.detail-header h3 {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.detail-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.detail-date {
+  color: #666;
+  font-size: 13px;
+}
+
+.detail-section h4 {
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+}
+
+.detail-box {
+  background: #f8f9fa;
+  border-left: 3px solid #1565c0;
+  border-radius: 4px;
+  color: #333;
+  line-height: 1.6;
+  padding: 14px;
+}
+
+/* Screenshot */
+.screenshot-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.screenshot-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.screenshot-filename {
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  color: #666;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+/* Session Info Notice */
+.session-info-notice {
+  align-items: center;
+  background: #e3f2fd;
+  border-left: 3px solid #1565c0;
+  border-radius: 4px;
+  color: #0d47a1;
+  display: flex;
+  font-size: 13px;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+}
+
+.session-info-notice.no-session {
+  background: #f5f5f5;
+  border-left-color: #999;
+  color: #666;
+}
+
+.info-icon {
+  font-size: 16px;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-field label {
+  color: #666;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.detail-field span {
+  color: #333;
+  font-size: 14px;
+}
+
+.code-text {
+  background: #f8f9fa;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: 6px 8px;
+  word-break: break-all;
+}
+
+.url-link {
+  color: #1565c0;
+  font-size: 14px;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.url-link:hover {
+  text-decoration: underline;
+}
+
+/* Loading & Empty States */
+.loading-state,
+.empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  border: 3px solid #f0f0f0;
+  border-radius: 50%;
+  border-top-color: #1565c0;
+  height: 40px;
+  margin-bottom: 16px;
+  width: 40px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p,
+.empty-state p {
+  color: #999;
+  font-size: 14px;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #1565c0;
+  border: 1px solid #1565c0;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0d47a1;
+}
+
+.btn-secondary {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #666;
+}
+
+.btn-secondary:hover {
+  background: #f5f5f5;
+}
+
+.btn-action {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #1565c0;
+}
+
+.btn-action:hover:not(:disabled) {
+  background: #e3f2fd;
+  border-color: #1565c0;
+}
+
+.btn-danger {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #d32f2f;
+}
+
+.btn-danger:hover {
+  background: #ffebee;
+  border-color: #ef5350;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Form Controls */
+.form-control {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 13px;
+  height: 36px;
+  padding: 6px 12px;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.form-control:focus {
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+  outline: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .feedback-content {
+    grid-template-columns: 400px 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .feedback-content {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .feedback-list-panel {
+    max-height: 400px;
+  }
+
+  .feedback-detail-panel {
+    min-height: 400px;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+  }
+
+  .filter-group,
+  .filter-search {
+    min-width: 100%;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .feedback-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .detail-actions .btn {
+    width: 100%;
+  }
+}
+</style>

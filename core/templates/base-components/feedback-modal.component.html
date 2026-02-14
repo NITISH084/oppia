@@ -106,7 +106,7 @@
   </div>
 </div>
 
-<div class="oppia-feedback-modal-footer ">
+<div class="oppia-feedback-modal-footer">
   <button type="button"
           class="btn btn-secondary"
           (click)="close()">
@@ -121,7 +121,8 @@
 </div>
 
 <style>
-  .oppia-feedback-modal {
+/* Base Modal Styles */
+.oppia-feedback-modal {
   padding: 28px 32px 20px;
   max-height: 80vh;
   color: #6b6b6b;
@@ -172,18 +173,29 @@
   scale: 1.25;
 }
 
+/* Category Section */
 .oppia-feedback-category {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 12px;
   margin-top: 8px;
 }
 
 .oppia-feedback-radio {
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
   gap: 6px;
   font-size: 15px;
+  min-height: 36px;
+  padding: 4px 0;
+}
+
+.oppia-feedback-radio input[type="radio"] {
+  cursor: pointer;
+  margin: 0;
+  min-width: 16px;
 }
 
 .oppia-feedback-label {
@@ -211,17 +223,19 @@
   box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.15);
 }
 
+/* Screenshot Section */
 .oppia-feedback-screenshot {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 8px; /* ADD THIS */
+  margin-top: 8px;
 }
 
 .oppia-feedback-screenshot-help {
   font-size: 14px;
   color: #7a7a7a;
-  margin-top: 4px; /* ADD THIS */
+  line-height: 1.4;
+  margin-top: 4px;
 }
 
 .oppia-feedback-screenshot-preview {
@@ -243,6 +257,13 @@
   margin-top: 6px;
 }
 
+/* Error Text */
+.oppia-feedback-error-text {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
 /* Inputs */
 .oppia-feedback-input {
   width: 100%;
@@ -257,11 +278,18 @@
 .oppia-feedback-checkbox {
   display: flex;
   align-items: center;
+  cursor: pointer;
   gap: 8px;
   font-size: 16px;
-  color: #2c2c2c;
+  color: #6b6b6b;
   padding: 4px 0;
   min-height: 28px;
+}
+
+.oppia-feedback-checkbox input[type="checkbox"] {
+  cursor: pointer;
+  margin: 0;
+  min-width: 16px;
 }
 
 /* Success message */
@@ -284,11 +312,278 @@
   padding: 10px 28px;
   font-size: 16px;
   font-weight: 600;
+  min-width: 120px;
 }
 
 .oppia-feedback-modal-footer .btn-secondary {
   border-radius: 10px;
   padding: 10px 22px;
   font-size: 15px;
+  min-width: 100px;
+}
+
+.oppia-feedback-modal-footer .btn {
+  transition: all 0.2s ease;
+}
+
+.oppia-feedback-modal-footer .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - TABLET (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  .oppia-feedback-modal {
+    padding: 20px 24px 16px;
+    max-height: 85vh;
+  }
+
+  .oppia-feedback-title {
+    font-size: 24px;
+  }
+
+  .oppia-feedback-subtitle {
+    font-size: 15px;
+  }
+
+  .oppia-feedback-section .oppia-feedback-star-button {
+    scale: 1.1;
+    letter-spacing: 8px;
+  }
+
+  .oppia-feedback-category {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .oppia-feedback-radio {
+    font-size: 16px;
+    min-height: 40px;
+  }
+
+  .oppia-feedback-label {
+    font-size: 16px;
+  }
+
+  .oppia-feedback-modal-footer {
+    gap: 12px;
+    padding: 16px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - MOBILE (max-width: 480px)
+   ======================================== */
+@media (max-width: 480px) {
+  .oppia-feedback-modal {
+    padding: 16px 20px 12px;
+    max-height: 80vh;
+  }
+
+  .oppia-feedback-header {
+    margin-bottom: 20px;
+  }
+
+  .oppia-feedback-title {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .oppia-feedback-subtitle {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .oppia-feedback-section .oppia-feedback-star-button {
+    scale: 1;
+    letter-spacing: 6px;
+  }
+
+  .oppia-feedback-section {
+    margin-bottom: 16px;
+  }
+
+  .oppia-feedback-category {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .oppia-feedback-radio {
+    font-size: 15px;
+    min-height: 44px;
+    padding: 8px 0;
+  }
+
+  .oppia-feedback-radio input[type="radio"] {
+    min-width: 18px;
+  }
+
+  .oppia-feedback-label {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .oppia-feedback-textarea {
+    font-size: 15px;
+    padding: 12px 14px;
+    min-height: 120px;
+  }
+
+  .oppia-feedback-screenshot-help {
+    font-size: 13px;
+  }
+
+  .oppia-feedback-checkbox {
+    font-size: 15px;
+    gap: 10px;
+    line-height: 1.4;
+    min-height: 44px;
+    padding: 8px 0;
+  }
+
+  .oppia-feedback-checkbox input[type="checkbox"] {
+    min-width: 18px;
+    flex-shrink: 0;
+  }
+
+  .oppia-feedback-modal-footer {
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .oppia-feedback-modal-footer .btn-primary,
+  .oppia-feedback-modal-footer .btn-secondary {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+
+  .oppia-feedback-screenshot-preview img {
+    max-height: 200px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - SMALL MOBILE (max-width: 360px)
+   ======================================== */
+@media (max-width: 360px) {
+  .oppia-feedback-modal {
+    padding: 12px 16px;
+  }
+
+  .oppia-feedback-title {
+    font-size: 20px;
+  }
+
+  .oppia-feedback-subtitle {
+    font-size: 13px;
+  }
+
+  .oppia-feedback-section .oppia-feedback-star-button {
+    letter-spacing: 4px;
+  }
+
+  .oppia-feedback-radio,
+  .oppia-feedback-checkbox {
+    font-size: 14px;
+  }
+
+  .oppia-feedback-modal-footer {
+    padding: 10px 12px;
+  }
+}
+
+/* ========================================
+   LANDSCAPE ORIENTATION - MOBILE
+   ======================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .oppia-feedback-modal {
+    max-height: 95vh;
+    padding: 12px 20px;
+  }
+
+  .oppia-feedback-header {
+    margin-bottom: 12px;
+  }
+
+  .oppia-feedback-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .oppia-feedback-subtitle {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .oppia-feedback-stars {
+    margin-bottom: 6px;
+  }
+
+  .oppia-feedback-section .oppia-feedback-star-button {
+    scale: 0.9;
+  }
+
+  .oppia-feedback-section {
+    margin-bottom: 8px;
+  }
+
+  .oppia-feedback-textarea {
+    min-height: 80px;
+  }
+
+  .oppia-feedback-modal-footer {
+    padding: 10px 16px;
+  }
+}
+
+/* ========================================
+   TOUCH DEVICE IMPROVEMENTS
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger tap targets for touch devices */
+  .oppia-feedback-radio,
+  .oppia-feedback-checkbox {
+    min-height: 44px;
+    padding: 8px 0;
+  }
+
+  .oppia-feedback-radio input[type="radio"],
+  .oppia-feedback-checkbox input[type="checkbox"] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* Prevent text selection on labels */
+  .oppia-feedback-radio,
+  .oppia-feedback-checkbox,
+  .oppia-feedback-label {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ========================================
+   HIGH CONTRAST MODE SUPPORT
+   ======================================== */
+@media (prefers-contrast: high) {
+  .oppia-feedback-textarea,
+  .oppia-feedback-input {
+    border-width: 2px;
+  }
+
+  .oppia-feedback-modal-footer .btn-primary,
+  .oppia-feedback-modal-footer .btn-secondary {
+    border-width: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oppia-feedback-modal-footer .btn {
+    transition: none;
+  }
 }
 </style>

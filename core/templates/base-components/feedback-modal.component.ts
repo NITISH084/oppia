@@ -55,7 +55,6 @@ interface FeedbackRteConfig {
 @Component({
   selector: 'oppia-feedback-modal',
   templateUrl: './feedback-modal.component.html',
-  styleUrls: ['./feedback-modal.component.css'],
 })
 export class FeedbackModalComponent {
   feedbackRating: number = 0;

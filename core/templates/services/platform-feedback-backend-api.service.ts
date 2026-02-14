@@ -54,18 +54,20 @@ export interface PlatformFeedbackSubmitResponse {
   feedback_id: string;
 }
 
+export type FeedbackCategory = 'platform' | 'lesson' | 'not_sure';
+export type FeedbackStatus = 'open' | 'dismissed' | 'deleted';
+
 export interface PlatformFeedbackListItem {
   id: string;
-  category: string;
+  category: FeedbackCategory;
   description: string;
   page_url: string;
   language_code: string;
-  status: string;
+  status: FeedbackStatus;
   created_on_msecs: number;
   rating: number | null;
   screenshot_filename: string | null;
   screenshot_entity_id: string | null;
-  contact_email: string | null;
   session_info: object | null;
 }
 
