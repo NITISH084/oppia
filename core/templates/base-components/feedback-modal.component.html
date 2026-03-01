@@ -52,12 +52,12 @@
     <label class="oppia-feedback-label">
       {{ 'I18N_FEEDBACK_DESCRIPTION_LABEL' | translate }}
     </label>
-    <schema-based-html-editor
-      [(ngModel)]="feedbackDescription"
-      [disabled]="false"
-      [labelForFocusTarget]="'feedback-description'"
-      [uiConfig]="feedbackRteConfig">
-    </schema-based-html-editor>
+    <textarea id="oppia-feedback-description"
+              class="oppia-feedback-textarea"
+              rows="4"
+              [ngModel]="feedbackDescription"
+              (ngModelChange)="feedbackDescription = $event"
+              [placeholder]="'I18N_FEEDBACK_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
     <div *ngIf="feedbackDescriptionError" class="oppia-feedback-error-text">
       {{ 'I18N_FEEDBACK_DESCRIPTION_ERROR' | translate }}
     </div>
