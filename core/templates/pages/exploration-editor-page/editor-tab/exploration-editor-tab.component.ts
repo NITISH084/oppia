@@ -327,16 +327,6 @@ export class ExplorationEditorTabComponent implements OnInit, OnDestroy {
 
   saveSolution(displayedValue: Solution | SubtitledHtml): void {
     const activeStateName = this.getValidActiveStateName();
-    const solutionContentId =
-      displayedValue instanceof Solution
-        ? displayedValue.explanation.contentId
-        : null;
-    console.error('[ContentIdDebug] Persisting state solution.', {
-      activeStateName: activeStateName,
-      solutionContentId: solutionContentId,
-      displayedIndex: this.explorationNextContentIdIndexService.displayed,
-      savedMementoIndex: this.explorationNextContentIdIndexService.savedMemento,
-    });
     this.explorationStatesService.saveSolution(
       activeStateName,
       cloneDeep(displayedValue) as SubtitledHtml
@@ -599,35 +589,10 @@ export class ExplorationEditorTabComponent implements OnInit, OnDestroy {
       () => {
         let indexToUse = this.explorationNextContentIdIndexService.displayed;
         this.explorationNextContentIdIndexService.displayed += 1;
-        console.error('[ContentIdDebug] Allocating content id index.', {
-          indexToUse: indexToUse,
-          nextDisplayedIndex:
-            this.explorationNextContentIdIndexService.displayed,
-          savedMementoIndex:
-            this.explorationNextContentIdIndexService.savedMemento,
-          activeStateName: this.stateEditorService.getActiveStateName(),
-        });
         return indexToUse;
       },
       () => {
-        console.error('[ContentIdDebug] Reverting unused content id indexes.', {
-          displayedIndexBeforeRevert:
-            this.explorationNextContentIdIndexService.displayed,
-          savedMementoIndex:
-            this.explorationNextContentIdIndexService.savedMemento,
-          activeStateName: this.stateEditorService.getActiveStateName(),
-        });
         this.explorationNextContentIdIndexService.restoreFromMemento();
-        console.error(
-          '[ContentIdDebug] Revert complete for content id indexes.',
-          {
-            displayedIndexAfterRevert:
-              this.explorationNextContentIdIndexService.displayed,
-            savedMementoIndex:
-              this.explorationNextContentIdIndexService.savedMemento,
-            activeStateName: this.stateEditorService.getActiveStateName(),
-          }
-        );
       }
     );
   }

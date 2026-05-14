@@ -39,7 +39,6 @@ import {ConvertToPlainTextPipe} from 'filters/string-utility-filters/convert-to-
 import INTERACTION_SPECS from 'interactions/interaction_specs.json';
 import {GenerateContentIdService} from 'services/generate-content-id.service';
 import {InteractionSpecsKey} from 'pages/interaction-specs.constants';
-import {ExplorationNextContentIdIndexService} from 'pages/exploration-editor-page/services/exploration-next-content-id-index.service';
 
 interface DeleteValue {
   index: number;
@@ -52,6 +51,7 @@ interface DeleteValue {
 })
 export class StateSolutionEditorComponent implements OnInit {
   // The state property is null until a solution is specified or removed.
+  @Output() onSaveNextContentIdIndex: EventEmitter<number> = new EventEmitter();
   @Output() saveSolution: EventEmitter<Solution | null> = new EventEmitter();
   @Output() refreshWarnings: EventEmitter<void> = new EventEmitter();
   @Output() getSolutionChange: EventEmitter<void> = new EventEmitter();
@@ -74,7 +74,6 @@ export class StateSolutionEditorComponent implements OnInit {
     private convertToPlainText: ConvertToPlainTextPipe,
     private editabilityService: EditabilityService,
     private explorationHtmlFormatterService: ExplorationHtmlFormatterService,
-    private explorationNextContentIdIndexService: ExplorationNextContentIdIndexService,
     private externalSaveService: ExternalSaveService,
     private generateContentIdService: GenerateContentIdService,
     private ngbModal: NgbModal,
@@ -173,28 +172,15 @@ export class StateSolutionEditorComponent implements OnInit {
     this.alertsService.clearWarnings();
     this.externalSaveService.onExternalSave.emit();
     this.inlineSolutionEditorIsActive = false;
-    console.error('[ContentIdDebug] Opening solution modal.', {
-      activeStateName: this.stateEditorService.getActiveStateName(),
-      existingSolutionContentId:
-        this.stateSolutionService.savedMemento?.explanation.contentId ?? null,
-      displayedIndex: this.explorationNextContentIdIndexService.displayed,
-      savedMementoIndex: this.explorationNextContentIdIndexService.savedMemento,
-    });
     this.ngbModal
       .open(AddOrUpdateSolutionModalComponent, {
         backdrop: 'static',
       })
       .result.then(
         result => {
-          console.error('[ContentIdDebug] Saving solution from modal.', {
-            activeStateName: this.stateEditorService.getActiveStateName(),
-            solutionContentId: result.solution.explanation.contentId,
-            displayedIndex: this.explorationNextContentIdIndexService.displayed,
-            savedMementoIndex:
-              this.explorationNextContentIdIndexService.savedMemento,
-          });
           this.stateSolutionService.displayed = result.solution;
           this.stateSolutionService.saveDisplayedValue();
+          this.onSaveNextContentIdIndex.emit();
           this.onSaveSolution(this.stateSolutionService.displayed);
           let activeStateName = this.stateEditorService.getActiveStateName();
           if (activeStateName === null) {
@@ -227,13 +213,6 @@ export class StateSolutionEditorComponent implements OnInit {
           }
         },
         () => {
-          console.error('[ContentIdDebug] Canceling solution modal.', {
-            activeStateName: this.stateEditorService.getActiveStateName(),
-            displayedIndexBeforeRevert:
-              this.explorationNextContentIdIndexService.displayed,
-            savedMementoIndex:
-              this.explorationNextContentIdIndexService.savedMemento,
-          });
           this.generateContentIdService.revertUnusedContentIdIndex();
           this.alertsService.clearWarnings();
           // Note to developers:
