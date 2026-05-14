@@ -161,6 +161,18 @@ class FixExplorationsWithDuplicateContentIdsJobTests(
         self.assertEqual(state1_updated.content.content_id, original_content_id)
         self.assertEqual(state2_updated.content.content_id, 'content_2')
 
+    def test_generate_matching_content_id_preserves_solution_prefix(
+        self,
+    ) -> None:
+        """Test that solution IDs regenerate with solution_* prefix."""
+        content_id_generator = translation_domain.ContentIdGenerator(12)
+
+        regenerated_content_id = delete_duplicate_content_ids_jobs._generate_matching_content_id(  # pylint: disable=protected-access
+            'solution_11', content_id_generator
+        )
+
+        self.assertEqual(regenerated_content_id, 'solution_12')
+
 
 class AuditIdentifyExplorationsWithDuplicateContentIdsJobTests(
     job_test_utils.JobTestBase
