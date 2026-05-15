@@ -173,6 +173,28 @@ class FixExplorationsWithDuplicateContentIdsJobTests(
 
         self.assertEqual(regenerated_content_id, 'solution_12')
 
+    def test_generate_matching_content_id_preserves_customization_arg_prefix(
+        self,
+    ) -> None:
+        """Test that customization arg IDs preserve their arg-name prefix."""
+        content_id_generator = translation_domain.ContentIdGenerator(7)
+
+        regenerated_content_id = delete_duplicate_content_ids_jobs._generate_matching_content_id(  # pylint: disable=protected-access
+            'ca_choices_6', content_id_generator
+        )
+
+        self.assertEqual(regenerated_content_id, 'ca_choices_7')
+
+    def test_generate_matching_content_id_for_unrecognized_prefix(self) -> None:
+        """Test that unknown IDs default to regular content_* IDs."""
+        content_id_generator = translation_domain.ContentIdGenerator(4)
+
+        regenerated_content_id = delete_duplicate_content_ids_jobs._generate_matching_content_id(  # pylint: disable=protected-access
+            'unexpected_format', content_id_generator
+        )
+
+        self.assertEqual(regenerated_content_id, 'content_4')
+
 
 class AuditIdentifyExplorationsWithDuplicateContentIdsJobTests(
     job_test_utils.JobTestBase
@@ -435,3 +457,100 @@ class ReplaceContentIdHelpersTests(test_utils.GenericTestBase):
         )
 
         self.assertEqual(state.content.content_id, 'keep_me')
+
+    def test_replace_content_id_in_state_skips_non_matching_nested_fields(
+        self,
+    ) -> None:
+        """Test that helper safely skips branches without matching IDs."""
+
+        class FakeContent:
+            """Simple object carrying a content_id."""
+
+            def __init__(self, content_id: str) -> None:
+                self.content_id = content_id
+
+        class FakeCustomizationArg:
+            """Customization arg stub with non-matching content IDs."""
+
+            def __init__(self, value: Any) -> None:
+                self.value = value
+
+            def get_content_ids(self) -> List[str]:
+                """Return IDs that do not include target ID."""
+                return ['some_other_id']
+
+        class FakeOutcomeWithoutFeedback:
+            """Outcome stub without feedback field."""
+
+            pass
+
+        class FakeAnswerGroup:
+            """Answer group stub with outcome lacking feedback."""
+
+            def __init__(self) -> None:
+                self.outcome = FakeOutcomeWithoutFeedback()
+
+        class FakeHintWithoutContent:
+            """Hint stub without hint_content field."""
+
+            pass
+
+        class FakeHint:
+            """Hint stub whose content_id does not match target."""
+
+            def __init__(self) -> None:
+                self.hint_content = FakeContent('other_hint_id')
+
+        class FakeSolution:
+            """Solution stub whose explanation does not match target."""
+
+            def __init__(self) -> None:
+                self.explanation = FakeContent('other_solution_id')
+
+        class FakeInteraction:
+            """Interaction stub exercising skip branches."""
+
+            def __init__(self) -> None:
+                self.customization_args = {
+                    'arg': FakeCustomizationArg(
+                        {'nested': FakeContent('other')}
+                    )
+                }
+                self.answer_groups = [FakeAnswerGroup()]
+                self.default_outcome = None
+                self.hints = [FakeHintWithoutContent(), FakeHint()]
+                self.solution = FakeSolution()
+
+        class FakeState:
+            """State stub bundling content and skip-branch interaction."""
+
+            def __init__(self) -> None:
+                self.content = FakeContent('state_content')
+                self.interaction = FakeInteraction()
+
+        state = FakeState()
+
+        # Here we use cast because FakeState is a stub; helper accepts State.
+        delete_duplicate_content_ids_jobs._replace_content_id_in_state(  # pylint: disable=protected-access
+            cast(state_domain.State, state), 'target_id', 'replacement_id'
+        )
+
+        self.assertEqual(state.content.content_id, 'state_content')
+        self.assertEqual(
+            cast(FakeHint, state.interaction.hints[1]).hint_content.content_id,
+            'other_hint_id',
+        )
+        self.assertEqual(
+            state.interaction.solution.explanation.content_id,
+            'other_solution_id',
+        )
+
+    def test_replace_content_id_in_value_handles_empty_dict(self) -> None:
+        """Test that helper handles empty dict values without errors."""
+        empty_dict: Dict[str, Any] = {}
+
+        delete_duplicate_content_ids_jobs._replace_content_id_in_value(  # pylint: disable=protected-access
+            empty_dict, 'old', 'new'
+        )
+
+        self.assertEqual(empty_dict, {})
