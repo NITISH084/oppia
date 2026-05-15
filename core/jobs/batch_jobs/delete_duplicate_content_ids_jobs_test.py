@@ -472,7 +472,9 @@ class ReplaceContentIdHelpersTests(test_utils.GenericTestBase):
         class FakeCustomizationArg:
             """Customization arg stub with non-matching content IDs."""
 
-            def __init__(self, value: Any) -> None:
+            # Here we use object because this test passes heterogenous nested
+            # values that intentionally model customization arg payloads.
+            def __init__(self, value: object) -> None:
                 self.value = value
 
             def get_content_ids(self) -> List[str]:
@@ -537,6 +539,7 @@ class ReplaceContentIdHelpersTests(test_utils.GenericTestBase):
 
         self.assertEqual(state.content.content_id, 'state_content')
         self.assertEqual(
+            # Here we use cast because hints contains multiple stub types.
             cast(FakeHint, state.interaction.hints[1]).hint_content.content_id,
             'other_hint_id',
         )
@@ -547,7 +550,9 @@ class ReplaceContentIdHelpersTests(test_utils.GenericTestBase):
 
     def test_replace_content_id_in_value_handles_empty_dict(self) -> None:
         """Test that helper handles empty dict values without errors."""
-        empty_dict: Dict[str, Any] = {}
+        # Here we use object because this empty dictionary is passed to a
+        # recursive helper that accepts mixed value types.
+        empty_dict: Dict[str, object] = {}
 
         delete_duplicate_content_ids_jobs._replace_content_id_in_value(  # pylint: disable=protected-access
             empty_dict, 'old', 'new'
