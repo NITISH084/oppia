@@ -280,6 +280,19 @@ def _generate_matching_content_id(
             break
 
     if content_type == translation_domain.ContentType.CUSTOMIZATION_ARG:
+        # Customization arg content IDs can contain an additional prefix
+        # between the content type and numeric index. For example:
+        #
+        #   ca_choices_12
+        #
+        # where:
+        #   - "ca" is the CUSTOMIZATION_ARG content type prefix
+        #   - "choices" is the customization arg name
+        #   - "12" is the generated index
+        #
+        # While regenerating duplicate IDs we preserve the customization arg
+        # portion ("choices") so the new ID retains the same structure and
+        # remains compatible with existing content references.
         content_id_parts = existing_content_id.split('_')
         if len(content_id_parts) >= 3:
             extra_prefix = '_'.join(content_id_parts[1:-1])
