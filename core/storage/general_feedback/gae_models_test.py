@@ -19,8 +19,8 @@
 from __future__ import annotations
 
 from core import utils
-from core.tests import test_utils
 from core.platform import models
+from core.tests import test_utils
 
 MYPY = False
 if MYPY:  # pragma: no cover

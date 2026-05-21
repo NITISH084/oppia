@@ -234,7 +234,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
         authored_threads: Sequence[WebFeedbackThreadModel] = (
             cls.get_all()
             .filter(
-                cls.deleted == False
+                cls.deleted is False
             )  # pylint: disable=singleton-comparison
             .filter(cls.original_author_id == user_id)
             .fetch()
