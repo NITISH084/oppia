@@ -364,6 +364,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
         ).order(-cls.created_on)
 
         start_cursor = datastore_services.make_cursor(urlsafe_cursor=cursor)
+        results: Sequence[WebFeedbackThreadModel]
         results, next_cursor, more = query.fetch_page(
             page_size, start_cursor=start_cursor
         )
@@ -614,7 +615,7 @@ class WebFeedbackMessageModel(base_models.BaseModel):
     @classmethod
     def get_messages_by_thread_ids(
         cls, thread_ids: Sequence[str]
-    ) -> Dict[str, Sequence['WebFeedbackMessageModel']]:
+    ) -> Dict[str, List['WebFeedbackMessageModel']]:
         """Returns all messages belonging to a list of thread IDs, grouped by thread ID."""
         messages_by_thread_id: Dict[str, List[WebFeedbackMessageModel]] = {
             thread_id: [] for thread_id in thread_ids

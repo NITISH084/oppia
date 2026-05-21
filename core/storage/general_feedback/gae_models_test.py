@@ -22,6 +22,8 @@ from core import utils
 from core.platform import models
 from core.tests import test_utils
 
+from typing import List, Sequence, cast
+
 MYPY = False
 if MYPY:  # pragma: no cover
     from mypy_imports import base_models, general_feedback_models
@@ -217,29 +219,41 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
 
     def test_get_filtered_query_of_feedback_threads(self) -> None:
         # Test filtering by category.
-        threads = general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
-            category_filter=self.CATEGORY1
-        ).fetch()
+        # Here we use cast because NDB query.fetch() loses concrete model typing.
+        threads = cast(
+            Sequence[general_feedback_models.WebFeedbackThreadModel],
+            general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
+                category_filter=self.CATEGORY1
+            ).fetch(),
+        )
         self.assertEqual(len(threads), 1)
         self.assertEqual(threads[0].id, self.thread_id1)
 
         # Test filtering by target_type.
-        threads = general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
-            target_type_filter=self.PLATFORM_TARGET_TYPE
-        ).fetch()
+        # Here we use cast because NDB query.fetch() loses concrete model typing.
+        threads = cast(
+            Sequence[general_feedback_models.WebFeedbackThreadModel],
+            general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
+                target_type_filter=self.PLATFORM_TARGET_TYPE
+            ).fetch(),
+        )
         self.assertEqual(len(threads), 1)
         self.assertEqual(threads[0].id, self.thread_id2)
 
         # Test filtering by category and target_type.
-        threads = general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
-            category_filter=self.CATEGORY1,
-            target_type_filter=self.LESSON_TARGET_TYPE,
-        ).fetch()
+        # Here we use cast because NDB query.fetch() loses concrete model typing.
+        threads = cast(
+            Sequence[general_feedback_models.WebFeedbackThreadModel],
+            general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
+                category_filter=self.CATEGORY1,
+                target_type_filter=self.LESSON_TARGET_TYPE,
+            ).fetch(),
+        )
         self.assertEqual(len(threads), 1)
         self.assertEqual(threads[0].id, self.thread_id1)
 
     def test_fetch_page_of_feedback_threads(self) -> None:
-        seen_thread_ids = []
+        seen_thread_ids: List[str] = []
         cursor = None
 
         while True:

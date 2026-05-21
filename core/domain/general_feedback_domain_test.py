@@ -24,13 +24,17 @@ from core import utils
 from core.domain import general_feedback_domain
 from core.tests import test_utils
 
+from typing import Dict
+
 
 class WebFeedbackThreadDomainUnitTests(test_utils.GenericTestBase):
     EXP_ID = 'exp0'
     ENTITY_ID = 'entity_id_123'
     THREAD_ID1 = 'exploration.exp0.thread0'
     THREAD_ID2 = 'general.entity_id_123.thread1'
-    SESSION_INFO = {
+    # Here we use object because session-info payloads contain heterogeneous
+    # nested JSON-like values (dicts, lists, strings, ints).
+    SESSION_INFO: Dict[str, object] = {
         'console_errors_json': [
             {
                 'error_message': 'TypeError: Cannot read properties of undefined',
