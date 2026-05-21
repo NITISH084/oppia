@@ -23,16 +23,7 @@ import datetime
 from core import feconf, utils
 from core.platform import models
 
-from typing import (
-    Dict,
-    Final,
-    List,
-    Literal,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-)
+from typing import Dict, Final, List, Literal, Optional, Sequence, Tuple, Union
 
 MYPY = False
 if MYPY:  # pragma: no cover
@@ -219,7 +210,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
             WebFeedbackMessageModel.query(
                 WebFeedbackMessageModel.author_id == user_id
             )
-            .filter(WebFeedbackMessageModel.deleted == False)
+            .filter(WebFeedbackMessageModel.deleted.IN([False]))
             .get(keys_only=True)
             is not None
         )
@@ -251,9 +242,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
 
         participated_messages: Sequence[WebFeedbackMessageModel] = (
             WebFeedbackMessageModel.get_all()
-            .filter(
-                WebFeedbackMessageModel.deleted == False
-            )  # pylint: disable=singleton-comparison
+            .filter(WebFeedbackMessageModel.deleted.IN([False]))
             .filter(WebFeedbackMessageModel.author_id == user_id)
             .fetch()
         )
@@ -337,9 +326,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
         """
         query = cls.query()
         # Ignoring deleted threads as they are not relevant for operations.
-        query = query.filter(  # pylint: disable=singleton-comparison
-            cls.deleted == False
-        )
+        query = query.filter(cls.deleted.IN([False]))
         if category_filter and category_filter in CATEGORY_CHOICES:
             query = query.filter(cls.category == category_filter)
         if status_filter and status_filter in STATUS_CHOICES:
@@ -396,11 +383,12 @@ class WebFeedbackThreadModel(base_models.BaseModel):
             entity_id: str. The ID of the entity.
 
         Returns:
-            str. Athread ID that is different from the IDs of all the existing threads within the given entity.
+            str. A thread ID that is different from all existing thread IDs
+            within the given entity.
 
         Raises:
-            Exception. There were too many collisions with existing thread IDs
-            when attempting to generate a new thread ID.
+            Exception. Raised when too many collisions occur while generating a
+                new thread ID.
         """
         for _ in range(_MAX_RETRIES):
             thread_id = '%s.%s.%s%s' % (
@@ -439,9 +427,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
                 'Lesson feedback must have target_type "%s".'
                 % TARGET_TYPE_EXPLORATION
             )
-        elif (
-            category == CATEGORY_PLATFORM and target_type != TARGET_TYPE_GENERAL
-        ):
+        if category == CATEGORY_PLATFORM and target_type != TARGET_TYPE_GENERAL:
             raise ValueError(
                 'Platform feedback must have target_type "%s".'
                 % TARGET_TYPE_GENERAL

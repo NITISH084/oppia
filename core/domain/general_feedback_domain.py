@@ -45,6 +45,8 @@ class WebFeedbackThreadDict(TypedDict):
     target_type: str
     target_id: str
     has_screenshot: bool
+    # Here we use object because session-info diagnostics are heterogeneous
+    # JSON-like payloads (nested dict/list values) from client logs.
     session_info: Optional[Dict[str, object]]
     user_id: Optional[str]
     message_count: int
@@ -138,6 +140,8 @@ class WebFeedbackThread:
         message_count: int,
         messages: List[WebFeedbackMessage],
         created_on_msecs: float,
+        # Here we use object because session-info diagnostics are heterogeneous
+        # JSON-like payloads (nested dict/list values) from client logs.
         session_info: Optional[Dict[str, object]],
         user_id: Optional[str] = None,
     ) -> None:
