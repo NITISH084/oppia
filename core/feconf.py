@@ -346,6 +346,13 @@ CURRENT_LEARNER_ANSWER_INFO_SCHEMA_VERSION = 1
 # schema changes.
 CURRENT_PLATFORM_PARAMETER_RULE_SCHEMA_VERSION = 1
 
+# This value should be updated if the schema of FeedbackSessionLogModel
+# schema changes.
+CURRENT_SESSION_INFO_SCHEMA_VERSION = 1
+
+# This is the minimum version of the FeedbackSessionLogModel schema that is supported.
+MINIMUM_SESSION_INFO_SCHEMA_VERSION = 1
+
 # The default number of exploration tiles to load at a time in the search
 # results page.
 SEARCH_RESULTS_PAGE_SIZE = 20
