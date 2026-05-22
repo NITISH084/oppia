@@ -24,7 +24,7 @@ class WebFeedbackMessageDict(TypedDict):
 
     message_index: int
     author_id: Optional[str]
-    author_role: str
+    author_status: str
     text: Optional[str]
     updated_status: Optional[str]
     screenshot_filename: Optional[str]
@@ -75,7 +75,7 @@ class WebFeedbackMessage:
     ) -> None:
         self.message_index = message_index
         self.author_id = author_id
-        self.author_role = author_status
+        self.author_status = author_status
         self.text = text
         self.updated_status = updated_status
         self.screenshot_filename = screenshot_filename
@@ -91,7 +91,7 @@ class WebFeedbackMessage:
         return {
             'message_index': self.message_index,
             'author_id': self.author_id,
-            'author_role': self.author_role,
+            'author_status': self.author_status,
             'text': self.text,
             'updated_status': self.updated_status,
             'screenshot_filename': self.screenshot_filename,

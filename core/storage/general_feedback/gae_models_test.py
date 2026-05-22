@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+import datetime
+
 from core import utils
 from core.platform import models
 from core.tests import test_utils
@@ -227,6 +229,18 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         )
         self.assertEqual(len(threads), 1)
         self.assertEqual(threads[0].id, THREAD_ID1)
+        # Test filtering by status.
+        # Here we use cast because NDB query.fetch() loses concrete model typing.
+        threads = cast(
+            Sequence[general_feedback_models.WebFeedbackThreadModel],
+            general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
+                status_filter=general_feedback_models.STATUS_CHOICES_OPEN
+            ).fetch(),
+        )
+        self.assertEqual(len(threads), 2)
+        self.assertEqual(
+            {thread.id for thread in threads}, {THREAD_ID1, THREAD_ID2}
+        )
 
         # Test filtering by target_type.
         # Here we use cast because NDB query.fetch() loses concrete model typing.
@@ -239,6 +253,31 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         self.assertEqual(len(threads), 1)
         self.assertEqual(threads[0].id, THREAD_ID2)
 
+        # Test filtering by target_id.
+        # Here we use cast because NDB query.fetch() loses concrete model typing.
+        threads = cast(
+            Sequence[general_feedback_models.WebFeedbackThreadModel],
+            general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
+                target_id_filter=LESSON_TARGET_ID
+            ).fetch(),
+        )
+        self.assertEqual(len(threads), 1)
+        self.assertEqual(threads[0].id, THREAD_ID1)
+
+        # Test filtering by date range.
+        # Here we use cast because NDB query.fetch() loses concrete model typing.
+        now = datetime.datetime.utcnow()
+        threads = cast(
+            Sequence[general_feedback_models.WebFeedbackThreadModel],
+            general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
+                date_from=now - datetime.timedelta(days=1),
+                date_to=now + datetime.timedelta(days=1),
+            ).fetch(),
+        )
+        self.assertEqual(len(threads), 2)
+        self.assertEqual(
+            {thread.id for thread in threads}, {THREAD_ID1, THREAD_ID2}
+        )
         # Test filtering by category and target_type.
         # Here we use cast because NDB query.fetch() loses concrete model typing.
         threads = cast(
@@ -281,6 +320,23 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         self.assertTrue(
             new_thread_id.startswith('general.new_platform_target.')
         )
+
+    def test_generate_new_thread_id_raises_error_after_many_collisions(
+        self,
+    ) -> None:
+        with self.swap(
+            general_feedback_models.WebFeedbackThreadModel,
+            'get_by_id',
+            lambda _: object(),
+        ):
+            with self.assertRaisesRegex(
+                Exception,
+                'New thread ID generator is producing too many collisions',
+            ):
+                general_feedback_models.WebFeedbackThreadModel.generate_new_thread_id(
+                    entity_type=TARGET_TYPE_GENERAL,
+                    entity_id='new_platform_target',
+                )
 
     def test_create(self) -> None:
         with self.assertRaisesRegex(
@@ -341,6 +397,30 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             thread_model.status, general_feedback_models.STATUS_CHOICES_OPEN
         )
         self.assertEqual(thread_model.message_count, 0)
+
+    def test_create_raises_error_for_preexisting_generated_thread_id(
+        self,
+    ) -> None:
+        with self.swap(
+            general_feedback_models.WebFeedbackThreadModel,
+            'generate_new_thread_id',
+            lambda _, __: THREAD_ID1,
+        ):
+            with self.assertRaisesRegex(
+                Exception,
+                'Generated thread ID already exists: %s' % THREAD_ID1,
+            ):
+                general_feedback_models.WebFeedbackThreadModel.create(
+                    category=CATEGORY1,
+                    target_type=TARGET_TYPE_EXPLORATION,
+                    target_id='new_exp_id',
+                    original_author_id=self.USER_ID,
+                    page_url=PAGE_URL,
+                    language_code=LANGUAGE_CODE,
+                    rating=RATING,
+                    has_screenshot=False,
+                    has_session_info=False,
+                )
 
 
 class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
@@ -567,6 +647,21 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
         self.assertIsNone(message_model.screenshot_filename)
         self.assertIsNone(message_model.screenshot_entity_id)
 
+    def test_create_raises_error_for_duplicate_message_id(self) -> None:
+        with self.assertRaisesRegex(
+            Exception, 'Message with ID %s already exists.' % self.message_id1
+        ):
+            general_feedback_models.WebFeedbackMessageModel.create(
+                thread_id=THREAD_ID1,
+                message_index=0,
+                author_id=self.USER_ID,
+                author_status='learner',
+                text='Test duplicate message',
+                updated_status=general_feedback_models.STATUS_CHOICES_OPEN,
+                screenshot_filename=None,
+                screenshot_entity_id=None,
+            )
+
 
 class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
     """Tests for FeedbackSessionLogModel."""
@@ -627,3 +722,23 @@ class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
         self.assertEqual(
             session_log_model.environment_json, {'user_agent': 'test-agent'}
         )
+
+    def test_create_raises_error_for_duplicate_thread_id(self) -> None:
+        general_feedback_models.FeedbackSessionLogModel.create(
+            thread_id=THREAD_ID1,
+            console_errors_json=[{'message': 'err'}],
+            failed_requests_json=[{'url': '/test'}],
+            navigation_history_json=[{'url': '/learn/math'}],
+            environment_json={'user_agent': 'test-agent'},
+        )
+        with self.assertRaisesRegex(
+            Exception,
+            'Session log for thread ID %s already exists.' % THREAD_ID1,
+        ):
+            general_feedback_models.FeedbackSessionLogModel.create(
+                thread_id=THREAD_ID1,
+                console_errors_json=[{'message': 'err2'}],
+                failed_requests_json=[{'url': '/test2'}],
+                navigation_history_json=[{'url': '/learn/science'}],
+                environment_json={'user_agent': 'test-agent-2'},
+            )
