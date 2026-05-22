@@ -114,7 +114,7 @@ class WebFeedbackThreadDomainUnitTests(test_utils.GenericTestBase):
                 {
                     'message_index': 0,
                     'author_id': self.viewer_id,
-                    'author_role': 'user',
+                    'author_status': 'user',
                     'text': 'test message',
                     'updated_status': None,
                     'screenshot_filename': 'test_screenshot.png',
@@ -175,7 +175,7 @@ class WebFeedbackThreadDomainUnitTests(test_utils.GenericTestBase):
                 {
                     'message_index': 0,
                     'author_id': self.viewer_id,
-                    'author_role': 'user',
+                    'author_status': 'user',
                     'text': 'test message',
                     'updated_status': None,
                     'screenshot_filename': 'test_screenshot.png',
@@ -235,7 +235,7 @@ class WebFeedbackMessageDomainUnitTests(test_utils.GenericTestBase):
         ) = {
             'message_index': self.MESSAGE_INDEX,
             'author_id': self.viewer_id,
-            'author_role': 'user',
+            'author_status': 'user',
             'text': 'test message',
             'updated_status': None,
             'screenshot_filename': 'test_screenshot.png',
