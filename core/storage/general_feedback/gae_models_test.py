@@ -33,21 +33,22 @@ if MYPY:  # pragma: no cover
 )
 
 
+NONEXISTENT_USER_ID = 'id_x'
+TARGET_TYPE_EXPLORATION = 'exploration'
+TARGET_TYPE_GENERAL = 'general'
+LESSON_TARGET_ID = 'exp_id_2'
+PLATFORM_TARGET_ID = 'platform_target'
+CATEGORY1 = 'lesson'
+CATEGORY2 = 'platform'
+PAGE_URL = '/learn/math'
+LANGUAGE_CODE = 'en'
+RATING = 4
+thread_id1 = 'general.thread.1'
+thread_id2 = 'general.thread.2'
+
+
 class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
     """Tests for WebFeedbackThreadModel."""
-
-    NONEXISTENT_USER_ID = 'id_x'
-    LESSON_TARGET_TYPE = 'exploration'
-    PLATFORM_TARGET_TYPE = 'general'
-    LESSON_TARGET_ID = 'exp_id_2'
-    PLATFORM_TARGET_ID = 'platform_target'
-    CATEGORY1 = 'lesson'
-    CATEGORY2 = 'platform'
-    PAGE_URL = '/learn/math'
-    LANGUAGE_CODE = 'en'
-    RATING = 4
-    thread_id1 = 'general.thread.1'
-    thread_id2 = 'general.thread.2'
 
     def setUp(self) -> None:
         super().setUp()
@@ -56,14 +57,14 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         self.USER_ID = self.get_user_id_from_email('learner@example.com')
 
         thread_model1 = general_feedback_models.WebFeedbackThreadModel(
-            id=self.thread_id1,
-            category=self.CATEGORY1,
-            target_type=self.LESSON_TARGET_TYPE,
-            target_id=self.LESSON_TARGET_ID,
+            id=thread_id1,
+            category=CATEGORY1,
+            target_type=TARGET_TYPE_EXPLORATION,
+            target_id=LESSON_TARGET_ID,
             original_author_id=self.USER_ID,
-            page_url=self.PAGE_URL,
-            language_code=self.LANGUAGE_CODE,
-            rating=self.RATING,
+            page_url=PAGE_URL,
+            language_code=LANGUAGE_CODE,
+            rating=RATING,
             has_screenshot=False,
             has_session_info=False,
             status=general_feedback_models.STATUS_CHOICES_OPEN,
@@ -72,14 +73,14 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         thread_model1.put()
 
         thread_model2 = general_feedback_models.WebFeedbackThreadModel(
-            id=self.thread_id2,
-            category=self.CATEGORY2,
-            target_type=self.PLATFORM_TARGET_TYPE,
-            target_id=self.PLATFORM_TARGET_ID,
+            id=thread_id2,
+            category=CATEGORY2,
+            target_type=TARGET_TYPE_GENERAL,
+            target_id=PLATFORM_TARGET_ID,
             original_author_id=self.USER_ID,
-            page_url=self.PAGE_URL,
-            language_code=self.LANGUAGE_CODE,
-            rating=self.RATING,
+            page_url=PAGE_URL,
+            language_code=LANGUAGE_CODE,
+            rating=RATING,
             has_screenshot=False,
             has_session_info=False,
             status=general_feedback_models.STATUS_CHOICES_OPEN,
@@ -101,7 +102,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         )
         self.assertFalse(
             general_feedback_models.WebFeedbackThreadModel.has_reference_to_user_id(
-                self.NONEXISTENT_USER_ID
+                NONEXISTENT_USER_ID
             )
         )
 
@@ -144,16 +145,14 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
 
     def test_export_data(self) -> None:
         thread_with_session_info = (
-            general_feedback_models.WebFeedbackThreadModel.get_by_id(
-                self.thread_id1
-            )
+            general_feedback_models.WebFeedbackThreadModel.get_by_id(thread_id1)
         )
         thread_with_session_info.has_session_info = True
         thread_with_session_info.update_timestamps()
         thread_with_session_info.put()
 
         general_feedback_models.FeedbackSessionLogModel.create(
-            self.thread_id1,
+            thread_id1,
             console_errors_json=[{'message': 'err'}],
             failed_requests_json=[{'url': '/test'}],
             navigation_history_json=[{'url': '/learn/math'}],
@@ -161,7 +160,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         )
         session_log_model = (
             general_feedback_models.FeedbackSessionLogModel.get_by_id(
-                self.thread_id1
+                thread_id1
             )
         )
 
@@ -171,8 +170,8 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             )
         )
         expected_export_data = {
-            self.thread_id1: (self.CATEGORY1, self.LESSON_TARGET_TYPE),
-            self.thread_id2: (self.CATEGORY2, self.PLATFORM_TARGET_TYPE),
+            thread_id1: (CATEGORY1, TARGET_TYPE_EXPLORATION),
+            thread_id2: (CATEGORY2, TARGET_TYPE_GENERAL),
         }
         self.assertEqual(
             set(export_data.keys()), set(expected_export_data.keys())
@@ -185,14 +184,14 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             thread_data = {
                 'category': expected_category,
                 'target_type': expected_target_type,
-                'page_url': self.PAGE_URL,
-                'language_code': self.LANGUAGE_CODE,
-                'rating': self.RATING,
+                'page_url': PAGE_URL,
+                'language_code': LANGUAGE_CODE,
+                'rating': RATING,
                 'has_screenshot': False,
-                'has_session_info': thread_id == self.thread_id1,
+                'has_session_info': thread_id == thread_id1,
                 'session_info': (
                     session_log_model.to_dict()
-                    if thread_id == self.thread_id1
+                    if thread_id == thread_id1
                     else None
                 ),
                 'status': general_feedback_models.STATUS_CHOICES_OPEN,
@@ -209,8 +208,8 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
                 ),
             }
 
-            if expected_target_type == self.LESSON_TARGET_TYPE:
-                thread_data['target_id'] = self.LESSON_TARGET_ID
+            if expected_target_type == TARGET_TYPE_EXPLORATION:
+                thread_data['target_id'] = LESSON_TARGET_ID
 
             self.assertEqual(
                 export_data[thread_id],
@@ -223,34 +222,34 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         threads = cast(
             Sequence[general_feedback_models.WebFeedbackThreadModel],
             general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
-                category_filter=self.CATEGORY1
+                category_filter=CATEGORY1
             ).fetch(),
         )
         self.assertEqual(len(threads), 1)
-        self.assertEqual(threads[0].id, self.thread_id1)
+        self.assertEqual(threads[0].id, thread_id1)
 
         # Test filtering by target_type.
         # Here we use cast because NDB query.fetch() loses concrete model typing.
         threads = cast(
             Sequence[general_feedback_models.WebFeedbackThreadModel],
             general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
-                target_type_filter=self.PLATFORM_TARGET_TYPE
+                target_type_filter=TARGET_TYPE_GENERAL
             ).fetch(),
         )
         self.assertEqual(len(threads), 1)
-        self.assertEqual(threads[0].id, self.thread_id2)
+        self.assertEqual(threads[0].id, thread_id2)
 
         # Test filtering by category and target_type.
         # Here we use cast because NDB query.fetch() loses concrete model typing.
         threads = cast(
             Sequence[general_feedback_models.WebFeedbackThreadModel],
             general_feedback_models.WebFeedbackThreadModel.get_filtered_query_of_feedback_threads(
-                category_filter=self.CATEGORY1,
-                target_type_filter=self.LESSON_TARGET_TYPE,
+                category_filter=CATEGORY1,
+                target_type_filter=TARGET_TYPE_EXPLORATION,
             ).fetch(),
         )
         self.assertEqual(len(threads), 1)
-        self.assertEqual(threads[0].id, self.thread_id1)
+        self.assertEqual(threads[0].id, thread_id1)
 
     def test_fetch_page_of_feedback_threads(self) -> None:
         seen_thread_ids: List[str] = []
@@ -267,18 +266,16 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             if not more:
                 break
 
-        self.assertEqual(
-            set(seen_thread_ids), {self.thread_id1, self.thread_id2}
-        )
+        self.assertEqual(set(seen_thread_ids), {thread_id1, thread_id2})
 
     def test_generate_new_thread_id(self) -> None:
         new_thread_id = general_feedback_models.WebFeedbackThreadModel.generate_new_thread_id(
-            entity_type=self.LESSON_TARGET_TYPE, entity_id='new_exp_id'
+            entity_type=TARGET_TYPE_EXPLORATION, entity_id='new_exp_id'
         )
         self.assertTrue(new_thread_id.startswith('exploration.new_exp_id.'))
 
         new_thread_id = general_feedback_models.WebFeedbackThreadModel.generate_new_thread_id(
-            entity_type=self.PLATFORM_TARGET_TYPE,
+            entity_type=TARGET_TYPE_GENERAL,
             entity_id='new_platform_target',
         )
         self.assertTrue(
@@ -290,13 +287,13 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             ValueError, 'Lesson feedback must have target_type'
         ):
             general_feedback_models.WebFeedbackThreadModel.create(
-                category=self.CATEGORY1,
-                target_type=self.PLATFORM_TARGET_TYPE,
+                category=CATEGORY1,
+                target_type=TARGET_TYPE_GENERAL,
                 target_id='new_platform_target',
                 original_author_id=self.USER_ID,
-                page_url=self.PAGE_URL,
-                language_code=self.LANGUAGE_CODE,
-                rating=self.RATING,
+                page_url=PAGE_URL,
+                language_code=LANGUAGE_CODE,
+                rating=RATING,
                 has_screenshot=False,
                 has_session_info=False,
             )
@@ -305,25 +302,25 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             ValueError, 'Platform feedback must have target_type'
         ):
             general_feedback_models.WebFeedbackThreadModel.create(
-                category=self.CATEGORY2,
-                target_type=self.LESSON_TARGET_TYPE,
+                category=CATEGORY2,
+                target_type=TARGET_TYPE_EXPLORATION,
                 target_id='new_exp_id',
                 original_author_id=self.USER_ID,
-                page_url=self.PAGE_URL,
-                language_code=self.LANGUAGE_CODE,
-                rating=self.RATING,
+                page_url=PAGE_URL,
+                language_code=LANGUAGE_CODE,
+                rating=RATING,
                 has_screenshot=False,
                 has_session_info=False,
             )
 
         new_thread_id = general_feedback_models.WebFeedbackThreadModel.create(
-            category=self.CATEGORY1,
-            target_type=self.LESSON_TARGET_TYPE,
+            category=CATEGORY1,
+            target_type=TARGET_TYPE_EXPLORATION,
             target_id='new_exp_id',
             original_author_id=self.USER_ID,
-            page_url=self.PAGE_URL,
-            language_code=self.LANGUAGE_CODE,
-            rating=self.RATING,
+            page_url=PAGE_URL,
+            language_code=LANGUAGE_CODE,
+            rating=RATING,
             has_screenshot=False,
             has_session_info=False,
         )
@@ -331,16 +328,305 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             new_thread_id
         )
         self.assertIsNotNone(thread_model)
-        self.assertEqual(thread_model.category, self.CATEGORY1)
-        self.assertEqual(thread_model.target_type, self.LESSON_TARGET_TYPE)
+        self.assertEqual(thread_model.category, CATEGORY1)
+        self.assertEqual(thread_model.target_type, TARGET_TYPE_EXPLORATION)
         self.assertEqual(thread_model.target_id, 'new_exp_id')
         self.assertEqual(thread_model.original_author_id, self.USER_ID)
-        self.assertEqual(thread_model.page_url, self.PAGE_URL)
-        self.assertEqual(thread_model.language_code, self.LANGUAGE_CODE)
-        self.assertEqual(thread_model.rating, self.RATING)
+        self.assertEqual(thread_model.page_url, PAGE_URL)
+        self.assertEqual(thread_model.language_code, LANGUAGE_CODE)
+        self.assertEqual(thread_model.rating, RATING)
         self.assertFalse(thread_model.has_screenshot)
         self.assertFalse(thread_model.has_session_info)
         self.assertEqual(
             thread_model.status, general_feedback_models.STATUS_CHOICES_OPEN
         )
         self.assertEqual(thread_model.message_count, 0)
+
+
+class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
+    """Tests for WebFeedbackMessageModel."""
+
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.signup('learner@example.com', 'learner')
+        self.USER_ID = self.get_user_id_from_email('learner@example.com')
+        second_user_email = 'feedbackadmin@example.com'
+        self.signup(second_user_email, 'feedback')
+        second_user_id = self.get_user_id_from_email(second_user_email)
+
+        self.message_id1 = (
+            general_feedback_models.WebFeedbackMessageModel.create(
+                thread_id=thread_id1,
+                message_index=0,
+                author_id=self.USER_ID,
+                author_status='learner',
+                text='Test message',
+                updated_status=general_feedback_models.STATUS_CHOICES_OPEN,
+                screenshot_filename=None,
+                screenshot_entity_id=None,
+            )
+        )
+        self.message_id2 = (
+            general_feedback_models.WebFeedbackMessageModel.create(
+                thread_id=thread_id1,
+                message_index=1,
+                author_id=self.USER_ID,
+                author_status='learner',
+                text='Test message 2',
+                updated_status=general_feedback_models.STATUS_CHOICES_OPEN,
+                screenshot_filename=None,
+                screenshot_entity_id=None,
+            )
+        )
+        self.message_id3 = (
+            general_feedback_models.WebFeedbackMessageModel.create(
+                thread_id=thread_id2,
+                message_index=0,
+                author_id=second_user_id,
+                author_status='feedback_admin',
+                text='Admin reply',
+                updated_status=general_feedback_models.STATUS_CHOICES_FIXED,
+                screenshot_filename='reply.png',
+                screenshot_entity_id='entity_1',
+            )
+        )
+
+    def test_get_deletion_policy(self) -> None:
+        self.assertEqual(
+            general_feedback_models.WebFeedbackMessageModel.get_deletion_policy(),
+            base_models.DELETION_POLICY.LOCALLY_PSEUDONYMIZE,
+        )
+
+    def test_has_reference_to_user_id(self) -> None:
+        self.assertTrue(
+            general_feedback_models.WebFeedbackMessageModel.has_reference_to_user_id(
+                self.USER_ID
+            )
+        )
+
+    def test_get_model_associated_with_user_id(self) -> None:
+
+        self.assertEqual(
+            general_feedback_models.WebFeedbackMessageModel.get_model_association_to_user(),
+            base_models.MODEL_ASSOCIATION_TO_USER.MULTIPLE_INSTANCES_PER_USER,
+        )
+
+    def test_get_export_policy(self) -> None:
+        self.assertEqual(
+            general_feedback_models.WebFeedbackMessageModel.get_export_policy(),
+            {
+                'thread_id': base_models.EXPORT_POLICY.EXPORTED,
+                'message_index': base_models.EXPORT_POLICY.EXPORTED,
+                'author_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'author_status': base_models.EXPORT_POLICY.EXPORTED,
+                'text': base_models.EXPORT_POLICY.EXPORTED,
+                'updated_status': base_models.EXPORT_POLICY.EXPORTED,
+                'screenshot_filename': base_models.EXPORT_POLICY.EXPORTED,
+                'screenshot_entity_id': base_models.EXPORT_POLICY.EXPORTED,
+                'created_on': base_models.EXPORT_POLICY.EXPORTED,
+                'last_updated': base_models.EXPORT_POLICY.EXPORTED,
+                'deleted': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+            },
+        )
+
+    def test_get_field_names_for_takeout(self) -> None:
+        self.assertEqual(
+            general_feedback_models.WebFeedbackMessageModel.get_field_names_for_takeout(),
+            {
+                'created_on': 'created_on_msec',
+                'last_updated': 'last_updated_msec',
+            },
+        )
+
+    def test_export_data(self) -> None:
+        message_model1 = (
+            general_feedback_models.WebFeedbackMessageModel.get_by_id(
+                self.message_id1
+            )
+        )
+        message_model2 = (
+            general_feedback_models.WebFeedbackMessageModel.get_by_id(
+                self.message_id2
+            )
+        )
+        expected_export_data = {
+            self.message_id1: {
+                'thread_id': thread_id1,
+                'message_index': 0,
+                'author_status': 'learner',
+                'text': 'Test message',
+                'updated_status': general_feedback_models.STATUS_CHOICES_OPEN,
+                'screenshot_filename': None,
+                'screenshot_entity_id': None,
+                'created_on_msec': utils.get_time_in_millisecs(
+                    message_model1.created_on
+                ),
+                'last_updated_msec': utils.get_time_in_millisecs(
+                    message_model1.last_updated
+                ),
+            },
+            self.message_id2: {
+                'thread_id': thread_id1,
+                'message_index': 1,
+                'author_status': 'learner',
+                'text': 'Test message 2',
+                'updated_status': general_feedback_models.STATUS_CHOICES_OPEN,
+                'screenshot_filename': None,
+                'screenshot_entity_id': None,
+                'created_on_msec': utils.get_time_in_millisecs(
+                    message_model2.created_on
+                ),
+                'last_updated_msec': utils.get_time_in_millisecs(
+                    message_model2.last_updated
+                ),
+            },
+        }
+        export_data = (
+            general_feedback_models.WebFeedbackMessageModel.export_data(
+                self.USER_ID
+            )
+        )
+        self.assertEqual(export_data, expected_export_data)
+
+    def test_get_messages(self) -> None:
+        messages1 = (
+            general_feedback_models.WebFeedbackMessageModel.get_messages(
+                thread_id1
+            )
+        )
+        self.assertEqual(len(messages1), 2)
+        self.assertEqual(messages1[0].message_index, 0)
+        self.assertEqual(messages1[0].text, 'Test message')
+        self.assertEqual(messages1[1].message_index, 1)
+        self.assertEqual(messages1[1].text, 'Test message 2')
+
+        messages2 = (
+            general_feedback_models.WebFeedbackMessageModel.get_messages(
+                thread_id2
+            )
+        )
+        self.assertEqual(len(messages2), 1)
+        self.assertEqual(messages2[0].message_index, 0)
+        self.assertEqual(messages2[0].text, 'Admin reply')
+
+    def test_get_messages_by_thread_ids(self) -> None:
+        messages = general_feedback_models.WebFeedbackMessageModel.get_messages_by_thread_ids(
+            [thread_id1, thread_id2]
+        )
+        self.assertEqual(set(messages.keys()), {thread_id1, thread_id2})
+        self.assertEqual(len(messages[thread_id1]), 2)
+        self.assertEqual(messages[thread_id1][0].message_index, 0)
+        self.assertEqual(messages[thread_id1][0].text, 'Test message')
+        self.assertEqual(messages[thread_id1][1].message_index, 1)
+        self.assertEqual(messages[thread_id1][1].text, 'Test message 2')
+        self.assertEqual(len(messages[thread_id2]), 1)
+        self.assertEqual(messages[thread_id2][0].message_index, 0)
+        self.assertEqual(messages[thread_id2][0].text, 'Admin reply')
+
+        messages = general_feedback_models.WebFeedbackMessageModel.get_messages_by_thread_ids(
+            []
+        )
+        self.assertEqual(messages, {})
+
+    def test_get_message_count_for_thread(self) -> None:
+        message_count1 = general_feedback_models.WebFeedbackMessageModel.get_message_count_for_thread(
+            thread_id1
+        )
+        self.assertEqual(message_count1, 2)
+
+        message_count2 = general_feedback_models.WebFeedbackMessageModel.get_message_count_for_thread(
+            thread_id2
+        )
+        self.assertEqual(message_count2, 1)
+
+    def test_create(self) -> None:
+        message_id = general_feedback_models.WebFeedbackMessageModel.create(
+            thread_id=thread_id1,
+            message_index=2,
+            author_id=self.USER_ID,
+            author_status='learner',
+            text='Test message 3',
+            updated_status=general_feedback_models.STATUS_CHOICES_OPEN,
+            screenshot_filename=None,
+            screenshot_entity_id=None,
+        )
+        message_model = (
+            general_feedback_models.WebFeedbackMessageModel.get_by_id(
+                message_id
+            )
+        )
+        self.assertEqual(message_model.text, 'Test message 3')
+        self.assertEqual(message_model.message_index, 2)
+        self.assertEqual(message_model.author_id, self.USER_ID)
+        self.assertEqual(message_model.author_status, 'learner')
+        self.assertEqual(
+            message_model.updated_status,
+            general_feedback_models.STATUS_CHOICES_OPEN,
+        )
+        self.assertIsNone(message_model.screenshot_filename)
+        self.assertIsNone(message_model.screenshot_entity_id)
+
+
+class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
+    """Tests for FeedbackSessionLogModel."""
+
+    def setUp(self) -> None:
+        super().setUp()
+
+    def test_get_deletion_policy(self) -> None:
+        self.assertEqual(
+            general_feedback_models.FeedbackSessionLogModel.get_deletion_policy(),
+            base_models.DELETION_POLICY.NOT_APPLICABLE,
+        )
+
+    def test_get_model_associated_with_user_id(self) -> None:
+
+        self.assertEqual(
+            general_feedback_models.FeedbackSessionLogModel.get_model_association_to_user(),
+            base_models.MODEL_ASSOCIATION_TO_USER.NOT_CORRESPONDING_TO_USER,
+        )
+
+    def test_get_export_policy(self) -> None:
+        self.assertEqual(
+            general_feedback_models.FeedbackSessionLogModel.get_export_policy(),
+            {
+                'session_info_schema_version': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'console_errors_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'failed_requests_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'navigation_history_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'environment_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'created_on': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'last_updated': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'deleted': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+            },
+        )
+
+    def test_create(self) -> None:
+        general_feedback_models.FeedbackSessionLogModel.create(
+            thread_id1,
+            console_errors_json=[{'message': 'err'}],
+            failed_requests_json=[{'url': '/test'}],
+            navigation_history_json=[{'url': '/learn/math'}],
+            environment_json={'user_agent': 'test-agent'},
+        )
+        session_log_model = (
+            general_feedback_models.FeedbackSessionLogModel.get_by_id(
+                thread_id1
+            )
+        )
+        self.assertIsNotNone(session_log_model)
+        self.assertEqual(session_log_model.id, thread_id1)
+        self.assertEqual(
+            session_log_model.console_errors_json, [{'message': 'err'}]
+        )
+        self.assertEqual(
+            session_log_model.failed_requests_json, [{'url': '/test'}]
+        )
+        self.assertEqual(
+            session_log_model.navigation_history_json,
+            [{'url': '/learn/math'}],
+        )
+        self.assertEqual(
+            session_log_model.environment_json, {'user_agent': 'test-agent'}
+        )

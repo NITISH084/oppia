@@ -54,6 +54,7 @@ if MYPY:  # pragma: no cover
         datastore_services,
         exp_models,
         feedback_models,
+        general_feedback_models,
         improvements_models,
         question_models,
         skill_models,
@@ -73,6 +74,7 @@ if MYPY:  # pragma: no cover
     config_models,
     exp_models,
     feedback_models,
+    general_feedback_models,
     improvements_models,
     question_models,
     skill_models,
@@ -90,6 +92,7 @@ if MYPY:  # pragma: no cover
         models.Names.CONFIG,
         models.Names.EXPLORATION,
         models.Names.FEEDBACK,
+        models.Names.GENERAL_FEEDBACK,
         models.Names.IMPROVEMENTS,
         models.Names.QUESTION,
         models.Names.SKILL,
@@ -584,6 +587,18 @@ def delete_user(
             models.Names.APP_FEEDBACK_REPORT,
         )
         _pseudonymize_feedback_models(pending_deletion_request)
+        _pseudonymize_one_model_class(
+            pending_deletion_request,
+            general_feedback_models.WebFeedbackThreadModel,
+            'original_author_id',
+            models.Names.GENERAL_FEEDBACK,
+        )
+        _pseudonymize_one_model_class(
+            pending_deletion_request,
+            general_feedback_models.WebFeedbackMessageModel,
+            'author_id',
+            models.Names.GENERAL_FEEDBACK,
+        )
         _pseudonymize_activity_models_without_associated_rights_models(
             pending_deletion_request,
             models.Names.QUESTION,

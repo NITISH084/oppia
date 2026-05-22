@@ -218,7 +218,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
     @classmethod
     def export_data(
         cls, user_id: str
-    ) -> Dict[str, Dict[str, Union[str, bool, None]]]:
+    ) -> Dict[str, Dict[str, Union[str, bool, int, float, None]]]:
         """Exports feedback thread data corresponding to a user_id.
 
         Args:
@@ -573,7 +573,7 @@ class WebFeedbackMessageModel(base_models.BaseModel):
     @classmethod
     def export_data(
         cls, user_id: str
-    ) -> Dict[str, Dict[str, Union[str, int, None]]]:
+    ) -> Dict[str, Dict[str, Union[str, int, float, None]]]:
         """Exports feedback message data corresponding to user_id."""
         user_data = {}
         message_models: Sequence[WebFeedbackMessageModel] = (
@@ -749,6 +749,7 @@ class FeedbackSessionLogModel(base_models.BaseModel):
                 'environment_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'created_on': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'last_updated': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'deleted': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
         )
 
