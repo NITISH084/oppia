@@ -43,8 +43,8 @@ CATEGORY2 = 'platform'
 PAGE_URL = '/learn/math'
 LANGUAGE_CODE = 'en'
 RATING = 4
-thread_id1 = 'general.thread.1'
-thread_id2 = 'general.thread.2'
+THREAD_ID1 = 'general.thread.1'
+THREAD_ID2 = 'general.thread.2'
 
 
 class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
@@ -57,7 +57,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         self.USER_ID = self.get_user_id_from_email('learner@example.com')
 
         thread_model1 = general_feedback_models.WebFeedbackThreadModel(
-            id=thread_id1,
+            id=THREAD_ID1,
             category=CATEGORY1,
             target_type=TARGET_TYPE_EXPLORATION,
             target_id=LESSON_TARGET_ID,
@@ -73,7 +73,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         thread_model1.put()
 
         thread_model2 = general_feedback_models.WebFeedbackThreadModel(
-            id=thread_id2,
+            id=THREAD_ID2,
             category=CATEGORY2,
             target_type=TARGET_TYPE_GENERAL,
             target_id=PLATFORM_TARGET_ID,
@@ -145,14 +145,14 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
 
     def test_export_data(self) -> None:
         thread_with_session_info = (
-            general_feedback_models.WebFeedbackThreadModel.get_by_id(thread_id1)
+            general_feedback_models.WebFeedbackThreadModel.get_by_id(THREAD_ID1)
         )
         thread_with_session_info.has_session_info = True
         thread_with_session_info.update_timestamps()
         thread_with_session_info.put()
 
         general_feedback_models.FeedbackSessionLogModel.create(
-            thread_id1,
+            THREAD_ID1,
             console_errors_json=[{'message': 'err'}],
             failed_requests_json=[{'url': '/test'}],
             navigation_history_json=[{'url': '/learn/math'}],
@@ -160,7 +160,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
         )
         session_log_model = (
             general_feedback_models.FeedbackSessionLogModel.get_by_id(
-                thread_id1
+                THREAD_ID1
             )
         )
 
@@ -170,8 +170,8 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             )
         )
         expected_export_data = {
-            thread_id1: (CATEGORY1, TARGET_TYPE_EXPLORATION),
-            thread_id2: (CATEGORY2, TARGET_TYPE_GENERAL),
+            THREAD_ID1: (CATEGORY1, TARGET_TYPE_EXPLORATION),
+            THREAD_ID2: (CATEGORY2, TARGET_TYPE_GENERAL),
         }
         self.assertEqual(
             set(export_data.keys()), set(expected_export_data.keys())
@@ -188,10 +188,10 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
                 'language_code': LANGUAGE_CODE,
                 'rating': RATING,
                 'has_screenshot': False,
-                'has_session_info': thread_id == thread_id1,
+                'has_session_info': thread_id == THREAD_ID1,
                 'session_info': (
                     session_log_model.to_dict()
-                    if thread_id == thread_id1
+                    if thread_id == THREAD_ID1
                     else None
                 ),
                 'status': general_feedback_models.STATUS_CHOICES_OPEN,
@@ -226,7 +226,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             ).fetch(),
         )
         self.assertEqual(len(threads), 1)
-        self.assertEqual(threads[0].id, thread_id1)
+        self.assertEqual(threads[0].id, THREAD_ID1)
 
         # Test filtering by target_type.
         # Here we use cast because NDB query.fetch() loses concrete model typing.
@@ -237,7 +237,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             ).fetch(),
         )
         self.assertEqual(len(threads), 1)
-        self.assertEqual(threads[0].id, thread_id2)
+        self.assertEqual(threads[0].id, THREAD_ID2)
 
         # Test filtering by category and target_type.
         # Here we use cast because NDB query.fetch() loses concrete model typing.
@@ -249,7 +249,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             ).fetch(),
         )
         self.assertEqual(len(threads), 1)
-        self.assertEqual(threads[0].id, thread_id1)
+        self.assertEqual(threads[0].id, THREAD_ID1)
 
     def test_fetch_page_of_feedback_threads(self) -> None:
         seen_thread_ids: List[str] = []
@@ -266,7 +266,7 @@ class WebFeedbackThreadModelTests(test_utils.GenericTestBase):
             if not more:
                 break
 
-        self.assertEqual(set(seen_thread_ids), {thread_id1, thread_id2})
+        self.assertEqual(set(seen_thread_ids), {THREAD_ID1, THREAD_ID2})
 
     def test_generate_new_thread_id(self) -> None:
         new_thread_id = general_feedback_models.WebFeedbackThreadModel.generate_new_thread_id(
@@ -357,7 +357,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
 
         self.message_id1 = (
             general_feedback_models.WebFeedbackMessageModel.create(
-                thread_id=thread_id1,
+                thread_id=THREAD_ID1,
                 message_index=0,
                 author_id=self.USER_ID,
                 author_status='learner',
@@ -369,7 +369,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
         )
         self.message_id2 = (
             general_feedback_models.WebFeedbackMessageModel.create(
-                thread_id=thread_id1,
+                thread_id=THREAD_ID1,
                 message_index=1,
                 author_id=self.USER_ID,
                 author_status='learner',
@@ -381,7 +381,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
         )
         self.message_id3 = (
             general_feedback_models.WebFeedbackMessageModel.create(
-                thread_id=thread_id2,
+                thread_id=THREAD_ID2,
                 message_index=0,
                 author_id=second_user_id,
                 author_status='feedback_admin',
@@ -452,7 +452,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
         )
         expected_export_data = {
             self.message_id1: {
-                'thread_id': thread_id1,
+                'thread_id': THREAD_ID1,
                 'message_index': 0,
                 'author_status': 'learner',
                 'text': 'Test message',
@@ -467,7 +467,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
                 ),
             },
             self.message_id2: {
-                'thread_id': thread_id1,
+                'thread_id': THREAD_ID1,
                 'message_index': 1,
                 'author_status': 'learner',
                 'text': 'Test message 2',
@@ -492,7 +492,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
     def test_get_messages(self) -> None:
         messages1 = (
             general_feedback_models.WebFeedbackMessageModel.get_messages(
-                thread_id1
+                THREAD_ID1
             )
         )
         self.assertEqual(len(messages1), 2)
@@ -503,7 +503,7 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
 
         messages2 = (
             general_feedback_models.WebFeedbackMessageModel.get_messages(
-                thread_id2
+                THREAD_ID2
             )
         )
         self.assertEqual(len(messages2), 1)
@@ -512,17 +512,17 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
 
     def test_get_messages_by_thread_ids(self) -> None:
         messages = general_feedback_models.WebFeedbackMessageModel.get_messages_by_thread_ids(
-            [thread_id1, thread_id2]
+            [THREAD_ID1, THREAD_ID2]
         )
-        self.assertEqual(set(messages.keys()), {thread_id1, thread_id2})
-        self.assertEqual(len(messages[thread_id1]), 2)
-        self.assertEqual(messages[thread_id1][0].message_index, 0)
-        self.assertEqual(messages[thread_id1][0].text, 'Test message')
-        self.assertEqual(messages[thread_id1][1].message_index, 1)
-        self.assertEqual(messages[thread_id1][1].text, 'Test message 2')
-        self.assertEqual(len(messages[thread_id2]), 1)
-        self.assertEqual(messages[thread_id2][0].message_index, 0)
-        self.assertEqual(messages[thread_id2][0].text, 'Admin reply')
+        self.assertEqual(set(messages.keys()), {THREAD_ID1, THREAD_ID2})
+        self.assertEqual(len(messages[THREAD_ID1]), 2)
+        self.assertEqual(messages[THREAD_ID1][0].message_index, 0)
+        self.assertEqual(messages[THREAD_ID1][0].text, 'Test message')
+        self.assertEqual(messages[THREAD_ID1][1].message_index, 1)
+        self.assertEqual(messages[THREAD_ID1][1].text, 'Test message 2')
+        self.assertEqual(len(messages[THREAD_ID2]), 1)
+        self.assertEqual(messages[THREAD_ID2][0].message_index, 0)
+        self.assertEqual(messages[THREAD_ID2][0].text, 'Admin reply')
 
         messages = general_feedback_models.WebFeedbackMessageModel.get_messages_by_thread_ids(
             []
@@ -531,18 +531,18 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
 
     def test_get_message_count_for_thread(self) -> None:
         message_count1 = general_feedback_models.WebFeedbackMessageModel.get_message_count_for_thread(
-            thread_id1
+            THREAD_ID1
         )
         self.assertEqual(message_count1, 2)
 
         message_count2 = general_feedback_models.WebFeedbackMessageModel.get_message_count_for_thread(
-            thread_id2
+            THREAD_ID2
         )
         self.assertEqual(message_count2, 1)
 
     def test_create(self) -> None:
         message_id = general_feedback_models.WebFeedbackMessageModel.create(
-            thread_id=thread_id1,
+            thread_id=THREAD_ID1,
             message_index=2,
             author_id=self.USER_ID,
             author_status='learner',
@@ -570,9 +570,6 @@ class WebFeedbackMessageModelTests(test_utils.GenericTestBase):
 
 class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
     """Tests for FeedbackSessionLogModel."""
-
-    def setUp(self) -> None:
-        super().setUp()
 
     def test_get_deletion_policy(self) -> None:
         self.assertEqual(
@@ -604,7 +601,7 @@ class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
 
     def test_create(self) -> None:
         general_feedback_models.FeedbackSessionLogModel.create(
-            thread_id1,
+            thread_id=THREAD_ID1,
             console_errors_json=[{'message': 'err'}],
             failed_requests_json=[{'url': '/test'}],
             navigation_history_json=[{'url': '/learn/math'}],
@@ -612,11 +609,11 @@ class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
         )
         session_log_model = (
             general_feedback_models.FeedbackSessionLogModel.get_by_id(
-                thread_id1
+                THREAD_ID1
             )
         )
         self.assertIsNotNone(session_log_model)
-        self.assertEqual(session_log_model.id, thread_id1)
+        self.assertEqual(session_log_model.id, THREAD_ID1)
         self.assertEqual(
             session_log_model.console_errors_json, [{'message': 'err'}]
         )
