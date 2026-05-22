@@ -1176,30 +1176,6 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
         learner_grp_user_model.update_timestamps()
         learner_grp_user_model.put()
 
-        web_feedback_thread_id = (
-            general_feedback_models.WebFeedbackThreadModel.create(
-                category=self.WEB_FEEDBACK_CATEGORY,
-                page_url=self.WEB_FEEDBACK_PAGE_URL,
-                language_code=self.WEB_FEEDBACK_LANGUAGE_CODE,
-                rating=self.WEB_FEEDBACK_RATING,
-                target_type=self.WEB_FEEDBACK_TARGET_TYPE,
-                target_id=self.WEB_FEEDBACK_TARGET_ID,
-                has_screenshot=False,
-                has_session_info=False,
-                original_author_id=self.USER_ID_1,
-            )
-        )
-        general_feedback_models.WebFeedbackMessageModel.create(
-            thread_id=web_feedback_thread_id,
-            message_index=0,
-            author_status=general_feedback_models.AUTHOR_ROLE_LEARNER,
-            author_id=self.USER_ID_1,
-            text=self.WEB_FEEDBACK_TEXT,
-            screenshot_filename=None,
-            screenshot_entity_id=None,
-            updated_status=self.WEB_FEEDBACK_STATUS,
-        )
-
     def set_up_trivial(self) -> None:
         """Setup for trivial test of export_data functionality."""
         user_models.UserSettingsModel(
@@ -2282,11 +2258,38 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
                 'opportunity_id': self.EXPLORATION_IDS[0],
             }
         }
+        web_feedback_thread_id = (
+            general_feedback_models.WebFeedbackThreadModel.create(
+                category=self.WEB_FEEDBACK_CATEGORY,
+                page_url=self.WEB_FEEDBACK_PAGE_URL,
+                language_code=self.WEB_FEEDBACK_LANGUAGE_CODE,
+                rating=self.WEB_FEEDBACK_RATING,
+                target_type=self.WEB_FEEDBACK_TARGET_TYPE,
+                target_id=self.WEB_FEEDBACK_TARGET_ID,
+                has_screenshot=False,
+                has_session_info=False,
+                original_author_id=self.USER_ID_1,
+            )
+        )
+        general_feedback_models.WebFeedbackMessageModel.create(
+            thread_id=web_feedback_thread_id,
+            message_index=0,
+            author_status=general_feedback_models.AUTHOR_ROLE_LEARNER,
+            author_id=self.USER_ID_1,
+            text=self.WEB_FEEDBACK_TEXT,
+            screenshot_filename=None,
+            screenshot_entity_id=None,
+            updated_status=self.WEB_FEEDBACK_STATUS,
+        )
         web_feedback_thread_model = (
-            general_feedback_models.WebFeedbackThreadModel.get_all().get()
+            general_feedback_models.WebFeedbackThreadModel.get_by_id(
+                web_feedback_thread_id
+            )
         )
         web_feedback_message_model = (
-            general_feedback_models.WebFeedbackMessageModel.get_all().get()
+            general_feedback_models.WebFeedbackMessageModel.get_by_id(
+                '%s.%d' % (web_feedback_thread_id, 0)
+            )
         )
         self.assertIsNotNone(web_feedback_thread_model)
         self.assertIsNotNone(web_feedback_message_model)
@@ -2309,10 +2312,10 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
                 'session_info': None,
                 'status': self.WEB_FEEDBACK_STATUS,
                 'message_count': 0,
-                'created_on': utils.get_time_in_millisecs(
+                'created_on_msec': utils.get_time_in_millisecs(
                     web_feedback_thread_model.created_on
                 ),
-                'last_updated': utils.get_time_in_millisecs(
+                'last_updated_msec': utils.get_time_in_millisecs(
                     web_feedback_thread_model.last_updated
                 ),
             }
