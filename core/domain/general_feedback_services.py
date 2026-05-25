@@ -19,14 +19,13 @@ from __future__ import annotations
 import datetime
 import hashlib
 
-from core import feconf
+from core import feconf, utils
 from core.domain import (
     fs_services,
     general_feedback_domain,
     subscription_services,
 )
 from core.platform import models
-from core import utils
 
 from typing import Dict, List, Optional, Sequence, Tuple
 
