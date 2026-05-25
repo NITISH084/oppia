@@ -19,8 +19,21 @@ from __future__ import annotations
 import datetime
 from unittest import mock
 
-from core.domain import general_feedback_services
+from core.domain import (
+    general_feedback_domain,
+    general_feedback_services,
+    subscription_services,
+)
+from core.platform import models
 from core.tests import test_utils
+
+MYPY = False
+if MYPY:  # pragma: no cover
+    from mypy_imports import feedback_models, general_feedback_models
+
+(feedback_models, general_feedback_models) = models.Registry.import_models(
+    [models.Names.FEEDBACK, models.Names.GENERAL_FEEDBACK]
+)
 
 
 class _FakeThreadUserModel:
@@ -60,7 +73,7 @@ class _FakeThreadModel:
         self.target_type = 'exploration'
         self.target_id = 'exp1'
         self.original_author_id = 'uid'
-        self.created_on_msecs = 1.0
+        self.created_on = datetime.datetime.utcfromtimestamp(1)
         self.message_count = 0
         self.update_timestamps_called = False
         self.put_called = False
@@ -85,7 +98,7 @@ class _FakeMessageModel:
         self.screenshot_filename = None
         self.screenshot_entity_id = None
         self.updated_status = None
-        self.created_on_msecs = 1.0
+        self.created_on = datetime.datetime.utcfromtimestamp(1)
 
 
 class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
@@ -115,12 +128,12 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     ) -> None:
         created_model = _FakeThreadUserModel([])
         with self.swap(
-            general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+            feedback_models.GeneralFeedbackThreadUserModel,
             'get',
             mock.Mock(return_value=None),
         ):
             with self.swap(
-                general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+                feedback_models.GeneralFeedbackThreadUserModel,
                 'create',
                 mock.Mock(return_value=created_model),
             ):
@@ -135,7 +148,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     def test_add_message_id_to_read_by_user_does_not_duplicate(self) -> None:
         thread_user_model = _FakeThreadUserModel([1, 2])
         with self.swap(
-            general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+            feedback_models.GeneralFeedbackThreadUserModel,
             'get',
             mock.Mock(return_value=thread_user_model),
         ):
@@ -148,7 +161,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
     def test_get_message_ids_read_by_user(self) -> None:
         with self.swap(
-            general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+            feedback_models.GeneralFeedbackThreadUserModel,
             'get',
             mock.Mock(return_value=None),
         ):
@@ -160,7 +173,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             )
 
         with self.swap(
-            general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+            feedback_models.GeneralFeedbackThreadUserModel,
             'get',
             mock.Mock(return_value=_FakeThreadUserModel([1, 2, 2])),
         ):
@@ -174,12 +187,12 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     def test_update_messages_read_by_the_user(self) -> None:
         created_model = _FakeThreadUserModel([])
         with self.swap(
-            general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+            feedback_models.GeneralFeedbackThreadUserModel,
             'get',
             mock.Mock(return_value=None),
         ):
             with self.swap(
-                general_feedback_services.feedback_models.GeneralFeedbackThreadUserModel,
+                feedback_models.GeneralFeedbackThreadUserModel,
                 'create',
                 mock.Mock(return_value=created_model),
             ):
@@ -210,24 +223,22 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         create_thread_mock = mock.Mock(return_value='t-1')
         create_message_mock = mock.Mock()
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'create',
             create_thread_mock,
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'create',
                 create_message_mock,
             ):
                 with self.swap(
-                    general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+                    general_feedback_models.WebFeedbackThreadModel,
                     'get',
                     mock.Mock(return_value=thread_model),
                 ):
                     thread_id = general_feedback_services.create_thread(
-                        category=(
-                            general_feedback_services.general_feedback_models.CATEGORY_PLATFORM
-                        ),
+                        category=(general_feedback_models.CATEGORY_PLATFORM),
                         description='desc',
                         page_url='/learn',
                         language_code='en',
@@ -250,29 +261,29 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     def test_create_thread_with_session_info_and_user(self) -> None:
         thread_model = _FakeThreadModel(thread_id='t-2')
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'create',
             mock.Mock(return_value='t-2'),
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'create',
                 mock.Mock(),
             ):
                 with self.swap(
-                    general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+                    general_feedback_models.WebFeedbackThreadModel,
                     'get',
                     mock.Mock(return_value=thread_model),
                 ):
                     create_session_log_mock = mock.Mock()
                     with self.swap(
-                        general_feedback_services.general_feedback_models.FeedbackSessionLogModel,
+                        general_feedback_models.FeedbackSessionLogModel,
                         'create',
                         create_session_log_mock,
                     ):
                         subscribe_mock = mock.Mock()
                         with self.swap(
-                            general_feedback_services.subscription_services,
+                            subscription_services,
                             'subscribe_to_threads',
                             subscribe_mock,
                         ):
@@ -318,28 +329,28 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     def test_create_message_without_author_subscription(self) -> None:
         thread_model = _FakeThreadModel(thread_id='t-3', status='open')
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=thread_model),
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'get_message_count_for_thread',
                 mock.Mock(return_value=2),
             ):
                 with self.swap(
-                    general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                    general_feedback_models.WebFeedbackMessageModel,
                     'create',
                     mock.Mock(),
                 ):
                     with self.swap(
-                        general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                        general_feedback_models.WebFeedbackMessageModel,
                         'get_by_id',
                         mock.Mock(return_value=_FakeMessageModel()),
                     ):
                         subscribe_mock = mock.Mock()
                         with self.swap(
-                            general_feedback_services.subscription_services,
+                            subscription_services,
                             'subscribe_to_threads',
                             subscribe_mock,
                         ):
@@ -360,28 +371,28 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     def test_create_message_with_status_and_author_subscription(self) -> None:
         thread_model = _FakeThreadModel(thread_id='t-4', status='open')
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=thread_model),
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'get_message_count_for_thread',
                 mock.Mock(return_value=0),
             ):
                 with self.swap(
-                    general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                    general_feedback_models.WebFeedbackMessageModel,
                     'create',
                     mock.Mock(),
                 ):
                     with self.swap(
-                        general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                        general_feedback_models.WebFeedbackMessageModel,
                         'get_by_id',
                         mock.Mock(return_value=_FakeMessageModel()),
                     ):
                         subscribe_mock = mock.Mock()
                         with self.swap(
-                            general_feedback_services.subscription_services,
+                            subscription_services,
                             'subscribe_to_threads',
                             subscribe_mock,
                         ):
@@ -425,9 +436,9 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         model.rating = 5
         model.has_screenshot = False
         model.target_id = 'exp1'
-        model.created_on_msecs = 1.0
+        model.created_on = datetime.datetime.utcfromtimestamp(1)
         messages = [
-            general_feedback_services.general_feedback_domain.WebFeedbackMessage(
+            general_feedback_domain.WebFeedbackMessage(
                 message_index=0,
                 author_id='uid',
                 author_status='learner',
@@ -446,7 +457,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
     def test_get_messages(self) -> None:
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+            general_feedback_models.WebFeedbackMessageModel,
             'get_messages',
             mock.Mock(return_value=[_FakeMessageModel()]),
         ):
@@ -456,7 +467,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
     def test_get_thread(self) -> None:
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=None),
         ):
@@ -464,14 +475,14 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         deleted_model = _FakeThreadModel(thread_id='tid', deleted=True)
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=deleted_model),
         ):
             self.assertIsNone(general_feedback_services.get_thread('tid'))
 
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=deleted_model),
         ):
@@ -502,43 +513,38 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         model_1 = _FakeThreadModel(thread_id='t1', deleted=False)
         model_2 = _FakeThreadModel(thread_id='t2', deleted=True)
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get_multi',
             mock.Mock(return_value=[model_1, None, model_2]),
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'get_messages_by_thread_ids',
                 mock.Mock(return_value={'t1': [_FakeMessageModel()]}),
             ):
                 with self.swap(
                     general_feedback_services,
-                    '_thread_model_to_domain',
-                    lambda model, messages, _session_info: (model.id, messages),
+                    '_get_session_info_by_thread_ids',
+                    lambda _thread_ids: {},
                 ):
-                    with self.swap(
-                        general_feedback_services,
-                        '_get_session_info_by_thread_ids',
-                        lambda _thread_ids: {},
-                    ):
-                        threads = general_feedback_services.get_threads_by_ids(
-                            ['t1', 'missing', 't2']
-                        )
+                    threads = general_feedback_services.get_threads_by_ids(
+                        ['t1', 'missing', 't2']
+                    )
 
-        self.assertEqual(threads[0][0], 't1')
-        self.assertEqual(len(threads[0][1]), 1)
-        self.assertEqual(threads[0][1][0].message_index, 2)
+        self.assertEqual(threads[0].id, 't1')
+        self.assertEqual(len(threads[0].messages), 1)
+        self.assertEqual(threads[0].messages[0].message_index, 2)
 
     def test_get_threads_passes_filters_to_model_fetch(self) -> None:
         model = _FakeThreadModel(thread_id='t1')
         fetch_page_mock = mock.Mock(return_value=([model], 'cur2', True))
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'fetch_page_of_feedback_threads',
             fetch_page_mock,
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'get_messages_by_thread_ids',
                 mock.Mock(return_value={}),
             ):
@@ -572,12 +578,12 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         model = _FakeThreadModel(thread_id='t1')
         fetch_page_mock = mock.Mock(return_value=([model], None, False))
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'fetch_page_of_feedback_threads',
             fetch_page_mock,
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'get_messages_by_thread_ids',
                 mock.Mock(return_value={}),
             ):
@@ -594,12 +600,12 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         fetch_page_mock.reset_mock()
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'fetch_page_of_feedback_threads',
             fetch_page_mock,
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                general_feedback_models.WebFeedbackMessageModel,
                 'get_messages_by_thread_ids',
                 mock.Mock(return_value={}),
             ):
@@ -616,7 +622,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
     def test_update_thread_status(self) -> None:
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=None),
         ):
@@ -626,7 +632,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         model = _FakeThreadModel(thread_id='tid', deleted=False, status='open')
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=model),
         ):
@@ -636,7 +642,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         model.deleted = True
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=model),
         ):
@@ -646,7 +652,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         model.deleted = False
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=model),
         ):
@@ -659,7 +665,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
     def test_delete_thread(self) -> None:
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=None),
         ):
@@ -667,7 +673,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         model = _FakeThreadModel(thread_id='tid', deleted=True)
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=model),
         ):
@@ -676,7 +682,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
         model.deleted = False
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'get',
             mock.Mock(return_value=model),
         ):
@@ -690,7 +696,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         empty_query_mock.filter.return_value = empty_query_mock
         empty_query_mock.fetch.return_value = []
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'query',
             mock.Mock(return_value=empty_query_mock),
         ):
@@ -710,37 +716,37 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         delete_messages_mock = mock.Mock()
         delete_threads_mock = mock.Mock()
         with self.swap(
-            general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+            general_feedback_models.WebFeedbackThreadModel,
             'query',
             mock.Mock(return_value=query_mock),
         ):
             with self.swap(
-                general_feedback_services.general_feedback_models.FeedbackSessionLogModel,
+                general_feedback_models.FeedbackSessionLogModel,
                 'get_multi',
                 mock.Mock(return_value=[None, mock.Mock()]),
             ):
                 with self.swap(
-                    general_feedback_services.general_feedback_models.FeedbackSessionLogModel,
+                    general_feedback_models.FeedbackSessionLogModel,
                     'delete_multi',
                     delete_sessions_mock,
                 ):
                     with self.swap(
-                        general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                        general_feedback_models.WebFeedbackMessageModel,
                         'get_multi',
                         mock.Mock(return_value=[mock.Mock(), None]),
                     ):
                         with self.swap(
-                            general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                            general_feedback_models.WebFeedbackMessageModel,
                             'delete_multi',
                             delete_messages_mock,
                         ):
                             with self.swap(
-                                general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
+                                general_feedback_models.WebFeedbackThreadModel,
                                 'delete_multi',
                                 delete_threads_mock,
                             ):
                                 with self.swap(
-                                    general_feedback_services.general_feedback_models.WebFeedbackMessageModel,
+                                    general_feedback_models.WebFeedbackMessageModel,
                                     'get_messages',
                                     mock.Mock(return_value=[]),
                                 ):

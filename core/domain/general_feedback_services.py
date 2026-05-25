@@ -26,6 +26,7 @@ from core.domain import (
     subscription_services,
 )
 from core.platform import models
+from core import utils
 
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -289,7 +290,7 @@ def _message_model_to_domain(
         screenshot_filename=model.screenshot_filename,
         screenshot_entity_id=model.screenshot_entity_id,
         updated_status=model.updated_status,
-        created_on_msecs=model.created_on_msecs,
+        created_on_msecs=utils.get_time_in_millisecs(model.created_on),
     )
 
 
@@ -315,7 +316,7 @@ def _thread_model_to_domain(
         target_id=model.target_id,
         message_count=model.message_count,
         messages=list(messages),
-        created_on_msecs=model.created_on_msecs,
+        created_on_msecs=utils.get_time_in_millisecs(model.created_on),
         session_info=session_info,
         user_id=model.original_author_id,
     )
@@ -523,7 +524,7 @@ def delete_general_feedback_older_than(
     Returns:
         int. Number of deleted feedback models.
     """
-    old_models = (
+    old_models: Sequence[general_feedback_models.WebFeedbackThreadModel] = (
         general_feedback_models.WebFeedbackThreadModel.query(
             general_feedback_models.WebFeedbackThreadModel.created_on
             < cutoff_datetime
@@ -570,7 +571,7 @@ def delete_general_feedback_older_than(
                 message_model.screenshot_filename,
             )
             general_feedback_models.WebFeedbackMessageModel.delete(
-                message_model.id
+                message_model
             )
 
     general_feedback_models.WebFeedbackThreadModel.delete_multi(old_models)
