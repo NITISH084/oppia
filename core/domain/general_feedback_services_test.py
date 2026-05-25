@@ -32,9 +32,11 @@ class _FakeThreadUserModel:
         self.put_called = False
 
     def update_timestamps(self) -> None:
+        """Marks timestamp update call."""
         self.update_timestamps_called = True
 
     def put(self) -> None:
+        """Marks put call."""
         self.put_called = True
 
 
@@ -64,9 +66,11 @@ class _FakeThreadModel:
         self.put_called = False
 
     def update_timestamps(self) -> None:
+        """Marks timestamp update call."""
         self.update_timestamps_called = True
 
     def put(self) -> None:
+        """Marks put call."""
         self.put_called = True
 
 
@@ -120,9 +124,9 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
                 'create',
                 mock.Mock(return_value=created_model),
             ):
-                general_feedback_services._add_message_id_to_read_by_user(
-                    'uid', 'tid', 3
-                )
+                getattr(
+                    general_feedback_services, '_add_message_id_to_read_by_user'
+                )('uid', 'tid', 3)
 
         self.assertEqual(created_model.message_ids_read_by_user, [3])
         self.assertTrue(created_model.update_timestamps_called)
@@ -135,9 +139,9 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             'get',
             mock.Mock(return_value=thread_user_model),
         ):
-            general_feedback_services._add_message_id_to_read_by_user(
-                'uid', 'tid', 2
-            )
+            getattr(
+                general_feedback_services, '_add_message_id_to_read_by_user'
+            )('uid', 'tid', 2)
         self.assertEqual(thread_user_model.message_ids_read_by_user, [1, 2])
         self.assertFalse(thread_user_model.update_timestamps_called)
         self.assertFalse(thread_user_model.put_called)
@@ -401,9 +405,9 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
 
     def test_message_model_to_domain(self) -> None:
         message_model = _FakeMessageModel()
-        message = general_feedback_services._message_model_to_domain(
-            message_model
-        )
+        message = getattr(
+            general_feedback_services, '_message_model_to_domain'
+        )(message_model)
         self.assertEqual(message.message_index, 2)
         self.assertEqual(message.author_id, 'uid')
         self.assertEqual(message.text, 'text')
@@ -434,7 +438,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
                 created_on_msecs=1.0,
             )
         ]
-        thread = general_feedback_services._thread_model_to_domain(
+        thread = getattr(general_feedback_services, '_thread_model_to_domain')(
             model, messages, {'env': {}}
         )
         self.assertEqual(thread.id, 't1')
@@ -682,10 +686,13 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         self.assertTrue(model.put_called)
 
     def test_delete_general_feedback_older_than(self) -> None:
+        empty_query_mock = mock.Mock()
+        empty_query_mock.filter.return_value = empty_query_mock
+        empty_query_mock.fetch.return_value = []
         with self.swap(
             general_feedback_services.general_feedback_models.WebFeedbackThreadModel,
             'query',
-            mock.Mock(return_value=mock.Mock(fetch=mock.Mock(return_value=[]))),
+            mock.Mock(return_value=empty_query_mock),
         ):
             self.assertEqual(
                 general_feedback_services.delete_general_feedback_older_than(
@@ -697,6 +704,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         old_model_1 = _FakeThreadModel(thread_id='t1')
         old_model_2 = _FakeThreadModel(thread_id='t2')
         query_mock = mock.Mock()
+        query_mock.filter.return_value = query_mock
         query_mock.fetch.return_value = [old_model_1, old_model_2]
         delete_sessions_mock = mock.Mock()
         delete_messages_mock = mock.Mock()

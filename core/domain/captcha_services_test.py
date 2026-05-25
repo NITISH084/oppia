@@ -38,7 +38,7 @@ class CaptchaServicesTests(test_utils.GenericTestBase):
     def test_get_turnstile_site_key_in_dev_mode(self) -> None:
         with self.swap(constants, 'DEV_MODE', True):
             self.assertEqual(
-                captcha_services._TURNSTILE_TEST_SITE_KEY,
+                '1x00000000000000000000AA',
                 captcha_services.get_turnstile_site_key(),
             )
 

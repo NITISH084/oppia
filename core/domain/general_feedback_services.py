@@ -106,28 +106,31 @@ def create_thread(
     target_id: Optional[str],
     screenshot_filename: Optional[str] = None,
     screenshot_entity_id: Optional[str] = None,
+    # Here we use object because session diagnostics payloads are
+    # heterogeneous JSON-like structures from the client.
     session_info: Optional[Dict[str, object]] = None,
     user_id: Optional[str] = None,
 ) -> str:
-    """Creates a new web feedback thread and return its id.
+    """Creates a new web feedback thread and returns its ID.
+
     Args:
-        category: One of 'lesson' or 'platform'.
-        description: feedback text.
-        page_url: URL of the page.
-        language_code: Language code.
-        rating: 0-5 rating.
-        target_type: str. Entity type ("exploration" for lesson feedback,
-            "general" for platform feedback).
-        target_id: str.  Identifier for the feedback target:
-            For lesson feedback: exploration_id
-            For platform feedback: deterministically generated as sha1(page_url).
-        screenshot_filename: Optional screenshot blob key.
-        screenshot_entity_id: Optional screenshot entity id.
-        session_info: Optional session/debug info dict.
-        user_id: Optional user id if logged in.
+        category: str. One of 'lesson' or 'platform'.
+        description: str. Feedback text.
+        page_url: str. URL of the page.
+        language_code: str. Language code.
+        rating: int. Rating from 0 to 5.
+        target_type: str. Entity type ("exploration" or "general").
+        target_id: Optional[str]. Identifier for the feedback target.
+        screenshot_filename: Optional[str]. Screenshot blob key.
+        screenshot_entity_id: Optional[str]. Screenshot entity ID.
+        session_info: Optional[Dict[str, object]]. Session diagnostics payload.
+        user_id: Optional[str]. User ID if logged in.
 
     Returns:
-        The id of the new feedback thread.
+        str. The ID of the new feedback thread.
+
+    Raises:
+        ValueError. The target_id is missing for non-platform feedback.
     """
     if category == general_feedback_models.CATEGORY_PLATFORM:
         target_id = get_platform_target_id_from_page_url(page_url)
@@ -213,22 +216,24 @@ def create_message(
     """Creates a new message in an existing web feedback thread.
 
     Args:
-    Fields:
-        thread_id: str. ID of the associated WebFeedbackThreadModel.
+        thread_id: str. ID of the associated feedback thread.
+        text: str. Message body.
+        author_status: str. Role of the author.
         author_id: Optional[str]. User ID of the message author,
             or None for anonymous users.
-        author_status: str. Role of the author
-            ("learner" | "feedback_admin" | "editor").
-        text: Optional[str]. Message content.
         updated_status: Optional[str]. Status change associated with
             this message, if any.
-        screenshot_filename: Optional[str]. FileName of the uploaded
+        screenshot_filename: Optional[str]. Filename of the uploaded
             screenshot stored in GCS.
         screenshot_entity_id: Optional[str]. Entity ID used for
             screenshot storage in GCS.
 
     Returns:
-        The id of the new message.
+        WebFeedbackMessage. The created message as a domain object.
+
+    Raises:
+        ValueError. The thread ID is invalid.
+        ValueError. The message was not created successfully.
     """
     thread_model = general_feedback_models.WebFeedbackThreadModel.get(thread_id)
     if thread_model is None:
@@ -291,6 +296,8 @@ def _message_model_to_domain(
 def _thread_model_to_domain(
     model: general_feedback_models.WebFeedbackThreadModel,
     messages: Sequence[general_feedback_domain.WebFeedbackMessage],
+    # Here we use object because session diagnostics payloads are
+    # heterogeneous JSON-like structures from the client.
     session_info: Optional[Dict[str, object]],
 ) -> general_feedback_domain.WebFeedbackThread:
     """Converts a general feedback thread model to a domain object."""
@@ -316,6 +323,8 @@ def _thread_model_to_domain(
 
 def _get_session_info_by_thread_ids(
     thread_ids: Sequence[str],
+    # Here we use object because session diagnostics payloads are
+    # heterogeneous JSON-like structures from the client.
 ) -> Dict[str, Dict[str, object]]:
     """Returns session diagnostics mapped by thread ID."""
     if not thread_ids:
@@ -323,6 +332,8 @@ def _get_session_info_by_thread_ids(
     session_models = general_feedback_models.FeedbackSessionLogModel.get_multi(
         thread_ids
     )
+    # Here we use object because session diagnostics payloads are
+    # heterogeneous JSON-like structures from the client.
     session_info_by_thread_id: Dict[str, Dict[str, object]] = {}
     for session_model in session_models:
         if session_model is None:
@@ -507,19 +518,25 @@ def delete_general_feedback_older_than(
     Args:
         cutoff_datetime: datetime. Any feedback created before this datetime
             will be deleted.
+        batch_size: int. Maximum number of threads deleted in one run.
 
     Returns:
         int. Number of deleted feedback models.
     """
-    old_models = general_feedback_models.WebFeedbackThreadModel.query(
-        general_feedback_models.WebFeedbackThreadModel.created_on
-        < cutoff_datetime,
-        general_feedback_models.WebFeedbackThreadModel.deleted
-        == False,  # pylint: disable=singleton-comparison
-    ).fetch(batch_size)
+    old_models = (
+        general_feedback_models.WebFeedbackThreadModel.query(
+            general_feedback_models.WebFeedbackThreadModel.created_on
+            < cutoff_datetime
+        )
+        .filter(
+            general_feedback_models.WebFeedbackThreadModel.deleted.IN([False])
+        )
+        .fetch(batch_size)
+    )
     if not old_models:
         return 0
-    # Deleting the FeedbackSessionLogModel associated with the WebFeedbackThreadModel
+    # Deleting the FeedbackSessionLogModel associated with the
+    # WebFeedbackThreadModel.
     session_model_ids = [model.id for model in old_models]
     session_models = general_feedback_models.FeedbackSessionLogModel.get_multi(
         session_model_ids
@@ -529,7 +546,8 @@ def delete_general_feedback_older_than(
         general_feedback_models.FeedbackSessionLogModel.delete_multi(
             existing_session_models
         )
-    # Deleting the WebFeedbackMessageModel associated with the WebFeedbackThreadModel
+    # Deleting the WebFeedbackMessageModel associated with the
+    # WebFeedbackThreadModel.
     message_model_ids = [model.id for model in old_models]
     message_models = general_feedback_models.WebFeedbackMessageModel.get_multi(
         message_model_ids
