@@ -58,7 +58,7 @@ def _add_message_id_to_read_by_user(
                 user_id, thread_id
             )
         )
-    # Add message index to list of message ids read by user
+    # Add message index to the list of read message IDs.
     if message_index not in thread_user_model.message_ids_read_by_user:
         thread_user_model.message_ids_read_by_user.append(message_index)
         thread_user_model.update_timestamps()
