@@ -54,6 +54,21 @@ class WebFeedbackThreadDict(TypedDict):
     created_on_msecs: float
 
 
+class WebFeedbackThreadSummaryDict(TypedDict):
+    """Lightweight dict representation of a web feedback thread."""
+
+    id: str
+    category: str
+    status: str
+    rating: int
+    target_type: str
+    target_id: str
+    has_screenshot: bool
+    has_session_info: bool
+    description_preview: str
+    created_on_msecs: float
+
+
 class WebFeedbackMessage:
     """Domain object for a single web feedback message.
 
@@ -184,4 +199,19 @@ class WebFeedbackThread:
             'created_on_msecs': self.created_on_msecs,
             'session_info': self.session_info,
             'user_id': self.user_id,
+        }
+
+    def to_summary_dict(self) -> WebFeedbackThreadSummaryDict:
+        """Returns a lightweight dict representation of this thread."""
+        return {
+            'id': self.id,
+            'category': self.category,
+            'status': self.status,
+            'rating': self.rating,
+            'target_type': self.target_type,
+            'target_id': self.target_id,
+            'has_screenshot': self.has_screenshot,
+            'has_session_info': self.session_info is not None,
+            'description_preview': self.description[:140],
+            'created_on_msecs': self.created_on_msecs,
         }

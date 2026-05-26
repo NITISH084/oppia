@@ -135,9 +135,7 @@ def create_thread(
     if category == general_feedback_models.CATEGORY_PLATFORM:
         target_id = get_platform_target_id_from_page_url(page_url)
     elif target_id is None:
-        raise ValueError(
-            'target_id must be provided for non-platform feedback.'
-        )
+        raise ValueError('target_id must be provided for Lesson feedback.')
 
     has_screenshot = (
         screenshot_entity_id is not None and screenshot_filename is not None
@@ -321,6 +319,25 @@ def _thread_model_to_domain(
     )
 
 
+def _thread_model_to_summary_domain(
+    model: general_feedback_models.WebFeedbackThreadModel,
+    description: str,
+) -> general_feedback_domain.WebFeedbackThreadSummaryDict:
+    """Converts a general feedback thread model to a summary domain object."""
+    return {
+        'id': model.id,
+        'category': model.category,
+        'status': model.status,
+        'rating': model.rating,
+        'target_type': model.target_type,
+        'target_id': model.target_id,
+        'has_screenshot': model.has_screenshot,
+        'has_session_info': model.has_session_info,
+        'description_preview': description[:140],
+        'created_on_msecs': utils.get_time_in_millisecs(model.created_on),
+    }
+
+
 def _get_session_info_by_thread_ids(
     thread_ids: Sequence[str],
     # Here we use object because session diagnostics payloads are
@@ -369,7 +386,7 @@ def get_thread(
 
 def get_threads_by_ids(
     thread_ids: Sequence[str],
-) -> Sequence[general_feedback_domain.WebFeedbackThread]:
+) -> Sequence[general_feedback_domain.WebFeedbackThreadSummaryDict]:
     """Returns threads for the given IDs in the same order, skipping missing."""
     if not thread_ids:
         return []
@@ -385,23 +402,17 @@ def get_threads_by_ids(
     message_models_by_thread_id = general_feedback_models.WebFeedbackMessageModel.get_messages_by_thread_ids(
         [model.id for model in existing_models]
     )
-    session_info_by_thread_id = _get_session_info_by_thread_ids(
-        [model.id for model in existing_models]
-    )
 
     threads = []
     for model in models_list:
         if model is None or model.deleted:
             continue
-        messages = [
-            _message_model_to_domain(message_model)
-            for message_model in message_models_by_thread_id.get(model.id, [])
-        ]
+        message_models = message_models_by_thread_id.get(model.id, [])
+        description = message_models[0].text or '' if message_models else ''
         threads.append(
-            _thread_model_to_domain(
+            _thread_model_to_summary_domain(
                 model,
-                messages,
-                session_info_by_thread_id.get(model.id),
+                description,
             )
         )
     return threads
@@ -428,7 +439,9 @@ def get_threads(
     date_from_msecs: Optional[float] = None,
     date_to_msecs: Optional[float] = None,
 ) -> Tuple[
-    Sequence[general_feedback_domain.WebFeedbackThread], Optional[str], bool
+    Sequence[general_feedback_domain.WebFeedbackThreadSummaryDict],
+    Optional[str],
+    bool,
 ]:
     """Returns a page of web feedback threads for admin."""
     date_from: Optional[datetime.datetime] = None
@@ -454,21 +467,15 @@ def get_threads(
     message_models_by_thread_id = general_feedback_models.WebFeedbackMessageModel.get_messages_by_thread_ids(
         [model.id for model in models_list]
     )
-    session_info_by_thread_id = _get_session_info_by_thread_ids(
-        [model.id for model in models_list]
-    )
 
     thread_list = []
     for model in models_list:
-        messages = [
-            _message_model_to_domain(message_model)
-            for message_model in message_models_by_thread_id.get(model.id, [])
-        ]
+        message_models = message_models_by_thread_id.get(model.id, [])
+        description = message_models[0].text or '' if message_models else ''
         thread_list.append(
-            _thread_model_to_domain(
+            _thread_model_to_summary_domain(
                 model,
-                messages,
-                session_info_by_thread_id.get(model.id),
+                description,
             )
         )
 
@@ -527,11 +534,7 @@ def delete_general_feedback_older_than(
         general_feedback_models.WebFeedbackThreadModel.query(
             general_feedback_models.WebFeedbackThreadModel.created_on
             < cutoff_datetime
-        )
-        .filter(
-            general_feedback_models.WebFeedbackThreadModel.deleted.IN([False])
-        )
-        .fetch(batch_size)
+        ).fetch(batch_size)
     )
     if not old_models:
         return 0
@@ -546,18 +549,6 @@ def delete_general_feedback_older_than(
         general_feedback_models.FeedbackSessionLogModel.delete_multi(
             existing_session_models
         )
-    # Deleting the WebFeedbackMessageModel associated with the
-    # WebFeedbackThreadModel.
-    message_model_ids = [model.id for model in old_models]
-    message_models = general_feedback_models.WebFeedbackMessageModel.get_multi(
-        message_model_ids
-    )
-    existing_message_models = [m for m in message_models if m is not None]
-    if existing_message_models:
-        general_feedback_models.WebFeedbackMessageModel.delete_multi(
-            existing_message_models
-        )
-
     for model in old_models:
         thread_message_models = (
             general_feedback_models.WebFeedbackMessageModel.get_messages(
