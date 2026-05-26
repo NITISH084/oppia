@@ -20,6 +20,7 @@ import datetime
 from unittest import mock
 
 from core.domain import (
+    fs_services,
     general_feedback_domain,
     general_feedback_services,
     subscription_services,
@@ -205,6 +206,21 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         self.assertTrue(created_model.update_timestamps_called)
         self.assertTrue(created_model.put_called)
 
+    def test_update_messages_read_by_the_user_when_model_exists(self) -> None:
+        existing_model = _FakeThreadUserModel([8, 9])
+        with self.swap(
+            feedback_models.GeneralFeedbackThreadUserModel,
+            'get',
+            mock.Mock(return_value=existing_model),
+        ):
+            general_feedback_services.update_messages_read_by_the_user(
+                'uid', 'tid', [5, 4, 4]
+            )
+
+        self.assertEqual(existing_model.message_ids_read_by_user, [4, 5])
+        self.assertTrue(existing_model.update_timestamps_called)
+        self.assertTrue(existing_model.put_called)
+
     def test_create_thread_raises_error_when_target_id_missing(self) -> None:
         with self.assertRaisesRegex(
             ValueError, 'target_id must be provided for Lesson feedback.'
@@ -245,7 +261,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
                         language_code='en',
                         rating=4,
                         target_type='general',
-                        target_id='ignored',
+                        target_id=None,
                     )
 
         self.assertEqual(thread_id, 't-1')
@@ -415,6 +431,39 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         subscribe_mock.assert_called_once_with('uid', ['t-4'])
         add_read_mock.assert_called_once_with('uid', 't-4', 0)
 
+    def test_create_message_raises_error_when_message_not_created(self) -> None:
+        thread_model = _FakeThreadModel(thread_id='t-4', status='open')
+        with self.swap(
+            general_feedback_models.WebFeedbackThreadModel,
+            'get',
+            mock.Mock(return_value=thread_model),
+        ):
+            with self.swap(
+                general_feedback_models.WebFeedbackMessageModel,
+                'get_message_count_for_thread',
+                mock.Mock(return_value=0),
+            ):
+                with self.swap(
+                    general_feedback_models.WebFeedbackMessageModel,
+                    'create',
+                    mock.Mock(),
+                ):
+                    with self.swap(
+                        general_feedback_models.WebFeedbackMessageModel,
+                        'get_by_id',
+                        mock.Mock(return_value=None),
+                    ):
+                        with self.assertRaisesRegex(
+                            ValueError,
+                            'Message was not created for thread ID: t-4',
+                        ):
+                            general_feedback_services.create_message(
+                                thread_id='t-4',
+                                text='msg',
+                                author_status='feedback_admin',
+                                author_id='uid',
+                            )
+
     def test_message_model_to_domain(self) -> None:
         message_model = _FakeMessageModel()
         message = getattr(
@@ -451,10 +500,27 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             )
         ]
         thread = getattr(general_feedback_services, '_thread_model_to_domain')(
-            model, messages, {'env': {}}
+            model, messages, {'console_errors_json': {}}
         )
         self.assertEqual(thread.id, 't1')
         self.assertEqual(thread.description, 'desc')
+
+    def test_thread_model_to_domain_with_empty_messages(self) -> None:
+        model = _FakeThreadModel(thread_id='t1')
+        thread = getattr(general_feedback_services, '_thread_model_to_domain')(
+            model, [], None
+        )
+        self.assertEqual(thread.description, '')
+
+    def test_thread_model_to_summary_domain(self) -> None:
+        model = _FakeThreadModel(thread_id='t1')
+        model.has_session_info = True
+        summary = getattr(
+            general_feedback_services, '_thread_model_to_summary_domain'
+        )(model, 'x' * 200)
+        self.assertEqual(summary['id'], 't1')
+        self.assertEqual(summary['has_session_info'], True)
+        self.assertEqual(summary['description_preview'], 'x' * 140)
 
     def test_get_messages(self) -> None:
         with self.swap(
@@ -535,6 +601,23 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         self.assertEqual(threads[0]['id'], 't1')
         self.assertEqual(threads[0]['description_preview'], 'text')
         self.assertEqual(threads[0]['has_session_info'], False)
+
+    def test_get_threads_by_ids_without_messages_uses_empty_preview(
+        self,
+    ) -> None:
+        model = _FakeThreadModel(thread_id='t1', deleted=False)
+        with self.swap(
+            general_feedback_models.WebFeedbackThreadModel,
+            'get_multi',
+            mock.Mock(return_value=[model]),
+        ):
+            with self.swap(
+                general_feedback_models.WebFeedbackMessageModel,
+                'get_messages_by_thread_ids',
+                mock.Mock(return_value={}),
+            ):
+                threads = general_feedback_services.get_threads_by_ids(['t1'])
+        self.assertEqual(threads[0]['description_preview'], '')
 
     def test_get_threads_by_ids_does_not_fetch_session_info(self) -> None:
         model = _FakeThreadModel(thread_id='t1', deleted=False)
@@ -838,3 +921,68 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             ],
         )
         delete_threads_mock.assert_called_once_with([old_model_1, old_model_2])
+
+    def test_delete_general_feedback_older_than_with_no_session_models(
+        self,
+    ) -> None:
+        old_model = _FakeThreadModel(thread_id='t1')
+        query_mock = mock.Mock()
+        query_mock.filter.return_value = query_mock
+        query_mock.fetch.return_value = [old_model]
+        delete_sessions_mock = mock.Mock()
+        with self.swap(
+            general_feedback_models.WebFeedbackThreadModel,
+            'query',
+            mock.Mock(return_value=query_mock),
+        ):
+            with self.swap(
+                general_feedback_models.FeedbackSessionLogModel,
+                'get_multi',
+                mock.Mock(return_value=[None]),
+            ):
+                with self.swap(
+                    general_feedback_models.FeedbackSessionLogModel,
+                    'delete_multi',
+                    delete_sessions_mock,
+                ):
+                    with self.swap(
+                        general_feedback_models.WebFeedbackMessageModel,
+                        'get_messages',
+                        mock.Mock(return_value=[]),
+                    ):
+                        with self.swap(
+                            general_feedback_models.WebFeedbackThreadModel,
+                            'delete_multi',
+                            mock.Mock(),
+                        ):
+                            deleted_count = general_feedback_services.delete_general_feedback_older_than(
+                                datetime.datetime.utcnow()
+                            )
+        self.assertEqual(deleted_count, 1)
+        delete_sessions_mock.assert_not_called()
+
+    def test_delete_feedback_screenshot_files_early_return(self) -> None:
+        gcs_ctor = mock.Mock()
+        with self.swap(fs_services, 'GcsFileSystem', gcs_ctor):
+            general_feedback_services._delete_feedback_screenshot_files(
+                None, 'abc.png'
+            )
+            general_feedback_services._delete_feedback_screenshot_files(
+                'entity-1', None
+            )
+        gcs_ctor.assert_not_called()
+
+    def test_delete_feedback_screenshot_files_ignores_ioerror(self) -> None:
+        file_system = mock.Mock()
+        file_system.delete.side_effect = [
+            IOError('boom'),
+            None,
+            IOError('boom2'),
+        ]
+        with self.swap(
+            fs_services, 'GcsFileSystem', mock.Mock(return_value=file_system)
+        ):
+            general_feedback_services._delete_feedback_screenshot_files(
+                'entity-1', 'file-1.png'
+            )
+        self.assertEqual(file_system.delete.call_count, 3)

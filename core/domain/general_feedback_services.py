@@ -130,7 +130,7 @@ def create_thread(
         str. The ID of the new feedback thread.
 
     Raises:
-        ValueError. The target_id is missing for non-platform feedback.
+        ValueError. The target_id is missing for Lesson feedback.
     """
     if category == general_feedback_models.CATEGORY_PLATFORM:
         target_id = get_platform_target_id_from_page_url(page_url)
