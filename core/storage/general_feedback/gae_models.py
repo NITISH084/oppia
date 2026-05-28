@@ -382,8 +382,8 @@ class WebFeedbackThreadModel(base_models.BaseModel):
             entity_id: str. The ID of the entity.
 
         Returns:
-            str. A thread ID that is different from all existing thread IDs
-            within the given entity.
+            str. A globally unique thread ID containing the entity type
+            and entity ID as part of the ID format.
 
         Raises:
             Exception. Raised when too many collisions occur while generating a
@@ -433,10 +433,7 @@ class WebFeedbackThreadModel(base_models.BaseModel):
             )
 
         thread_id = cls.generate_new_thread_id(target_type, target_id)
-        if cls.get_by_id(thread_id):
-            raise Exception(
-                'Generated thread ID already exists: %s' % thread_id
-            )
+
         thread = cls(
             id=thread_id,
             category=category,
@@ -509,7 +506,7 @@ class WebFeedbackMessageModel(base_models.BaseModel):
     author_status = datastore_services.StringProperty(
         required=True, indexed=True, choices=AUTHOR_ROLE_CHOICES
     )
-    text = datastore_services.TextProperty(required=True, indexed=False)
+    text = datastore_services.TextProperty(required=False, indexed=False)
     updated_status = datastore_services.TextProperty(
         required=False,
         choices=STATUS_CHOICES,
@@ -567,7 +564,10 @@ class WebFeedbackMessageModel(base_models.BaseModel):
     def has_reference_to_user_id(cls, user_id: str) -> bool:
         """Checks whether message data references the given user ID."""
         return (
-            cls.query(cls.author_id == user_id).get(keys_only=True) is not None
+            cls.query(cls.author_id == user_id)
+            .filter(cls.deleted.IN([False]))
+            .get(keys_only=True)
+            is not None
         )
 
     @classmethod
@@ -577,7 +577,10 @@ class WebFeedbackMessageModel(base_models.BaseModel):
         """Exports feedback message data corresponding to user_id."""
         user_data = {}
         message_models: Sequence[WebFeedbackMessageModel] = (
-            cls.get_all().filter(cls.author_id == user_id).fetch()
+            cls.get_all()
+            .filter(cls.author_id == user_id)
+            .filter(cls.deleted.IN([False]))
+            .fetch()
         )
 
         for message_model in message_models:
@@ -606,6 +609,7 @@ class WebFeedbackMessageModel(base_models.BaseModel):
         """Returns all messages belonging to a given thread, sorted by message_index."""
         return (
             cls.query(cls.thread_id == thread_id)
+            .filter(cls.deleted.IN([False]))
             .order(cls.message_index)
             .fetch()
         )
@@ -627,6 +631,7 @@ class WebFeedbackMessageModel(base_models.BaseModel):
             ]
             message_models: Sequence[WebFeedbackMessageModel] = (
                 cls.query(cls.thread_id.IN(batch_thread_ids))
+                .filter(cls.deleted.IN([False]))
                 .order(cls.thread_id)
                 .order(cls.message_index)
                 .fetch()
@@ -641,7 +646,11 @@ class WebFeedbackMessageModel(base_models.BaseModel):
     @classmethod
     def get_message_count_for_thread(cls, thread_id: str) -> int:
         """Returns the total number of messages in a given thread."""
-        return cls.query(cls.thread_id == thread_id).count()
+        return (
+            cls.query(cls.thread_id == thread_id)
+            .filter(cls.deleted.IN([False]))
+            .count()
+        )
 
     @classmethod
     def create(
