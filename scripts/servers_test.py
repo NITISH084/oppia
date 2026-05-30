@@ -1251,7 +1251,7 @@ class ManagedProcessTests(test_utils.TestBase):
             'blog-admin/assign-and-remove-blog-editor-and-blog-admin-roles'
         )
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': test_file_path,
                     'framework': 'puppeteer',
@@ -1294,7 +1294,7 @@ class ManagedProcessTests(test_utils.TestBase):
             'blog-admin/assign-and-remove-blog-editor-and-blog-admin-roles'
         )
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': suite_name,
                     'framework': 'puppeteer',
@@ -1327,7 +1327,7 @@ class ManagedProcessTests(test_utils.TestBase):
             'blog-admin/assign-and-remove-blog-editor-and-blog-admin-roles'
         )
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': suite_name,
                     'framework': 'puppeteer',
@@ -1358,7 +1358,7 @@ class ManagedProcessTests(test_utils.TestBase):
     def test_managed_acceptance_test_server_playwright_suite(self) -> None:
         popen_calls = self.exit_stack.enter_context(self.swap_popen())
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': 'testSuite',
                     'framework': 'playwright',
@@ -1389,7 +1389,7 @@ class ManagedProcessTests(test_utils.TestBase):
     def test_managed_acceptance_test_server_playwright_headless(self) -> None:
         popen_calls = self.exit_stack.enter_context(self.swap_popen())
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': 'testSuite',
                     'framework': 'playwright',
@@ -1417,7 +1417,7 @@ class ManagedProcessTests(test_utils.TestBase):
     def test_managed_acceptance_test_server_playwright_mobile(self) -> None:
         popen_calls = self.exit_stack.enter_context(self.swap_popen())
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': 'testSuite',
                     'framework': 'playwright',
@@ -1442,7 +1442,7 @@ class ManagedProcessTests(test_utils.TestBase):
         self,
     ) -> None:
         mock_config = {
-            'core': [
+            'suite': [
                 {
                     'name': 'testSuite',
                     'framework': 'invalid_framework',

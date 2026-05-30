@@ -32,7 +32,7 @@ from scripts import (
     servers,
 )
 
-from typing import ContextManager, Dict, List, Optional, Tuple
+from typing import ContextManager, List, Optional, Tuple
 
 
 class PopenErrorReturn:
@@ -108,6 +108,30 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
             run_acceptance_tests,
             'install_playwright_dependencies',
             lambda: None,
+        )
+        self.build_js_files_swap = self.swap_with_checks(
+            build,
+            'build_js_files',
+            lambda *_, **__: None,
+            expected_args=[(True,)],
+        )
+        self.managed_redis_server_swap = self.swap_with_checks(
+            servers, 'managed_redis_server', mock_managed_process
+        )
+        self.managed_elasticsearch_dev_server_swap = self.swap_with_checks(
+            servers, 'managed_elasticsearch_dev_server', mock_managed_process
+        )
+        self.managed_firebase_auth_emulator_swap = self.swap_with_checks(
+            servers, 'managed_firebase_auth_emulator', mock_managed_process
+        )
+        self.managed_dev_appserver_swap = self.swap_with_checks(
+            servers, 'managed_dev_appserver', mock_managed_process
+        )
+        self.managed_portserver_swap = self.swap_with_checks(
+            servers, 'managed_portserver', mock_managed_process
+        )
+        self.managed_cloud_datastore_emulator_swap = self.swap_with_checks(
+            servers, 'managed_cloud_datastore_emulator', mock_managed_process
         )
 
     def tearDown(self) -> None:
@@ -253,7 +277,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_run_tests_raises_error_when_suite_not_found(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'someOtherSuite',
                     'framework': 'puppeteer',
@@ -262,15 +286,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
             ]
         }
 
-        def mock_json_load(unused_f: str) -> Dict[str, List[Dict[str, str]]]:
-            return mock_config
-
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                common, 'is_oppia_server_already_running', lambda *_: False
-            )
-        )
-        json_load_swap = self.swap(json, 'load', mock_json_load)
+        json_load_swap = self.swap(json, 'load', lambda _: mock_config)
 
         with json_load_swap:
             with self.assertRaisesRegex(
@@ -283,7 +299,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_compile_ts_called_for_puppeteer_suite(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'puppeteer',
@@ -291,9 +307,6 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 }
             ]
         }
-
-        def mock_json_load(unused_f: str) -> Dict[str, List[Dict[str, str]]]:
-            return mock_config
 
         compile_called = []
         playwright_deps_called = []
@@ -309,47 +322,16 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: False
             )
         )
+        self.exit_stack.enter_context(self.build_js_files_swap)
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                build,
-                'build_js_files',
-                lambda *_, **__: None,
-                expected_args=[(True,)],
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
+        self.exit_stack.enter_context(self.managed_portserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_portserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
         self.exit_stack.enter_context(
             self.swap_with_checks(
@@ -373,7 +355,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
             )
         )
 
-        json_load_swap = self.swap(json, 'load', mock_json_load)
+        json_load_swap = self.swap(json, 'load', lambda _: mock_config)
         compile_swap = self.swap(
             run_acceptance_tests,
             'compile_test_ts_files',
@@ -394,7 +376,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_playwright_deps_called_for_playwright_suite(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'playwright',
@@ -402,9 +384,6 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 }
             ]
         }
-
-        def mock_json_load(unused_f: str) -> Dict[str, List[Dict[str, str]]]:
-            return mock_config
 
         compile_called = []
         playwright_deps_called = []
@@ -420,47 +399,16 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: False
             )
         )
+        self.exit_stack.enter_context(self.build_js_files_swap)
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                build,
-                'build_js_files',
-                lambda *_, **__: None,
-                expected_args=[(True,)],
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
+        self.exit_stack.enter_context(self.managed_portserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_portserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
         self.exit_stack.enter_context(
             self.swap_with_checks(
@@ -484,7 +432,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
             )
         )
 
-        json_load_swap = self.swap(json, 'load', mock_json_load)
+        json_load_swap = self.swap(json, 'load', lambda _: mock_config)
         compile_swap = self.swap(
             run_acceptance_tests,
             'compile_test_ts_files',
@@ -509,11 +457,8 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: True
             )
         )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_portserver', mock_managed_process
-            )
-        )
+
+        self.exit_stack.enter_context(self.managed_portserver_swap)
 
         with self.compile_test_ts_files_swap, self.assertRaisesRegex(
             SystemExit,
@@ -526,7 +471,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_start_tests_when_no_other_instance_running(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'puppeteer',
@@ -540,47 +485,16 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: False
             )
         )
+        self.exit_stack.enter_context(self.build_js_files_swap)
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                build,
-                'build_js_files',
-                lambda *_, **__: None,
-                expected_args=[(True,)],
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
+        self.exit_stack.enter_context(self.managed_portserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_portserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
         self.exit_stack.enter_context(
             self.swap_with_checks(
@@ -612,7 +526,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_work_with_non_ascii_chars(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'puppeteer',
@@ -639,42 +553,15 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: False
             )
         )
+        self.exit_stack.enter_context(self.build_js_files_swap)
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                build,
-                'build_js_files',
-                lambda *_, **__: None,
-                expected_args=[(True,)],
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
         self.exit_stack.enter_context(
             self.swap_with_checks(
@@ -708,7 +595,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_start_tests_skip_build(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'puppeteer',
@@ -735,27 +622,15 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'set_constants_to_default', lambda: None
             )
         )
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
+        self.exit_stack.enter_context(self.managed_portserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
         self.exit_stack.enter_context(
             self.swap_with_checks(
@@ -763,18 +638,6 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 'managed_webpack_compiler',
                 mock_managed_process,
                 called=False,
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_portserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
             )
         )
         self.exit_stack.enter_context(
@@ -808,7 +671,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_start_tests_in_jasmine(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'puppeteer',
@@ -822,47 +685,16 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: False
             )
         )
+        self.exit_stack.enter_context(self.build_js_files_swap)
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                build,
-                'build_js_files',
-                lambda *_, **__: None,
-                expected_args=[(True,)],
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
+        self.exit_stack.enter_context(self.managed_portserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_portserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
         self.exit_stack.enter_context(
             self.swap_with_checks(
@@ -894,7 +726,7 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
 
     def test_start_tests_for_long_lived_process(self) -> None:
         mock_config = {
-            'core': [
+            'suites': [
                 {
                     'name': 'testSuite',
                     'framework': 'puppeteer',
@@ -908,44 +740,16 @@ class RunAcceptanceTestsTests(test_utils.GenericTestBase):
                 common, 'is_oppia_server_already_running', lambda *_: False
             )
         )
+        self.exit_stack.enter_context(self.build_js_files_swap)
+        self.exit_stack.enter_context(self.managed_redis_server_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                build,
-                'build_js_files',
-                lambda *_, **__: None,
-                expected_args=[(True,)],
-            )
+            self.managed_elasticsearch_dev_server_swap
         )
+        self.exit_stack.enter_context(self.managed_firebase_auth_emulator_swap)
+        self.exit_stack.enter_context(self.managed_dev_appserver_swap)
         self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_elasticsearch_dev_server',
-                mock_managed_process,
-            )
+            self.managed_cloud_datastore_emulator_swap
         )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_firebase_auth_emulator', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_dev_appserver', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers, 'managed_redis_server', mock_managed_process
-            )
-        )
-        self.exit_stack.enter_context(
-            self.swap_with_checks(
-                servers,
-                'managed_cloud_datastore_emulator',
-                mock_managed_process,
-            )
-        )
-
         self.exit_stack.enter_context(
             self.swap_with_checks(
                 servers,
