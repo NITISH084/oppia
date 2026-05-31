@@ -47,6 +47,7 @@ from core.controllers import (
     feedback,
     feedback_updates,
     firebase,
+    general_feedback,
     improvements,
     incoming_app_feedback_report,
     learner_dashboard,
@@ -1042,6 +1043,14 @@ URLS = [
     get_redirect_route(
         r'%s/<exploration_id>' % feconf.FEEDBACK_STATS_URL_PREFIX,
         feedback.FeedbackStatsHandler,
+    ),
+    get_redirect_route(
+        r'%s' % feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+        general_feedback.GeneralFeedbackSubmitHandler,
+    ),
+    get_redirect_route(
+        r'%s' % feconf.GENERAL_FEEDBACK_CAPTCHA_CONFIG_URL,
+        general_feedback.GeneralFeedbackCaptchaConfigHandler,
     ),
     get_redirect_route(
         r'%s/' % feconf.SUGGESTION_URL_PREFIX, suggestion.SuggestionHandler

@@ -983,28 +983,195 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             )
 
     def test_validate_general_feedback_submit_payload_coupling(self) -> None:
+        # Here we use object because feedback payloads include multiple JSON
+        # scalar types and nested dictionaries.
+        payload: Dict[str, object] = {
+            'include_session_info': False,
+            'session_info': None,
+            'description': 'Useful feedback.',
+            'category': 'platform',
+            'target_type': 'general',
+            'target_id': None,
+            'screenshot_filename': None,
+            'screenshot_file': None,
+        }
+
+        self.assertIsNone(
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                payload
+            )
+        )
+
         with self.assertRaisesRegex(
             Exception,
             'Session info must be provided if include_session_info is True.',
         ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['include_session_info'] = True
             domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception,
+            'Session info should not be provided when include_session_info is '
+            'False.',
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['session_info'] = self.session_info
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(Exception, 'Description is required.'):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['description'] = '   '
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(Exception, 'Description is required.'):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['description'] = None
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Lesson feedback requires target_type=exploration.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['category'] = 'lesson'
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Lesson feedback requires target_id.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['category'] = 'lesson'
+            invalid_payload['target_type'] = 'exploration'
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        valid_lesson_payload = copy.deepcopy(payload)
+        valid_lesson_payload.update(
+            {
+                'category': 'lesson',
+                'target_type': 'exploration',
+                'target_id': 'exp_id',
+            }
+        )
+        self.assertIsNone(
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                valid_lesson_payload
+            )
+        )
+
+        payload_with_unknown_category = copy.deepcopy(payload)
+        payload_with_unknown_category['category'] = 'other'
+        self.assertIsNone(
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                payload_with_unknown_category
+            )
+        )
+
+        with self.assertRaisesRegex(
+            Exception, 'Platform feedback requires target_type=general.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['target_type'] = 'exploration'
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Platform feedback should not specify target_id.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['target_id'] = 'exp_id'
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Screenshot file requires a screenshot filename.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['screenshot_file'] = {'screenshot.png': 'data'}
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Screenshot filename requires screenshot file data.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['screenshot_filename'] = 'screenshot.png'
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Screenshot filename is invalid.'
+        ):
+            invalid_payload = copy.deepcopy(payload)
+            invalid_payload['screenshot_filename'] = 'invalid.txt'
+            invalid_payload['screenshot_file'] = {'invalid.txt': 'data'}
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
+        valid_screenshot_payload = copy.deepcopy(payload)
+        valid_screenshot_payload.update(
+            {
+                'screenshot_filename': 'screenshot.png',
+                'screenshot_file': {'screenshot.png': 'data'},
+            }
+        )
+        self.assertIsNone(
+            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
+                valid_screenshot_payload
+            )
+        )
+
+    def test_validate_general_feedback_screenshot_file(self) -> None:
+        self.assertIsNone(
+            domain_objects_validator.validate_general_feedback_screenshot_file(
+                None
+            )
+        )
+        valid_file = {'screenshot.png': 'data'}
+        self.assertEqual(
+            domain_objects_validator.validate_general_feedback_screenshot_file(
+                valid_file
+            ),
+            valid_file,
+        )
+
+        with self.assertRaisesRegex(
+            Exception, 'Only one screenshot file is allowed.'
+        ):
+            domain_objects_validator.validate_general_feedback_screenshot_file(
                 {
-                    'include_session_info': True,
-                    'session_info': None,
+                    'first.png': 'data',
+                    'second.png': 'data',
                 }
             )
-        # Here we use object because session-info diagnostics are heterogeneous
-        # JSON-like payloads (nested dict/list values) from client logs.
-        payload: Dict[str, object] = {
-            'include_session_info': False,
-            'session_info': None,
-        }
-        self.assertEqual(
-            domain_objects_validator.validate_general_feedback_submit_payload_coupling(
-                payload
-            ),
-            payload,
-        )
+
+        with self.assertRaisesRegex(Exception, 'Filename should be a string.'):
+            domain_objects_validator.validate_general_feedback_screenshot_file(
+                {1: 'data'}
+            )
+
+        with self.assertRaisesRegex(
+            Exception, 'Screenshot data should be a string.'
+        ):
+            domain_objects_validator.validate_general_feedback_screenshot_file(
+                {'screenshot.png': 1}
+            )
 
     def test_validate_general_feedback_session_info_log_entries_happy_path(
         self,

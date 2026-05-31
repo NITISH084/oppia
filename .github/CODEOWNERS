@@ -623,6 +623,7 @@
 
 # Web User Feedback project.
 /core/templates/domain/feedback/ @oppia/lace-frontend-reviewers
+/core/controllers/general_feedback*.py @oppia/lace-backend-reviewers
 
 # Suggestion and feedback team.
 # Suggestion project.
