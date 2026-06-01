@@ -114,13 +114,14 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
 
     def test_submit_platform_feedback_successfully(self) -> None:
         create_thread_mock = mock.Mock(return_value='thread_id')
-
+        csrf_token = self.get_new_csrf_token()
         with self.swap(
             general_feedback_services, 'create_thread', create_thread_mock
         ):
             response = self.post_json(
                 feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                 self._get_base_payload(),
+                csrf_token=csrf_token,
                 expected_status_int=200,
             )
 
@@ -144,7 +145,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         payload['captcha_token'] = 'valid-token'
         create_thread_mock = mock.Mock(return_value='thread_id')
         verify_token_mock = mock.Mock(return_value=True)
-
+        csrf_token = self.get_new_csrf_token()
         with self.swap(
             captcha_services, 'verify_turnstile_token', verify_token_mock
         ):
@@ -154,6 +155,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 response = self.post_json(
                     feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                     payload,
+                    csrf_token=csrf_token,
                     expected_status_int=200,
                 )
 
@@ -163,13 +165,14 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
     def test_submit_feedback_rejects_invalid_captcha_token(self) -> None:
         payload = self._get_base_payload()
         payload['captcha_token'] = 'invalid-token'
-
+        csrf_token = self.get_new_csrf_token()
         with self.swap_to_always_return(
             captcha_services, 'verify_turnstile_token', False
         ):
             response = self.post_json(
                 feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                 payload,
+                csrf_token=csrf_token,
                 expected_status_int=400,
             )
 
@@ -185,6 +188,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             }
         )
         create_thread_mock = mock.Mock(return_value='lesson_thread_id')
+        csrf_token = self.get_new_csrf_token()
 
         with self.swap(
             general_feedback_services, 'create_thread', create_thread_mock
@@ -192,6 +196,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             response = self.post_json(
                 feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                 payload,
+                csrf_token=csrf_token,
                 expected_status_int=200,
             )
 
@@ -213,6 +218,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 'target_id': 'missing_exp_id',
             }
         )
+        csrf_token = self.get_new_csrf_token()
 
         with self.swap_to_always_return(
             exp_fetchers, 'get_exploration_by_id', None
@@ -220,6 +226,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             response = self.post_json(
                 feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                 payload,
+                csrf_token=csrf_token,
                 expected_status_int=400,
             )
 
@@ -239,6 +246,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         )
         create_thread_mock = mock.Mock(return_value='thread_id')
         validate_and_save_image_mock = mock.Mock()
+        csrf_token = self.get_new_csrf_token()
 
         with self.swap(
             fs_services,
@@ -251,6 +259,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 self.post_json(
                     feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                     payload,
+                    csrf_token=csrf_token,
                     expected_status_int=200,
                 )
 
@@ -274,6 +283,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 'screenshot_file': {'feedback.png': 'aGVsbG8='},
             }
         )
+        csrf_token = self.get_new_csrf_token()
 
         with self.swap(
             fs_services,
@@ -283,6 +293,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             response = self.post_json(
                 feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                 payload,
+                csrf_token=csrf_token,
                 expected_status_int=400,
             )
 
@@ -305,9 +316,11 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         with self.swap(
             general_feedback_services, 'create_thread', create_thread_mock
         ):
+            csrf_token = self.get_new_csrf_token()
             self.post_json(
                 feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
                 payload,
+                csrf_token=csrf_token,
                 expected_status_int=200,
             )
         self.logout()
