@@ -69,7 +69,7 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
     def _get_valid_session_info(self) -> Dict[str, object]:
         """Returns valid browser session diagnostics."""
         return {
-            'console_errors_json': [
+            'console_logs_json': [
                 {
                     'error_message': 'Console error.',
                     'timestamp_msecs': 1,
