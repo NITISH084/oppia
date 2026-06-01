@@ -71,7 +71,6 @@ class GeneralFeedbackSubmitHandler(
 ):
     """Handler for web user feedback submission."""
 
-    REQUIRE_PAYLOAD_CSRF_CHECK = False
     POST_HANDLER_ERROR_RETURN_TYPE = feconf.HANDLER_TYPE_JSON
     URL_PATH_ARGS_SCHEMAS = {}
     HANDLER_ARGS_SCHEMAS = {
