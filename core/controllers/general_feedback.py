@@ -196,15 +196,16 @@ class GeneralFeedbackSubmitHandler(
         domain_objects_validator.validate_general_feedback_submit_payload_coupling(
             payload=payload
         )
-        category = payload.get('category')
-        description = payload.get('description')
-        page_url = payload.get('page_url')
-        language_code = payload.get('language_code')
-        rating = payload.get('rating')
-        target_type = payload.get('target_type')
+        category = payload['category']
+        description = payload['description']
+        page_url = payload['page_url']
+        language_code = payload['language_code']
+        rating = payload['rating']
+        target_type = payload['target_type']
+        submit_anonymously = payload['submit_anonymously']
+
         target_id = payload.get('target_id')
         screenshot_filename = payload.get('screenshot_filename')
-        submit_anonymously = payload.get('submit_anonymously')
         session_info = payload.get('session_info')
         captcha_token = payload.get('captcha_token')
         screenshot_file = payload.get('screenshot_file')
