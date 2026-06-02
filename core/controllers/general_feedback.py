@@ -32,7 +32,7 @@ from core.domain import (
 
 from typing import Dict
 
-_MAX_DESCRIPTION_LENGTH = 4000
+_MAX_DESCRIPTION_LENGTH = 2500
 _MAX_FILENAME_LENGTH = 200
 _ALLOWED_CATEGORIES = ('lesson', 'platform')
 _ALLOWED_TARGET_TYPES = ('exploration', 'general')
@@ -43,24 +43,19 @@ def _resolve_feedback_screenshot_entity_id(
     screenshot_file: Dict[str, str],
 ) -> str:
     """Returns the entity id for a feedback screenshot."""
-    try:
-        decoded_image = base64.decodebytes(
-            screenshot_file[screenshot_filename].encode('utf-8')
-        )
-        entity_id = utils.convert_to_hash(uuid.uuid4().hex, 22)
+    decoded_image = base64.decodebytes(
+        screenshot_file[screenshot_filename].encode('utf-8')
+    )
+    entity_id = utils.convert_to_hash(uuid.uuid4().hex, 22)
 
-        fs_services.validate_and_save_image(
-            decoded_image,
-            screenshot_filename,
-            'image',
-            feconf.ENTITY_TYPE_FEEDBACK_SCREENSHOT,
-            entity_id,
-        )
-        return entity_id
-    except Exception as exc:
-        raise base.BaseHandler.InvalidInputException(
-            'Failed to save feedback screenshot.'
-        ) from exc
+    fs_services.validate_and_save_image(
+        decoded_image,
+        screenshot_filename,
+        'image',
+        feconf.ENTITY_TYPE_FEEDBACK_SCREENSHOT,
+        entity_id,
+    )
+    return entity_id
 
 
 class GeneralFeedbackSubmitHandler(
@@ -209,18 +204,23 @@ class GeneralFeedbackSubmitHandler(
         captcha_token = payload.get('captcha_token')
         screenshot_file = payload.get('screenshot_file')
 
-        # Verify captcha token.
-        if (
-            captcha_token is not None
-            and not captcha_services.verify_turnstile_token(captcha_token)
-        ):
-            raise self.InvalidInputException('Invalid captcha token.')
+        # Verify captcha token, only for logged-out users.
+        if self.user_id is None:
+            if not captcha_token:
+                raise self.InvalidInputException(
+                    'Captcha token is required for logged-out users.'
+                )
+
+            if not captcha_services.verify_turnstile_token(captcha_token):
+                raise self.InvalidInputException('Invalid captcha token.')
 
         # Validate lesson's target_id existence.
         if category == 'lesson':
             assert target_id is not None
 
-            exploration = exp_fetchers.get_exploration_by_id(target_id)
+            exploration = exp_fetchers.get_exploration_by_id(
+                target_id, strict=False
+            )
             if exploration is None:
                 raise self.InvalidInputException(
                     'Invalid target_id for lesson feedback, target_id is not '
@@ -234,7 +234,7 @@ class GeneralFeedbackSubmitHandler(
             screenshot_entity_id = _resolve_feedback_screenshot_entity_id(
                 screenshot_filename, screenshot_file
             )
-
+        # Set user_id to None if feedback is submitted anonymously (this is a option only for logged-in users), else set it to the current user's id.
         user_id = None
         if not submit_anonymously:
             user_id = self.user_id

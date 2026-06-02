@@ -178,6 +178,24 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
 
         self.assertEqual(response['error'], 'Invalid captcha token.')
 
+    def test_submit_feedback_rejects_missing_captcha_token(self) -> None:
+        payload = self._get_base_payload()
+        payload['captcha_token'] = None
+        csrf_token = self.get_new_csrf_token()
+        with self.swap_to_always_return(
+            captcha_services, 'verify_turnstile_token', False
+        ):
+            response = self.post_json(
+                feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+                payload,
+                csrf_token=csrf_token,
+                expected_status_int=400,
+            )
+
+        self.assertEqual(
+            response['error'], 'Captcha token is required for logged-out users.'
+        )
+
     def test_submit_lesson_feedback_successfully(self) -> None:
         payload = self._get_base_payload()
         payload.update(

@@ -770,12 +770,10 @@ def validate_general_feedback_submit_payload_coupling(
             'Screenshot filename requires screenshot file data.'
         )
 
-    screenshot_filename = payload.get('screenshot_filename')
-
     if (
         screenshot_filename is not None
         and isinstance(screenshot_filename, str)
-        and re.match(
+        and re.fullmatch(
             utils.get_image_filename_regex_pattern(),
             screenshot_filename,
         )
