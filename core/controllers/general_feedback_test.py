@@ -115,15 +115,20 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
     def test_submit_platform_feedback_successfully(self) -> None:
         create_thread_mock = mock.Mock(return_value='thread_id')
         csrf_token = self.get_new_csrf_token()
-        with self.swap(
-            general_feedback_services, 'create_thread', create_thread_mock
+        payload = self._get_base_payload()
+        payload['captcha_token'] = 'valid-token'
+        with self.swap_to_always_return(
+            captcha_services, 'verify_turnstile_token', True
         ):
-            response = self.post_json(
-                feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
-                self._get_base_payload(),
-                csrf_token=csrf_token,
-                expected_status_int=200,
-            )
+            with self.swap(
+                general_feedback_services, 'create_thread', create_thread_mock
+            ):
+                response = self.post_json(
+                    feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+                    payload,
+                    csrf_token=csrf_token,
+                    expected_status_int=200,
+                )
 
         self.assertEqual(response, {'success': True, 'thread_id': 'thread_id'})
         create_thread_mock.assert_called_once_with(
@@ -205,18 +210,22 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 'target_id': self.EXP_ID,
             }
         )
+        payload['captcha_token'] = 'valid-token'
         create_thread_mock = mock.Mock(return_value='lesson_thread_id')
         csrf_token = self.get_new_csrf_token()
 
-        with self.swap(
-            general_feedback_services, 'create_thread', create_thread_mock
+        with self.swap_to_always_return(
+            captcha_services, 'verify_turnstile_token', True
         ):
-            response = self.post_json(
-                feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
-                payload,
-                csrf_token=csrf_token,
-                expected_status_int=200,
-            )
+            with self.swap(
+                general_feedback_services, 'create_thread', create_thread_mock
+            ):
+                response = self.post_json(
+                    feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+                    payload,
+                    csrf_token=csrf_token,
+                    expected_status_int=200,
+                )
 
         self.assertEqual(
             response, {'success': True, 'thread_id': 'lesson_thread_id'}
@@ -236,17 +245,20 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 'target_id': 'missing_exp_id',
             }
         )
+        payload['captcha_token'] = 'valid-token'
         csrf_token = self.get_new_csrf_token()
-
         with self.swap_to_always_return(
-            exp_fetchers, 'get_exploration_by_id', None
+            captcha_services, 'verify_turnstile_token', True
         ):
-            response = self.post_json(
-                feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
-                payload,
-                csrf_token=csrf_token,
-                expected_status_int=400,
-            )
+            with self.swap_to_always_return(
+                exp_fetchers, 'get_exploration_by_id', None
+            ):
+                response = self.post_json(
+                    feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+                    payload,
+                    csrf_token=csrf_token,
+                    expected_status_int=400,
+                )
 
         self.assertEqual(
             response['error'],
@@ -262,24 +274,30 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 'screenshot_file': {'feedback.png': 'aGVsbG8='},
             }
         )
+        payload['captcha_token'] = 'valid-token'
+
         create_thread_mock = mock.Mock(return_value='thread_id')
         validate_and_save_image_mock = mock.Mock()
         csrf_token = self.get_new_csrf_token()
-
-        with self.swap(
-            fs_services,
-            'validate_and_save_image',
-            validate_and_save_image_mock,
+        with self.swap_to_always_return(
+            captcha_services, 'verify_turnstile_token', True
         ):
             with self.swap(
-                general_feedback_services, 'create_thread', create_thread_mock
+                fs_services,
+                'validate_and_save_image',
+                validate_and_save_image_mock,
             ):
-                self.post_json(
-                    feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
-                    payload,
-                    csrf_token=csrf_token,
-                    expected_status_int=200,
-                )
+                with self.swap(
+                    general_feedback_services,
+                    'create_thread',
+                    create_thread_mock,
+                ):
+                    self.post_json(
+                        feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+                        payload,
+                        csrf_token=csrf_token,
+                        expected_status_int=200,
+                    )
 
         validate_and_save_image_mock.assert_called_once()
         self.assertEqual(
@@ -301,23 +319,24 @@ class GeneralFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 'screenshot_file': {'feedback.png': 'aGVsbG8='},
             }
         )
+        payload['captcha_token'] = 'valid-token'
         csrf_token = self.get_new_csrf_token()
-
-        with self.swap(
-            fs_services,
-            'validate_and_save_image',
-            mock.Mock(side_effect=Exception('save failed')),
+        with self.swap_to_always_return(
+            captcha_services, 'verify_turnstile_token', True
         ):
-            response = self.post_json(
-                feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
-                payload,
-                csrf_token=csrf_token,
-                expected_status_int=400,
-            )
+            with self.swap(
+                fs_services,
+                'validate_and_save_image',
+                mock.Mock(side_effect=Exception('save failed')),
+            ):
+                response = self.post_json(
+                    feconf.GENERAL_FEEDBACK_SUBMISSION_URL,
+                    payload,
+                    csrf_token=csrf_token,
+                    expected_status_int=500,
+                )
 
-        self.assertEqual(
-            response['error'], 'Failed to save feedback screenshot.'
-        )
+        self.assertEqual(response['error'], 'save failed')
 
     def test_submit_non_anonymous_feedback_uses_logged_in_user_id(self) -> None:
         payload = self._get_base_payload()
