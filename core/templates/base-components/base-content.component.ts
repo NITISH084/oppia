@@ -20,6 +20,8 @@ import {ChangeDetectorRef, Component, Directive} from '@angular/core';
 import {AppConstants} from 'app.constants';
 import {CookieService} from 'ngx-cookie';
 import {Subscription} from 'rxjs';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FeedbackSubmissionModalComponent} from './feedback-submission-modal.component';
 import {BottomNavbarStatusService} from 'services/bottom-navbar-status.service';
 import {UrlService} from 'services/contextual/url.service';
 import {WindowRef} from 'services/contextual/window-ref.service';
@@ -61,7 +63,8 @@ export class BaseContentComponent {
     private urlService: UrlService,
     private cookieService: CookieService,
     private i18nLanguageCodeService: I18nLanguageCodeService,
-    private router: Router
+    private router: Router,
+    private ngbModal: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -176,7 +179,9 @@ export class BaseContentComponent {
   }
 
   openFeedbackModal(): void {
-    // TODO(#26195): Implement feedback modal opening logic.
+    this.ngbModal.open(FeedbackSubmissionModalComponent, {
+      backdrop: 'static',
+    });
     return;
   }
 

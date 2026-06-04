@@ -127,7 +127,7 @@
     </div>
   </div>
 
-  <div *ngIf="isWebGeneralFeedbackModalEnabled() && !iframed && !isFeedbackFloaterDismissed"
+  <div *ngIf="!iframed && !isFeedbackFloaterDismissed"
        class="oppia-feedback-floater">
     <button type="button"
             class="oppia-feedback-floater-dismiss-button"

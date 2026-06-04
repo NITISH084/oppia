@@ -1,0 +1,291 @@
+<div class="oppia-feedback-modal">
+  <div class="oppia-feedback-section oppia-feedback-header">
+    <div class="oppia-feedback-title">
+      {{ 'I18N_FEEDBACK_MODAL_TITLE' | translate }}
+    </div>
+    <div class="oppia-feedback-subtitle">
+      {{ 'I18N_FEEDBACK_RATING_PROMPT' | translate }}
+    </div>
+    <div class="oppia-feedback-faces" aria-label="Feedback rating">
+        <button
+          type="button"
+          class="oppia-feedback-face-button"
+          [ngClass]="{
+            'oppia-feedback-face-selected': feedbackRating === 1
+          }"
+          [attr.aria-checked]="feedbackRating === 1"
+          aria-label="Very bad"
+          role="radio"
+          (click)="setFeedbackRating(1)">
+          <i class="far fa-dizzy oppia-feedback-face-icon" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="oppia-feedback-face-button"
+          [ngClass]="{
+            'oppia-feedback-face-selected': feedbackRating === 2
+          }"
+          [attr.aria-checked]="feedbackRating === 2"
+          aria-label="Bad"
+          role="radio"
+          (click)="setFeedbackRating(2)">
+          <i class="far fa-frown oppia-feedback-face-icon" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="oppia-feedback-face-button"
+          [ngClass]="{
+            'oppia-feedback-face-selected': feedbackRating === 3
+          }"
+          [attr.aria-checked]="feedbackRating === 3"
+          aria-label="Okay"
+          role="radio"
+          (click)="setFeedbackRating(3)">
+          <i class="far fa-meh oppia-feedback-face-icon" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="oppia-feedback-face-button"
+          [ngClass]="{
+            'oppia-feedback-face-selected': feedbackRating === 4
+          }"
+          [attr.aria-checked]="feedbackRating === 4"
+          aria-label="Good"
+          role="radio"
+          (click)="setFeedbackRating(4)">
+          <i class="far fa-smile oppia-feedback-face-icon" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="oppia-feedback-face-button"
+          [ngClass]="{
+            'oppia-feedback-face-selected': feedbackRating === 5
+          }"
+          [attr.aria-checked]="feedbackRating === 5"
+          aria-label="Excellent"
+          role="radio"
+          (click)="setFeedbackRating(5)">
+          <i class="far fa-laugh oppia-feedback-face-icon" aria-hidden="true"></i>
+        </button>
+    </div>
+    <div class="oppia-feedback-rating-label" *ngIf = "feedbackRating > 0">{{ getSelectedFeedbackRatingLabel() }}</div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_CATEGORY_LABEL' | translate }}
+    </div>
+    <div class="oppia-feedback-category">
+        <label>
+          <input type="radio"
+                 name="feedback-category"
+                 class="oppia-feedback-radio"
+                 [checked]="feedbackCategoryChoice === 'lesson'"
+                 (change)="setFeedbackCategoryChoice('lesson')">
+          {{ 'I18N_FEEDBACK_CATEGORY_LESSON' | translate}}
+        </label>
+        <label>
+          <input type="radio"
+                 name="feedback-category"
+                 class="oppia-feedback-radio"
+                 [checked]="feedbackCategoryChoice === 'lesson'"
+                 (change)="setFeedbackCategoryChoice('lesson')">
+          {{ 'I18N_FEEDBACK_CATEGORY_PLATFORM' | translate }}
+        </label>
+        <label>
+          <input type="radio"
+                 name="feedback-category"
+                 class="oppia-feedback-radio"
+                 [checked]="feedbackCategoryChoice === 'lesson'"
+                 (change)="setFeedbackCategoryChoice('lesson')">
+          {{ 'I18N_FEEDBACK_CATEGORY_UNSURE' | translate }}
+        </label>
+    </div>
+  </div>
+  <div class="oppia-feedback-section">
+    <label class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_DESCRIPTION_LABEL' | translate }}
+    </label>
+    <textarea id="oppia-feedback-description"
+              class="oppia-feedback-textarea"
+              rows="4"
+              [ngModel]="feedbackDescription"
+              (ngModelChange)="onFeedbackDescriptionChange($event)"
+              [placeholder]="'I18N_FEEDBACK_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+    <div class="oppia-feedback-character-count">
+      {{ feedbackDescription.length }}/{{ MAX_FEEDBACK_DESCRIPTION_LENGTH }}
+    </div>
+    <div *ngIf="feedbackDescriptionError" class="oppia-feedback-error-text">
+      {{ 'I18N_FEEDBACK_DESCRIPTION_ERROR' | translate }}
+    </div>
+    <div *ngIf="feedbackDescriptionTooLongError" class="oppia-feedback-error-text">
+      Description should be under {{ MAX_FEEDBACK_DESCRIPTION_LENGTH }} characters.
+    </div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      {{ 'I18N_FEEDBACK_SCREENSHOT_LABEL' | translate }}
+    </div>
+    <div class="oppia-feedback-screenshot">
+      <div *ngIf="!screenshotPreviewDataUrl">
+        <oppia-image-receiver
+          [allowedImageFormats]="allowedScreenshotImageFormats"
+          [maxImageSizeInKB]="maxScreenshotSizeInKB"
+          (fileChanged)="onScreenshotFileReceived($event)">
+        </oppia-image-receiver>
+      </div>
+      <div *ngIf="screenshotPreviewDataUrl" class="oppia-feedback-screenshot-preview">
+        <button
+          type="button"
+          class="btn btn-secondary
+          oppia-feedback-screenshot-remove-button"
+          aria-label="Remove screenshot"
+          (click)="removeScreenshot()">
+          <i class="fas fa-times"></i>
+        </button>
+        <img [src]="screenshotPreviewDataUrl" alt="Feedback Screenshot preview">
+      </div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+
+  <div class="oppia-feedback-section">
+    <label class="oppia-feedback-checkbox">
+      <input
+             type="checkbox"
+             [checked]="includeSessionInfo"
+             (change)="includeSessionInfo = !includeSessionInfo">
+      {{ 'I18N_FEEDBACK_SESSION_OPTIN' | translate }}
+    </label>
+  </div>
+
+    <div class="oppia-feedback-section">
+    <label class="oppia-feedback-checkbox">
+      <input
+             type="checkbox"
+             [checked]="submitAnonymously"
+             (change)="submitAnonymously = !submitAnonymously">
+      {{ 'I18N_FEEDBACK_SUBMIT_ANONYMOUSLY' | translate }}
+    </label>
+  </div>
+
+  <div class="oppia-feedback-section" *ngIf="isUserLoggedIn">
+    <div #turnstileContainer class="oppia-feedback-turnstile-container">
+    </div>
+    <div *ngIf="captchaLoadError" class="oppia-feedback-error-text">
+      {{ captchaLoadError }}
+    </div>
+  </div>
+
+  <div *ngIf="submitError" class="oppia-feedback-error-text">
+    <span>{{ submitError | translate }}</span>
+  </div>
+
+  <div *ngIf="submitSuccess" class="oppia-feedback-success-text">
+    Feedback submitted successfully.
+  </div>
+</div>
+
+
+</div>
+<div class="modal-footer">
+  <button type="button"
+          class="btn btn-secondary"
+          (click)="close()">
+    {{ 'I18N_FEEDBACK_CANCEL' | translate }}
+  </button>
+  <button type="button"
+          class="btn btn-success"
+          [disabled]="isSubmittingFeedback || isUploadingScreenshot"
+          (click)="submitFeedback()">
+    {{ 'I18N_FEEDBACK_SUBMIT' | translate }}
+  </button>
+</div>
+
+<style>
+
+.oppia-feedback-modal {
+  padding: 28px 32px 20px;
+  max-height: 80vh;
+  color: #6b6b6b;
+  overflow-y: auto;
+}
+
+.oppia-feedback-header{
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.oppia-feedback-title{
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #6b6b6b;
+}
+
+.oppia-feedback-subtitle{
+  font-size: 16px;
+  color: #7a7a7a;
+  margin-bottom: 18px;
+}
+
+.oppia-feedback-faces{
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.oppia-feedback-face-button{
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  height: 58px;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 150ms ease-in-out;
+  width: 58px;
+}
+
+.oppia-feedback-face-selected{
+  background: #d8eaeb;
+}
+
+.oppia-feedback-face-selected .oppia-feedback-face-icon{
+  color: #00766d;
+}
+
+.oppia-feedback-face-icon{
+  color: #7b7b7b;
+  font-size: 36px;
+}
+
+
+.oppia-feedback-rating-label{
+  color: #404040;
+  font-size: 15px;
+  line-height: 1.2;
+  min-height: 18px;
+}
+
+.oppia-feedback-category {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.oppia-feedback-label{
+
+}
+
+.oppia-feedback-radio{
+
+}
+</style>

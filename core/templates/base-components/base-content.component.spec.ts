@@ -24,6 +24,7 @@ import {AppConstants} from 'app.constants';
 import {LimitToPipe} from 'filters/limit-to.pipe';
 import {CookieModule, CookieService} from 'ngx-cookie';
 import {Observable, of} from 'rxjs';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {BottomNavbarStatusService} from 'services/bottom-navbar-status.service';
 import {UrlService} from 'services/contextual/url.service';
 import {WindowRef} from 'services/contextual/window-ref.service';
@@ -35,6 +36,7 @@ import {BackgroundMaskService} from 'services/stateful/background-mask.service';
 import {MockTranslatePipe} from 'tests/unit-test-utils';
 import {BaseContentComponent} from './base-content.component';
 import {PlatformFeatureService} from 'services/platform-feature.service';
+import {FeedbackSubmissionModalComponent} from './feedback-submission-modal.component';
 
 class MockPlatformFeatureService {
   status = {
@@ -59,6 +61,7 @@ describe('Base Content Component', () => {
   let pathname: string = 'test_pathname';
   let search: string = 'test_search';
   let hash: string = 'test_hash';
+  let ngbModal: NgbModal;
   let backgroundMaskService: BackgroundMaskService;
   let bottomNavbarStatusService: BottomNavbarStatusService;
   let mockPlatformFeatureService = new MockPlatformFeatureService();
@@ -90,6 +93,10 @@ describe('Base Content Component', () => {
     public events: Observable<NavigationEnd> = of(
       new NavigationEnd(0, 'http://localhost:8181', 'http://localhost:8181')
     );
+  }
+
+  class MockNgbModal {
+    open = jasmine.createSpy('open').and.returnValue({componentInstance: {}});
   }
 
   class MockWindowRef {
@@ -129,6 +136,10 @@ describe('Base Content Component', () => {
           useClass: MockRouteService,
         },
         {
+          provide: NgbModal,
+          useClass: MockNgbModal,
+        },
+        {
           provide: PlatformFeatureService,
           useValue: mockPlatformFeatureService,
         },
@@ -161,6 +172,7 @@ describe('Base Content Component', () => {
     fixture = TestBed.createComponent(BaseContentComponent);
     componentInstance = fixture.componentInstance;
     loaderService = TestBed.inject(LoaderService);
+    ngbModal = TestBed.inject(NgbModal);
     loaderService = loaderService as jasmine.SpyObj<LoaderService>;
     urlService = TestBed.inject(UrlService);
     keyboardShortcutService = TestBed.inject(KeyboardShortcutService);
@@ -273,7 +285,13 @@ describe('Base Content Component', () => {
   });
 
   it('should open the Feedback modal', () => {
-    expect(() => componentInstance.openFeedbackModal()).not.toThrowError();
+    componentInstance.openFeedbackModal();
+    expect(ngbModal.open).toHaveBeenCalledWith(
+      FeedbackSubmissionModalComponent,
+      {
+        backdrop: 'static',
+      }
+    );
   });
 
   it('should show the cookie banner if there is no cookie set', () => {
