@@ -126,16 +126,6 @@ export class UserFactory {
       }
 
       switch (role) {
-        case ROLES.TOPIC_MANAGER:
-          if (typeof args !== 'string') {
-            throw new Error('Expected additional argument to be string.');
-          }
-          await superAdminInstance.assignRoleToUser(
-            user.username,
-            ROLES.TOPIC_MANAGER,
-            args as string
-          );
-          break;
         default:
           await superAdminInstance.assignRoleToUser(user.username, role);
           break;
