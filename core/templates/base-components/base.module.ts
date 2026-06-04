@@ -57,7 +57,7 @@ import {FooterDonateVolunteerComponent} from './footer-donate-volunteer.componen
 import {PrimaryButtonComponent} from 'components/button-directives/primary-button.component';
 import {RouterModule} from '@angular/router';
 import {FeedbackSubmissionModalComponent} from './feedback-submission-modal.component';
-import {ImageReceiverComponent} from 'components/forms/custom-forms-directives/image-receiver.component';
+import {CustomFormsComponentsModule} from 'components/forms/custom-forms-directives/custom-form-components.module';
 
 @NgModule({
   imports: [
@@ -71,6 +71,7 @@ import {ImageReceiverComponent} from 'components/forms/custom-forms-directives/i
     NgBootstrapModule,
     RouterModule,
     SharedPipesModule,
+    CustomFormsComponentsModule,
   ],
 
   declarations: [
@@ -95,7 +96,6 @@ import {ImageReceiverComponent} from 'components/forms/custom-forms-directives/i
     ClassroomNavigationLinksComponent,
     LanguageBannerComponent,
     FeedbackSubmissionModalComponent,
-    ImageReceiverComponent,
   ],
 
   entryComponents: [
@@ -114,7 +114,6 @@ import {ImageReceiverComponent} from 'components/forms/custom-forms-directives/i
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
     FeedbackSubmissionModalComponent,
-    ImageReceiverComponent,
   ],
 
   exports: [
@@ -123,6 +122,7 @@ import {ImageReceiverComponent} from 'components/forms/custom-forms-directives/i
     DirectivesModule,
     I18nModule,
     SharedPipesModule,
+    CustomFormsComponentsModule,
 
     // Components and Directives.
     AlertMessageComponent,
@@ -143,7 +143,6 @@ import {ImageReceiverComponent} from 'components/forms/custom-forms-directives/i
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
     FeedbackSubmissionModalComponent,
-    ImageReceiverComponent,
   ],
 })
 export class BaseModule {}
