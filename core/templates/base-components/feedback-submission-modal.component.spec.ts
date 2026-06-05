@@ -68,7 +68,17 @@ class MockActiveModal {
 }
 
 class MockWindowRef {
-  nativeWindow = {
+  nativeWindow: {
+    location: {href: string};
+    navigator: {userAgent: string};
+    innerWidth: number;
+    innerHeight: number;
+    document: {title: string};
+    turnstile?: {
+      render: jasmine.Spy;
+      reset: jasmine.Spy;
+    };
+  } = {
     location: {
       href: 'https://www.oppia.org/learn/math',
     },
@@ -197,7 +207,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     createComponent();
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeFalse();
+    expect(component.isUserLoggedIn).toBe(false);
     expect(
       feedbackBackendApiService.fetchCaptchaConfigAsync
     ).toHaveBeenCalled();
@@ -205,7 +215,7 @@ describe('FeedbackSubmissionModalComponent', () => {
       KNOWN_SCRIPTS.TURNSTILE,
       jasmine.any(Function)
     );
-    expect(windowRef.nativeWindow.turnstile.render).toHaveBeenCalled();
+    expect(windowRef.nativeWindow.turnstile!.render).toHaveBeenCalled();
     expect(component.captchaToken).toEqual('captcha-token');
   }));
 
@@ -215,7 +225,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     createComponent();
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeTrue();
+    expect(component.isUserLoggedIn).toBe(true);
     expect(
       feedbackBackendApiService.fetchCaptchaConfigAsync
     ).not.toHaveBeenCalled();
@@ -228,7 +238,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     createComponent();
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeFalse();
+    expect(component.isUserLoggedIn).toBe(false);
     expect(
       feedbackBackendApiService.fetchCaptchaConfigAsync
     ).toHaveBeenCalled();
@@ -274,7 +284,7 @@ describe('FeedbackSubmissionModalComponent', () => {
   }));
 
   it('should update captcha state from turnstile callbacks', fakeAsync(() => {
-    windowRef.nativeWindow.turnstile.render.and.callFake(
+    windowRef.nativeWindow.turnstile!.render.and.callFake(
       (
         _container: HTMLElement,
         options: {
@@ -332,8 +342,8 @@ describe('FeedbackSubmissionModalComponent', () => {
     component.onFeedbackDescriptionChange('Helpful feedback.');
 
     expect(component.feedbackDescription).toEqual('Helpful feedback.');
-    expect(component.feedbackDescriptionError).toBeFalse();
-    expect(component.feedbackDescriptionTooLongError).toBeFalse();
+    expect(component.feedbackDescriptionError).toBe(false);
+    expect(component.feedbackDescriptionTooLongError).toBe(false);
   });
 
   it('should show an error when description is too long', () => {
@@ -343,7 +353,7 @@ describe('FeedbackSubmissionModalComponent', () => {
       'a'.repeat(component.MAX_FEEDBACK_DESCRIPTION_LENGTH + 1)
     );
 
-    expect(component.feedbackDescriptionTooLongError).toBeTrue();
+    expect(component.feedbackDescriptionTooLongError).toBe(true);
   });
 
   it('should stage screenshot and show preview', fakeAsync(() => {
@@ -359,7 +369,7 @@ describe('FeedbackSubmissionModalComponent', () => {
 
     createComponent();
     component.onScreenshotFileReceived(file);
-    expect(component.isUploadingScreenshot).toBeTrue();
+    expect(component.isUploadingScreenshot).toBe(true);
     flushMicrotasks();
 
     expect(
@@ -370,7 +380,7 @@ describe('FeedbackSubmissionModalComponent', () => {
       'data:image/png;base64,image'
     );
     expect(component.screenshotFileError).toBeNull();
-    expect(component.isUploadingScreenshot).toBeFalse();
+    expect(component.isUploadingScreenshot).toBe(false);
   }));
 
   it('should show screenshot upload error when staging fails', fakeAsync(() => {
@@ -390,7 +400,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     expect(component.screenshotFileError).toEqual(
       'I18N_FEEDBACK_SCREENSHOT_UPLOAD_ERROR'
     );
-    expect(component.isUploadingScreenshot).toBeFalse();
+    expect(component.isUploadingScreenshot).toBe(false);
   }));
 
   it('should clear a staged screenshot', () => {
@@ -426,7 +436,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     component.submitFeedback();
     flushMicrotasks();
 
-    expect(component.feedbackDescriptionError).toBeTrue();
+    expect(component.feedbackDescriptionError).toBe(true);
     expect(
       feedbackBackendApiService.submitFeedbackAsync
     ).not.toHaveBeenCalled();
@@ -441,7 +451,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     component.submitFeedback();
     flushMicrotasks();
 
-    expect(component.feedbackDescriptionTooLongError).toBeTrue();
+    expect(component.feedbackDescriptionTooLongError).toBe(true);
     expect(
       feedbackBackendApiService.submitFeedbackAsync
     ).not.toHaveBeenCalled();
@@ -458,7 +468,7 @@ describe('FeedbackSubmissionModalComponent', () => {
     expect(component.submitError).toEqual(
       'Please complete captcha before submitting Feedback.'
     );
-    expect(component.submitErrorIsI18nKey).toBeFalse();
+    expect(component.submitErrorIsI18nKey).toBe(false);
     expect(
       feedbackBackendApiService.submitFeedbackAsync
     ).not.toHaveBeenCalled();
@@ -472,10 +482,10 @@ describe('FeedbackSubmissionModalComponent', () => {
     component.submitFeedback();
     flushMicrotasks();
 
-    expect(component.feedbackDescriptionError).toBeFalse();
-    expect(component.feedbackDescriptionTooLongError).toBeFalse();
+    expect(component.feedbackDescriptionError).toBe(false);
+    expect(component.feedbackDescriptionTooLongError).toBe(false);
     expect(component.submitError).toBeNull();
-    expect(component.isSubmittingFeedback).toBeFalse();
+    expect(component.isSubmittingFeedback).toBe(false);
   }));
 
   it('should close the modal and remove screenshot', () => {
@@ -511,11 +521,11 @@ describe('FeedbackSubmissionModalComponent', () => {
     expect(component.feedbackRating).toEqual(0);
     expect(component.feedbackCategory).toBeNull();
     expect(component.feedbackCategoryChoice).toBeNull();
-    expect(component.includeSessionInfo).toBeTrue();
-    expect(component.submitAnonymously).toBeTrue();
+    expect(component.includeSessionInfo).toBe(true);
+    expect(component.submitAnonymously).toBe(true);
     expect(component.feedbackDescription).toEqual('');
     expect(component.captchaToken).toEqual('');
-    expect(windowRef.nativeWindow.turnstile.reset).toHaveBeenCalledWith(
+    expect(windowRef.nativeWindow.turnstile!.reset).toHaveBeenCalledWith(
       'widget-id'
     );
   }));
