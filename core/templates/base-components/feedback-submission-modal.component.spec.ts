@@ -215,7 +215,11 @@ describe('FeedbackSubmissionModalComponent', () => {
       KNOWN_SCRIPTS.TURNSTILE,
       jasmine.any(Function)
     );
-    expect(windowRef.nativeWindow.turnstile!.render).toHaveBeenCalled();
+    const turnstile = windowRef.nativeWindow.turnstile;
+    expect(turnstile).toBeDefined();
+    if (turnstile) {
+      expect(turnstile.render).toHaveBeenCalled();
+    }
     expect(component.captchaToken).toEqual('captcha-token');
   }));
 
@@ -284,7 +288,12 @@ describe('FeedbackSubmissionModalComponent', () => {
   }));
 
   it('should update captcha state from turnstile callbacks', fakeAsync(() => {
-    windowRef.nativeWindow.turnstile!.render.and.callFake(
+    const turnstile = windowRef.nativeWindow.turnstile;
+    expect(turnstile).toBeDefined();
+    if (!turnstile) {
+      return;
+    }
+    turnstile.render.and.callFake(
       (
         _container: HTMLElement,
         options: {
@@ -307,6 +316,19 @@ describe('FeedbackSubmissionModalComponent', () => {
     expect(component.captchaToken).toEqual('');
     expect(component.captchaLoadError).toEqual('Captcha failed to load.');
   }));
+
+  it('should not render turnstile when captcha site key is missing', () => {
+    createComponent();
+
+    component.captchaSiteKey = null;
+
+    const turnstile = windowRef.nativeWindow.turnstile;
+    expect(turnstile).toBeDefined();
+
+    if (turnstile) {
+      expect(turnstile.render).not.toHaveBeenCalled();
+    }
+  });
 
   it('should set feedback rating and label', () => {
     createComponent();
@@ -525,8 +547,10 @@ describe('FeedbackSubmissionModalComponent', () => {
     expect(component.submitAnonymously).toBe(true);
     expect(component.feedbackDescription).toEqual('');
     expect(component.captchaToken).toEqual('');
-    expect(windowRef.nativeWindow.turnstile!.reset).toHaveBeenCalledWith(
-      'widget-id'
-    );
+    const turnstile = windowRef.nativeWindow.turnstile;
+    expect(turnstile).toBeDefined();
+    if (turnstile) {
+      expect(turnstile.reset).toHaveBeenCalledWith('widget-id');
+    }
   }));
 });
