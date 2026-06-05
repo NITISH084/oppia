@@ -26,6 +26,7 @@ import {
   InsertScriptService,
   KNOWN_SCRIPTS,
 } from 'services/insert-script.service';
+import './feedback-submission-modal.component.css';
 
 interface TurnstileApi {
   render: (
@@ -47,7 +48,6 @@ interface TurnstileWindow extends Window {
 @Component({
   selector: 'oppia-feedback-submission-modal',
   templateUrl: './feedback-submission-modal.component.html',
-  styleUrls: ['./feedback-submission-modal.component.css'],
 })
 export class FeedbackSubmissionModalComponent {
   feedbackRating: number = 0;

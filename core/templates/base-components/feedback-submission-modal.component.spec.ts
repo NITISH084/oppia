@@ -319,8 +319,8 @@ describe('FeedbackSubmissionModalComponent', () => {
 
   it('should not render turnstile when captcha site key is missing', () => {
     createComponent();
-
     component.captchaSiteKey = null;
+    component.ngOnInit();
 
     const turnstile = windowRef.nativeWindow.turnstile;
     expect(turnstile).toBeDefined();
