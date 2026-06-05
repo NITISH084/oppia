@@ -451,8 +451,22 @@ describe('FeedbackSubmissionModalComponent', () => {
     ).not.toHaveBeenCalled();
   });
 
+  it('should not submit feedback when category is not selected', fakeAsync(() => {
+    createComponent();
+    component.feedbackCategory = null;
+
+    component.submitFeedback();
+    flushMicrotasks();
+
+    expect(component.feedbackCategoryError).toBe(true);
+    expect(
+      feedbackBackendApiService.submitFeedbackAsync
+    ).not.toHaveBeenCalled();
+  }));
+
   it('should not submit feedback when description is empty', fakeAsync(() => {
     createComponent();
+    component.feedbackCategory = 'lesson';
     component.feedbackDescription = '   ';
 
     component.submitFeedback();
@@ -466,6 +480,7 @@ describe('FeedbackSubmissionModalComponent', () => {
 
   it('should not submit feedback when description is too long', fakeAsync(() => {
     createComponent();
+    component.feedbackCategory = 'lesson';
     component.feedbackDescription = 'a'.repeat(
       component.MAX_FEEDBACK_DESCRIPTION_LENGTH + 1
     );
@@ -481,6 +496,7 @@ describe('FeedbackSubmissionModalComponent', () => {
 
   it('should require captcha before logged-out users submit feedback', fakeAsync(() => {
     createComponent();
+    component.feedbackCategory = 'platform';
     component.feedbackDescription = 'Helpful feedback.';
     component.captchaToken = '';
 
@@ -498,6 +514,7 @@ describe('FeedbackSubmissionModalComponent', () => {
 
   it('should mark feedback as submitting when validation passes', fakeAsync(() => {
     createComponent();
+    component.feedbackCategory = 'platform';
     component.feedbackDescription = 'Helpful feedback.';
     component.captchaToken = 'captcha-token';
 

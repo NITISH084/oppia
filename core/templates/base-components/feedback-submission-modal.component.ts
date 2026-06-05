@@ -62,8 +62,8 @@ export class FeedbackSubmissionModalComponent {
     5: 'Excellent',
   };
   private turnstileWidgetId: string | null = null;
-  feedbackCategory!: 'platform' | 'lesson' | null;
-  feedbackCategoryChoice!: 'platform' | 'lesson' | 'unsure' | null;
+  feedbackCategory: 'platform' | 'lesson' | null = null;
+  feedbackCategoryChoice: 'platform' | 'lesson' | 'unsure' | null = null;
   includeSessionInfo: boolean = true;
   submitAnonymously: boolean = true;
   feedbackDescription: string = '';
@@ -83,6 +83,7 @@ export class FeedbackSubmissionModalComponent {
   submitSuccess: boolean = false;
   submitErrorIsI18nKey: boolean = false;
   submitError: string | null = null;
+  feedbackCategoryError: boolean = false;
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -117,6 +118,7 @@ export class FeedbackSubmissionModalComponent {
   setFeedbackCategoryChoice(choice: 'lesson' | 'platform' | 'unsure'): void {
     this.feedbackCategoryChoice = choice;
     this.feedbackCategory = choice === 'unsure' ? 'platform' : choice;
+    this.feedbackCategoryError = false;
   }
 
   onFeedbackDescriptionChange(description: string): void {
@@ -162,6 +164,11 @@ export class FeedbackSubmissionModalComponent {
     this.submitSuccess = false;
     this.submitError = null;
     this.submitErrorIsI18nKey = false;
+    console.log(this.feedbackCategory);
+    if (this.feedbackCategory === null) {
+      this.feedbackCategoryError = true;
+      return;
+    }
     const trimmedDescription = this.feedbackDescription.trim();
     this.feedbackDescriptionError = !trimmedDescription;
     this.feedbackDescriptionTooLongError =

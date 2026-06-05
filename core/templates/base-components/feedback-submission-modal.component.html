@@ -90,6 +90,9 @@
         </label>
       </div>
     </div>
+    <div *ngIf="feedbackCategoryError" class="oppia-feedback-error-text">
+      {{ 'I18N_FEEDBACK_CATEGORY_ERROR' | translate }}
+    </div>
   </div>
 
   <div class="oppia-feedback-section">
