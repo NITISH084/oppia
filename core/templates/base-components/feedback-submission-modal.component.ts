@@ -47,6 +47,7 @@ interface TurnstileWindow extends Window {
 @Component({
   selector: 'oppia-feedback-submission-modal',
   templateUrl: './feedback-submission-modal.component.html',
+  styleUrls: ['./feedback-submission-modal.component.css'],
 })
 export class FeedbackSubmissionModalComponent {
   feedbackRating: number = 0;

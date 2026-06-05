@@ -7,68 +7,54 @@
       {{ 'I18N_FEEDBACK_RATING_PROMPT' | translate }}
     </div>
     <div class="oppia-feedback-faces" aria-label="Feedback rating">
-        <button
-          type="button"
-          class="oppia-feedback-face-button"
-          [ngClass]="{
-            'oppia-feedback-face-selected': feedbackRating === 1
-          }"
-          [attr.aria-checked]="feedbackRating === 1"
-          aria-label="Very bad"
-          role="radio"
-          (click)="setFeedbackRating(1)">
-          <i class="far fa-dizzy oppia-feedback-face-icon" aria-hidden="true"></i>
-        </button>
-        <button
-          type="button"
-          class="oppia-feedback-face-button"
-          [ngClass]="{
-            'oppia-feedback-face-selected': feedbackRating === 2
-          }"
-          [attr.aria-checked]="feedbackRating === 2"
-          aria-label="Bad"
-          role="radio"
-          (click)="setFeedbackRating(2)">
-          <i class="far fa-frown oppia-feedback-face-icon" aria-hidden="true"></i>
-        </button>
-        <button
-          type="button"
-          class="oppia-feedback-face-button"
-          [ngClass]="{
-            'oppia-feedback-face-selected': feedbackRating === 3
-          }"
-          [attr.aria-checked]="feedbackRating === 3"
-          aria-label="Okay"
-          role="radio"
-          (click)="setFeedbackRating(3)">
-          <i class="far fa-meh oppia-feedback-face-icon" aria-hidden="true"></i>
-        </button>
-        <button
-          type="button"
-          class="oppia-feedback-face-button"
-          [ngClass]="{
-            'oppia-feedback-face-selected': feedbackRating === 4
-          }"
-          [attr.aria-checked]="feedbackRating === 4"
-          aria-label="Good"
-          role="radio"
-          (click)="setFeedbackRating(4)">
-          <i class="far fa-smile oppia-feedback-face-icon" aria-hidden="true"></i>
-        </button>
-        <button
-          type="button"
-          class="oppia-feedback-face-button"
-          [ngClass]="{
-            'oppia-feedback-face-selected': feedbackRating === 5
-          }"
-          [attr.aria-checked]="feedbackRating === 5"
-          aria-label="Excellent"
-          role="radio"
-          (click)="setFeedbackRating(5)">
-          <i class="far fa-laugh oppia-feedback-face-icon" aria-hidden="true"></i>
-        </button>
+      <button type="button"
+              class="oppia-feedback-face-button"
+              [class.oppia-feedback-face-selected]="feedbackRating === 1"
+              [attr.aria-checked]="feedbackRating === 1"
+              aria-label="Very bad"
+              role="radio"
+              (click)="setFeedbackRating(1)">
+        <i class="far fa-dizzy oppia-feedback-face-icon" aria-hidden="true"></i>
+      </button>
+      <button type="button"
+              class="oppia-feedback-face-button"
+              [class.oppia-feedback-face-selected]="feedbackRating === 2"
+              [attr.aria-checked]="feedbackRating === 2"
+              aria-label="Bad"
+              role="radio"
+              (click)="setFeedbackRating(2)">
+        <i class="far fa-frown oppia-feedback-face-icon" aria-hidden="true"></i>
+      </button>
+      <button type="button"
+              class="oppia-feedback-face-button"
+              [class.oppia-feedback-face-selected]="feedbackRating === 3"
+              [attr.aria-checked]="feedbackRating === 3"
+              aria-label="Okay"
+              role="radio"
+              (click)="setFeedbackRating(3)">
+        <i class="far fa-meh oppia-feedback-face-icon" aria-hidden="true"></i>
+      </button>
+      <button type="button"
+              class="oppia-feedback-face-button"
+              [class.oppia-feedback-face-selected]="feedbackRating === 4"
+              [attr.aria-checked]="feedbackRating === 4"
+              aria-label="Good"
+              role="radio"
+              (click)="setFeedbackRating(4)">
+        <i class="far fa-smile oppia-feedback-face-icon" aria-hidden="true"></i>
+      </button>
+      <button type="button"
+              class="oppia-feedback-face-button"
+              [class.oppia-feedback-face-selected]="feedbackRating === 5"
+              [attr.aria-checked]="feedbackRating === 5"
+              aria-label="Excellent"
+              role="radio"
+              (click)="setFeedbackRating(5)">
+        <i class="far fa-laugh oppia-feedback-face-icon" aria-hidden="true"></i>
+      </button>
     </div>
-    <div class="oppia-feedback-rating-label" *ngIf = "feedbackRating > 0">{{ getSelectedFeedbackRatingLabel() }}
+    <div class="oppia-feedback-rating-label" *ngIf="feedbackRating > 0">
+      {{ getSelectedFeedbackRatingLabel() }}
     </div>
   </div>
 
@@ -84,7 +70,7 @@
                  class="oppia-feedback-radio"
                  [checked]="feedbackCategoryChoice === 'lesson'"
                  (change)="setFeedbackCategoryChoice('lesson')">
-          {{ 'I18N_FEEDBACK_CATEGORY_LESSON' | translate}}
+          {{ 'I18N_FEEDBACK_CATEGORY_LESSON' | translate }}
         </label>
         <label>
           <input type="radio"
@@ -105,7 +91,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="oppia-feedback-section">
     <label class="oppia-feedback-label">
       {{ 'I18N_FEEDBACK_DESCRIPTION_LABEL' | translate }}
@@ -115,7 +101,8 @@
               rows="4"
               [ngModel]="feedbackDescription"
               (ngModelChange)="onFeedbackDescriptionChange($event)"
-              [placeholder]="'I18N_FEEDBACK_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+              [placeholder]="'I18N_FEEDBACK_DESCRIPTION_PLACEHOLDER' | translate">
+    </textarea>
     <div class="oppia-feedback-character-count">
       {{ feedbackDescription.length }}/{{ MAX_FEEDBACK_DESCRIPTION_LENGTH }}
     </div>
@@ -139,13 +126,12 @@
           (fileChanged)="onScreenshotFileReceived($event)">
         </oppia-image-receiver>
       </div>
-      <div *ngIf="screenshotPreviewDataUrl" class="oppia-feedback-screenshot-preview">
-        <button
-          type="button"
-          class="btn btn-secondary
-          oppia-feedback-screenshot-remove-button"
-          aria-label="Remove screenshot"
-          (click)="removeScreenshot()">
+      <div *ngIf="screenshotPreviewDataUrl"
+           class="oppia-feedback-screenshot-preview">
+        <button type="button"
+                class="btn btn-secondary oppia-feedback-screenshot-remove-button"
+                aria-label="Remove screenshot"
+                (click)="removeScreenshot()">
           <i class="fas fa-times oppia-vcenter"></i>
         </button>
         <img [src]="screenshotPreviewDataUrl" alt="Feedback Screenshot preview">
@@ -161,18 +147,16 @@
 
   <div class="oppia-feedback-section">
     <label class="oppia-feedback-checkbox">
-      <input
-             type="checkbox"
+      <input type="checkbox"
              [checked]="includeSessionInfo"
              (change)="includeSessionInfo = !includeSessionInfo">
       {{ 'I18N_FEEDBACK_SESSION_OPTIN' | translate }}
     </label>
   </div>
 
-    <div class="oppia-feedback-section" *ngIf="isUserLoggedIn">
+  <div class="oppia-feedback-section" *ngIf="isUserLoggedIn">
     <label class="oppia-feedback-checkbox">
-      <input
-             type="checkbox"
+      <input type="checkbox"
              [checked]="submitAnonymously"
              (change)="submitAnonymously = !submitAnonymously">
       {{ 'I18N_FEEDBACK_SUBMIT_ANONYMOUSLY' | translate }}
@@ -209,389 +193,3 @@
     {{ 'I18N_FEEDBACK_SUBMIT' | translate }}
   </button>
 </div>
-
-<style>
-
-.oppia-feedback-modal{
-  padding: 28px 32px 20px;
-  max-height: 80vh;
-  color: #6b6b6b;
-  overflow-y: auto;
-}
-
-.oppia-feedback-section{
-  margin-bottom: 10px;
-}
-
-.oppia-feedback-header{
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.oppia-feedback-title{
-  font-size: 28px;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #6b6b6b;
-}
-
-.oppia-feedback-subtitle{
-  font-size: 16px;
-  color: #7a7a7a;
-  margin-bottom: 18px;
-}
-
-.oppia-feedback-faces{
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.oppia-feedback-face-button{
-  align-items: center;
-  background: transparent;
-  border: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  display: inline-flex;
-  height: 58px;
-  justify-content: center;
-  padding: 0;
-  transition: background-color 150ms ease-in-out;
-  width: 58px;
-}
-
-.oppia-feedback-face-selected{
-  background: #d8eaeb;
-}
-
-.oppia-feedback-face-icon{
-  color: #7b7b7b;
-  font-size: 36px;
-}
-
-.oppia-feedback-face-selected .oppia-feedback-face-icon{
-  color: #00766d;
-}
-
-
-.oppia-feedback-rating-label{
-  color: #404040;
-  font-size: 15px;
-  line-height: 1.2;
-  min-height: 18px;
-}
-
-.oppia-feedback-category{
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-.oppia-feedback-radio{
-  display: flex;
-  flex-direction: column;
-  margin: 8px 0;
-}
-
-.oppia-feedback-radio label{
-  align-items: center;
-  cursor: pointer;
-  display: inline-flex;
-  font-size: 15px;
-  gap: 10px;
-}
-
-.oppia-feedback-label{
-  display: block;
-  font-size: 15px;
-  margin-bottom: 8px;
-  color: #6b6b6b;
-}
-
-.oppia-feedback-textarea{
-  width: 100%;
-  min-height: 100px;
-  border-radius: 12px;
-  border: 1.5px solid #9aa0a6;
-  padding: 14px 16px;
-  font-size: 16px;
-  resize: vertical;
-}
-
-.oppia-feedback-character-count{
-  color: #7a7a7a;
-  font-size: 13px;
-  margin-top: 6px;
-  text-align: right;
-}
-
-.oppia-feedback-textarea:focus{
-  outline: none;
-  border-color: #5b8def;
-  box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.15);
-}
-
-.oppia-feedback-screenshot{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.oppia-feedback-screenshot-preview{
-  align-items: center;
-  background: #e4e4e4;
-  border-radius: 4px;
-  box-shadow: 0 4.5px 10px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 10px;
-  max-width: 100%;
-  min-height: 220px;
-  padding: 16px 16px 12px;
-  position: relative;
-}
-
-.oppia-feedback-screenshot-preview img{
-  border-radius: 4px;
-  max-height: 220px;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-.oppia-feedback-screenshot-remove-button{
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  z-index: 1;
-}
-
-.oppia-feedback-upload-text{
-  color: #4b4b4b;
-  font-size: 14px;
-  margin-top: 6px;
-}
-
-.oppia-feedback-error-text{
-  color: #d32f2f;
-  font-size: 14px;
-  margin-top: 6px;
-}
-
-.oppia-feedback-turnstile-container{
-  min-height: 65px;
-}
-
-.oppia-feedback-success-text{
-  margin-top: 16px;
-  padding: 12px 16px;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 8px;
-  color: #155724;
-  font-size: 15px;
-  text-align: center;
-}
-
-@media (max-width: 768px){
-  .oppia-feedback-modal {
-    padding: 20px 24px 16px;
-    max-height: 85vh;
-  }
-
-  .oppia-feedback-title{
-    font-size: 24px;
-  }
-
-  .oppia-feedback-subtitle{
-    font-size: 15px;
-  }
-
-  .oppia-feedback-faces{
-    gap: 10px;
-  }
-
-  .oppia-feedback-face-button{
-    height: 54px;
-    width: 54px;
-  }
-
-  .oppia-feedback-face-icon{
-    font-size: 34px;
-  }
-
-  .oppia-feedback-category{
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .oppia-feedback-radio{
-    font-size: 16px;
-    min-height: 40px;
-  }
-
-  .oppia-feedback-label{
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px){
-  .oppia-feedback-modal {
-    padding: 16px 20px 12px;
-    max-height: 80vh;
-  }
-
-  .oppia-feedback-header{
-    margin-bottom: 20px;
-  }
-
-  .oppia-feedback-title{
-    font-size: 22px;
-    margin-bottom: 8px;
-  }
-
-  .oppia-feedback-subtitle{
-    font-size: 14px;
-    margin-bottom: 16px;
-  }
-
-  .oppia-feedback-faces{
-    gap: 8px;
-  }
-
-  .oppia-feedback-face-button{
-    height: 48px;
-    width: 48px;
-  }
-
-  .oppia-feedback-face-icon{
-    font-size: 30px;
-  }
-
-  .oppia-feedback-section{
-    margin-bottom: 16px;
-  }
-
-  .oppia-feedback-category{
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .oppia-feedback-radio{
-    font-size: 15px;
-    min-height: 44px;
-    padding: 8px 0;
-  }
-
-  .oppia-feedback-label{
-    font-size: 15px;
-    margin-bottom: 10px;
-  }
-
-  .oppia-feedback-textarea{
-    font-size: 15px;
-    padding: 12px 14px;
-    min-height: 120px;
-  }
-
-  .oppia-feedback-screenshot-help{
-    font-size: 13px;
-  }
-
-  .oppia-feedback-screenshot-preview img{
-    max-height: 200px;
-  }
-
-  .oppia-feedback-screenshot-reset-button{
-    right: 8px;
-    top: 8px;
-  }
-
-  .oppia-feedback-checkbox{
-    font-size: 15px;
-    gap: 10px;
-    line-height: 1.4;
-    min-height: 44px;
-    padding: 8px 0;
-  }
-}
-
-@media (max-width: 360px){
-  .oppia-feedback-modal{
-    padding: 12px 16px;
-  }
-
-  .oppia-feedback-title{
-    font-size: 20px;
-  }
-
-  .oppia-feedback-subtitle{
-    font-size: 13px;
-  }
-
-  .oppia-feedback-faces{
-    gap: 6px;
-  }
-
-  .oppia-feedback-face-button{
-    height: 44px;
-    width: 44px;
-  }
-
-  .oppia-feedback-face-icon{
-    font-size: 28px;
-  }
-
-  .oppia-feedback-radio,
-  .oppia-feedback-checkbox{
-    font-size: 14px;
-  }
-}
-
-@media (max-height: 500px) and (orientation: landscape){
-  .oppia-feedback-modal{
-    max-height: 95vh;
-    padding: 12px 20px;
-  }
-
-  .oppia-feedback-header{
-    margin-bottom: 12px;
-  }
-
-  .oppia-feedback-title{
-    font-size: 20px;
-    margin-bottom: 4px;
-  }
-
-  .oppia-feedback-subtitle{
-    font-size: 13px;
-    margin-bottom: 10px;
-  }
-
-  .oppia-feedback-faces{
-    margin-bottom: 6px;
-  }
-
-  .oppia-feedback-face-button{
-    height: 42px;
-    width: 42px;
-  }
-
-  .oppia-feedback-face-icon{
-    font-size: 26px;
-  }
-
-  .oppia-feedback-section{
-    margin-bottom: 8px;
-  }
-
-  .oppia-feedback-textarea{
-    min-height: 80px;
-  }
-}
-</style>
