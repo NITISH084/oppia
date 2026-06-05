@@ -103,7 +103,6 @@ export class FeedbackSubmissionModalComponent {
         this.isUserLoggedIn = false;
         this.initializeCaptchaIfRequired();
       });
-    console.log(this.isUserLoggedIn);
   }
 
   setFeedbackRating(rating: number): void {
@@ -115,6 +114,7 @@ export class FeedbackSubmissionModalComponent {
   }
 
   setFeedbackCategoryChoice(choice: 'lesson' | 'platform' | 'unsure'): void {
+    this.feedbackCategoryChoice = choice;
     this.feedbackCategory = choice === 'unsure' ? 'platform' : choice;
   }
 
@@ -169,7 +169,7 @@ export class FeedbackSubmissionModalComponent {
       return;
     }
     if (!this.isUserLoggedIn && !this.captchaToken) {
-      this.submitError = 'Please complete captcha.';
+      this.submitError = 'Please complete captcha before submitting Feedback.';
       this.submitErrorIsI18nKey = false;
       return;
     }
@@ -208,7 +208,8 @@ export class FeedbackSubmissionModalComponent {
       .then(config => {
         this.captchaSiteKey = config.site_key;
         if (!this.captchaSiteKey) {
-          this.captchaLoadError = 'Captcha is currently unavailable.';
+          this.captchaLoadError =
+            'Captcha is currently unavailable. Please Login to submit feedback.';
           return;
         }
         this.insertScriptService.loadScript(KNOWN_SCRIPTS.TURNSTILE, () => {
