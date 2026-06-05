@@ -21,7 +21,13 @@ import {BaseUser} from '../common/playwright-utils';
 import testConstants from '../common/test-constants';
 import {showMessage} from '../common/show-message';
 
+const baseUrl = testConstants.URLs.BaseURL;
 const learnerDashboardUrl = testConstants.URLs.LearnerDashboard;
+
+const anonymousCheckboxSelector = '.e2e-test-stay-anonymous-checkbox';
+const feedbackTextareaSelector = '.e2e-test-exploration-feedback-textarea';
+const submitButtonSelector = '.e2e-test-exploration-feedback-submit-btn';
+const submittedMessageSelector = '.e2e-test-rating-submitted-message';
 
 const explorationCard = '.e2e-test-exploration-dashboard-card';
 const desktopLessonCardTitleSelector = '.e2e-test-exploration-tile-title';
@@ -39,6 +45,10 @@ const lessonCardTitleInPlayLaterSelector = `${playLaterSectionSelector} .e2e-tes
 const mobileLessonCardOptionsDropdownButton =
   '.e2e-test-mobile-lesson-card-dropdown';
 const progressSectionSelector = '.e2e-test-progress-section';
+
+const ratingsHeaderSelector = '.conversation-skin-final-ratings-header';
+const ratingStarSelector = '.e2e-test-rating-star';
+const filledRatingStarSelector = '.fas.fa-star';
 
 // Learner dashboard selectors.
 const communityLessonsSectionInLearnerDashboard =
@@ -138,6 +148,17 @@ export class LoggedInUser extends BaseUser {
   }
 
   /**
+   * Check if rating stars are displayed.
+   */
+  async expectRatingStarsToBeVisible(): Promise<void> {
+    await this.page.waitForSelector(ratingsHeaderSelector);
+    const ratingStars = await this.page.$$(ratingStarSelector);
+    if (ratingStars.length !== 5) {
+      throw new Error('Rating stars are not visible.');
+    }
+  }
+
+  /**
    * Expects the tooltip text of the 'Play Later' icon for the given lesson title to match the expected tooltip text.
    * @param {string} lessonTitle - The title of the lesson to check the 'Play Later' icon tooltip text for.
    * @param {string} expectedTooltip - The expected tooltip text for the 'Play Later' icon.
@@ -188,6 +209,20 @@ export class LoggedInUser extends BaseUser {
   }
 
   /**
+   * Waits for the given number of filled stars to be present on the page.
+   * @param rating The number of filled stars to wait for.
+   */
+  async expectStarRatingToBe(rating: number): Promise<void> {
+    await this.page.waitForFunction(
+      ({selector, rating}: {selector: string; rating: number}) => {
+        const filledStars = document.querySelectorAll(selector);
+        return filledStars.length === rating;
+      },
+      {selector: filledRatingStarSelector, rating}
+    );
+  }
+
+  /**
    * Navigates to the community library tab of the learner dashboard.
    */
   async navigateToCommunityLessonsSection(): Promise<void> {
@@ -222,6 +257,14 @@ export class LoggedInUser extends BaseUser {
   }
 
   /**
+   * Navigates to the exploration page and starts playing the exploration.
+   * @param {string} explorationId - The ID of the exploration to play.
+   */
+  async playExploration(explorationId: string | null): Promise<void> {
+    await this.goto(`${baseUrl}/explore/${explorationId as string}`);
+  }
+
+  /**
    * Function to play a specific lesson from the community library tab in learner dashboard.
    * @param {string} lessonName - The name of the lesson to be played.
    */
@@ -252,6 +295,59 @@ export class LoggedInUser extends BaseUser {
       const newError = new Error(
         `Failed to play lesson from dashboard: ${error}`
       );
+      newError.stack = (error as Error).stack;
+      throw newError;
+    }
+  }
+
+  /**
+   * Rates an exploration by clicking on the rating stars, providing feedback, and optionally staying anonymous.
+   *
+   * @param {number} rating - The rating to give to the exploration.
+   * @param {string} feedback - The feedback to provide for the exploration.
+   * @param {boolean} stayAnonymous - Whether to stay anonymous or not.
+   */
+  async rateExploration(
+    rating: number,
+    feedback: string,
+    stayAnonymous: boolean
+  ): Promise<void> {
+    try {
+      await this.page.waitForSelector(ratingsHeaderSelector);
+      const ratingStars = await this.page.$$(ratingStarSelector);
+      await this.waitForElementToBeClickable(ratingStars[rating - 1]);
+      await ratingStars[rating - 1].click();
+
+      await this.typeInInputField(feedbackTextareaSelector, feedback);
+      if (stayAnonymous) {
+        await this.clickOnElementWithSelector(anonymousCheckboxSelector);
+      }
+
+      await this.clickOnElementWithSelector(submitButtonSelector);
+
+      // Fix for flaky test (#23488). This uses a single, atomic page.$eval()
+      // call to prevent a race condition where the element could be removed
+      // from the DOM before its text was read. Using textContent is also
+      // more reliable than innerText for automated tests.
+      // Explicitly wait for the submitted message to be visible on the page.
+      await this.page.waitForSelector(submittedMessageSelector, {
+        state: 'visible',
+      });
+      // Now that we know it's visible, we can safely get its text content.
+      const submittedMessageText = await this.page.$eval(
+        submittedMessageSelector,
+        (el: Element) => el.textContent
+      );
+      if (
+        !submittedMessageText ||
+        submittedMessageText.trim() !== 'Thank you for the feedback!'
+      ) {
+        throw new Error(
+          `Unexpected submitted message text: ${submittedMessageText}`
+        );
+      }
+    } catch (error) {
+      const newError = new Error(`Failed to rate exploration: ${error}`);
       newError.stack = (error as Error).stack;
       throw newError;
     }
