@@ -164,7 +164,6 @@ export class FeedbackSubmissionModalComponent {
     this.submitSuccess = false;
     this.submitError = null;
     this.submitErrorIsI18nKey = false;
-    console.log(this.feedbackCategory);
     if (this.feedbackCategory === null) {
       this.feedbackCategoryError = true;
       return;
