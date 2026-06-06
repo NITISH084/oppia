@@ -29,15 +29,27 @@ import {
   ExplorationEditor,
   ExplorationEditorFactory,
 } from '../user/exploration-editor';
+import {
+  CurriculumAdmin,
+  CurriculumAdminFactory,
+} from '../user/curriculum-admin';
+import {ReleaseCoordinatorFactory} from '../user/release-coordinator';
+import {TopicManager, TopicManagerFactory} from '../user/topic-manager';
 
 const ROLES = testConstants.Roles;
 const cookieBannerAcceptButton =
   'button.e2e-test-oppia-cookie-banner-accept-button';
+const isMobile = process.env.MOBILE === 'true';
+const specName = process.env.SPEC_NAME;
 
 /**
  * Mapping of user roles to their respective factory functions.
  */
-const USER_ROLE_MAPPING = {} as const;
+const USER_ROLE_MAPPING = {
+  [ROLES.CURRICULUM_ADMIN]: CurriculumAdminFactory,
+  [ROLES.RELEASE_COORDINATOR]: ReleaseCoordinatorFactory,
+  [ROLES.TOPIC_MANAGER]: TopicManagerFactory,
+} as const;
 
 // Roles that are not reflected on the admin page after assignment.
 const USERS_ROLES_NOT_REFLECTED_IN_ADMIN_PAGE: string[] = [
@@ -62,7 +74,11 @@ type MultipleRoleIntersection<T extends (keyof typeof USER_ROLE_MAPPING)[]> =
 type OptionalRoles<TRoles extends (keyof typeof USER_ROLE_MAPPING)[]> =
   TRoles extends never[] ? [] : TRoles | [];
 
-type BasicRolesUser = LoggedOutUser & LoggedInUser & ExplorationEditor;
+type BasicRolesUser = LoggedOutUser &
+  LoggedInUser &
+  ExplorationEditor &
+  CurriculumAdmin &
+  TopicManager;
 
 /**
  * Global user instances that are created and can be reused again.
@@ -126,6 +142,16 @@ export class UserFactory {
       }
 
       switch (role) {
+        case ROLES.TOPIC_MANAGER:
+          if (typeof args !== 'string') {
+            throw new Error('Expected additional argument to be string.');
+          }
+          await superAdminInstance.assignRoleToUser(
+            user.username,
+            ROLES.TOPIC_MANAGER,
+            args as string
+          );
+          break;
         default:
           await superAdminInstance.assignRoleToUser(user.username, role);
           break;
@@ -134,6 +160,10 @@ export class UserFactory {
       if (!USERS_ROLES_NOT_REFLECTED_IN_ADMIN_PAGE.includes(role)) {
         await superAdminInstance.expectUserToHaveRole(user.username, role);
       }
+
+      UserFactory.composeUserWithRoles(user, [
+        USER_ROLE_MAPPING[role](user.page),
+      ]);
     }
 
     return user as TUser & MultipleRoleIntersection<typeof roles>;
@@ -160,7 +190,7 @@ export class UserFactory {
   ): Promise<BasicRolesUser & MultipleRoleIntersection<TRoles>> {
     const context = await browser.newContext({
       recordVideo: {
-        dir: 'core/tests/playwright-acceptance-tests/test-results/videos/',
+        dir: `../oppia_full_stack_test_video_recordings/acceptance/${isMobile ? 'mobile' : 'desktop'}-${specName}/`,
       },
     });
     const page = await context.newPage();
@@ -169,6 +199,8 @@ export class UserFactory {
       LoggedOutUserFactory(page),
       LoggedInUserFactory(page),
       ExplorationEditorFactory(page),
+      CurriculumAdminFactory(page),
+      TopicManagerFactory(page),
     ]);
 
     user.username = username;
@@ -218,7 +250,11 @@ export class UserFactory {
   static createLoggedOutUser = async function (
     browser: Browser
   ): Promise<LoggedOutUser> {
-    const context = await browser.newContext();
+    const context = await browser.newContext({
+      recordVideo: {
+        dir: `../oppia_full_stack_test_video_recordings/acceptance/${isMobile ? 'mobile' : 'desktop'}-${specName}/`,
+      },
+    });
     const page = await context.newPage();
 
     let user = UserFactory.composeUserWithRoles(BaseUserFactory(page), [
