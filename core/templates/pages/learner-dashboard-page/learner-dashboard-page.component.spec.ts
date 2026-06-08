@@ -346,10 +346,6 @@ describe('Learner dashboard page', () => {
             provide: PlatformFeatureService,
             useClass: MockPlatformFeatureService,
           },
-          {
-            provide: PlatformFeatureService,
-            useClass: MockPlatformFeatureService,
-          },
           SuggestionModalForLearnerDashboardService,
           UrlInterpolationService,
           UserService,
@@ -908,6 +904,20 @@ describe('Learner dashboard page', () => {
           isEnabled: false,
         },
       });
+
+      expect(
+        component.isEnableSkillAndCommunityLessonsInNewLearnerDashboard()
+      ).toBe(false);
+
+      spyOnProperty(platformFeatureService, 'status', 'get').and.returnValue({
+        EnableSkillAndCommunityLessonsInNewLearnerDashboard: {
+          isEnabled: true,
+        },
+      });
+
+      expect(
+        component.isEnableSkillAndCommunityLessonsInNewLearnerDashboard()
+      ).toBe(true);
     });
 
     it('should correctly get subtopic masteries', fakeAsync(() => {
