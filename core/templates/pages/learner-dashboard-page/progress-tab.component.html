@@ -409,12 +409,12 @@
               </ng-container>
             </ng-container>
           </oppia-card-display>
-          <oppia-card-display *ngIf="totalIncompleteLessonsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_COMMUNITY_LESSONS_SECTION'" [numCards]="totalIncompleteLessonsList.length" [controlType]="'toggle'">
+          <oppia-card-display *ngIf="SkillsAndCommunityLessonsFeatureFlag && totalIncompleteLessonsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_COMMUNITY_LESSONS_SECTION'" [numCards]="totalIncompleteLessonsList.length" [controlType]="'toggle'">
             <ng-container *ngFor="let summaryTile of totalIncompleteLessonsList">
               <lesson-card [story]="summaryTile"> </lesson-card>
             </ng-container>
           </oppia-card-display>
-          <oppia-card-display *ngIf="partiallyLearntTopicsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_SKILLS'" [numCards]="partialTopicMastery.reduce(getTotalSkillCards, 0)" [controlType]="'toggle'">
+          <oppia-card-display *ngIf="SkillsAndCommunityLessonsFeatureFlag && partiallyLearntTopicsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_SKILLS'" [numCards]="partialTopicMastery.reduce(getTotalSkillCards, 0)" [controlType]="'toggle'">
             <ng-container *ngFor="let topicObj of partialTopicMastery">
               <ng-container *ngFor="let subtopic of topicObj.topic.subtopics; index as i">
                 <oppia-skill-card [topic]="topicObj.topic" [progress]="topicObj.progress[i]" [subtopic]="subtopic"></oppia-skill-card>
@@ -433,12 +433,12 @@
             </ng-container>
           </ng-container>
         </oppia-card-display>
-        <oppia-card-display *ngIf="totalCompletedLessonsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_COMMUNITY_LESSONS_SECTION'" [numCards]="totalCompletedLessonsList.length" [controlType]="'toggle'">
+        <oppia-card-display *ngIf="SkillsAndCommunityLessonsFeatureFlag && totalCompletedLessonsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_COMMUNITY_LESSONS_SECTION'" [numCards]="totalCompletedLessonsList.length" [controlType]="'toggle'">
           <ng-container *ngFor="let summaryTile of totalCompletedLessonsList">
             <lesson-card [story]="summaryTile" [isCommunityLessonComplete]="true"> </lesson-card>
           </ng-container>
         </oppia-card-display>
-        <oppia-card-display *ngIf="learntTopicsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_SKILLS'" [numCards]="learntTopicMastery.reduce(getTotalSkillCards, 0)" [controlType]="'toggle'">
+        <oppia-card-display *ngIf="SkillsAndCommunityLessonsFeatureFlag && learntTopicsList.length !== 0" [headingI18n]="'I18N_LEARNER_DASHBOARD_SKILLS'" [numCards]="learntTopicMastery.reduce(getTotalSkillCards, 0)" [controlType]="'toggle'">
           <ng-container *ngFor="let topicObj of learntTopicMastery">
             <ng-container *ngFor="let subtopic of topicObj.topic.subtopics; index as i">
               <oppia-skill-card [topic]="topicObj.topic" [progress]="topicObj.progress[i]" [subtopic]="subtopic"></oppia-skill-card>

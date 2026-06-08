@@ -103,6 +103,9 @@ class MockPlatformFeatureService {
       ShowRedesignedLearnerDashboard: {
         isEnabled: false,
       },
+      EnableSkillAndCommunityLessonsInNewLearnerDashboard: {
+        isEnabled: false,
+      },
     };
   }
 }
@@ -898,6 +901,15 @@ describe('Learner dashboard page', () => {
         },
       });
     });
+
+    it('should get enable_skill_and_community_lessons_in_new_learner_dashboard flag', () => {
+      spyOnProperty(platformFeatureService, 'status', 'get').and.returnValue({
+        EnableSkillAndCommunityLessonsInNewLearnerDashboard: {
+          isEnabled: false,
+        },
+      });
+    });
+
     it('should correctly get subtopic masteries', fakeAsync(() => {
       let subtopic = {
         skill_ids: ['skill_id_2'],
