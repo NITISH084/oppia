@@ -50,7 +50,6 @@ export enum FeatureNames {
   EnableCertificateAssessment = 'enable_certificate_assessment',
   WebGeneralFeedbackModalEnabled = 'web_general_feedback_modal_enabled',
   ExplorationEditorNewCreatorFeedbackTab = 'exploration_editor_new_creator_feedback_tab',
-  EnableSkillAndCommunityLessonsInNewLearnerDashboard = 'enable_skills_and_community_lessons_in_new_learner_dashboard',
 }
 
 export interface FeatureStatusSummaryBackendDict {

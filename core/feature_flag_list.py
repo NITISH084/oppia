@@ -104,9 +104,6 @@ class FeatureNames(enum.Enum):
     EXPLORATION_EDITOR_NEW_CREATOR_FEEDBACK_TAB = (
         'exploration_editor_new_creator_feedback_tab'
     )
-    ENABLE_SKILLS_AND_COMMUNITY_LESSONS_IN_NEW_LEARNER_DASHBOARD = (
-        'enable_skills_and_community_lessons_in_new_learner_dashboard'
-    )
 
 
 # Names of feature objects defined in FeatureNames should be added
@@ -137,7 +134,6 @@ DEV_FEATURES_LIST = [
     FeatureNames.ENABLE_CERTIFICATE_ASSESSMENT,
     FeatureNames.WEB_GENERAL_FEEDBACK_MODAL_ENABLED,
     FeatureNames.EXPLORATION_EDITOR_NEW_CREATOR_FEEDBACK_TAB,
-    FeatureNames.ENABLE_SKILLS_AND_COMMUNITY_LESSONS_IN_NEW_LEARNER_DASHBOARD,
 ]
 
 # Names of features in test stage, the corresponding feature flag instances must
@@ -365,12 +361,6 @@ FEATURE_FLAG_NAME_TO_DESCRIPTION_AND_FEATURE_STAGE = {
         (
             'This flag enables the new creator feedback tab experience in '
             'the exploration editor along with the updated feedback updates page UI.',
-            feature_flag_domain.ServerMode.DEV,
-        )
-    ),
-    FeatureNames.ENABLE_SKILLS_AND_COMMUNITY_LESSONS_IN_NEW_LEARNER_DASHBOARD.value: (
-        (
-            'This flag enables the skills and community lessons sections in the new learner dashboard.',
             feature_flag_domain.ServerMode.DEV,
         )
     ),
