@@ -20,6 +20,9 @@ import {Component} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {WindowRef} from 'services/contextual/window-ref.service';
 import {UserService} from 'services/user.service';
+import {PlayerPositionService} from 'pages/exploration-player-page/services/player-position.service';
+import {PageContextService} from 'services/page-context.service';
+import {LearnerAnswerInfoService} from 'pages/exploration-player-page/services/learner-answer-info.service';
 import './send-a-lesson-feedback-modal.component.css';
 
 @Component({
@@ -34,7 +37,10 @@ export class SendALessonFeedbackModalComponent {
   constructor(
     private userService: UserService,
     private activeModal: NgbActiveModal,
-    private windowRef: WindowRef
+    private windowRef: WindowRef,
+    private playerPositionService: PlayerPositionService,
+    private pageContextService: PageContextService,
+    private learnerAnswerInfoService: LearnerAnswerInfoService
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +74,12 @@ export class SendALessonFeedbackModalComponent {
 
   sendFeedback(): void {
     if (this.isFeedbackFormValid()) {
-      this.activeModal.dismiss();
+      // const explorationId = this.pageContextService.getExplorationId();
+      // const explorationVersion = this.pageContextService.getExplorationVersion();
+      // const stateName = this.playerPositionService.getCurrentStateName();
+      // const stateIndex = this.playerPositionService.getDisplayedCardIndex();
+      // const learnerAnswerInfo = this.learnerAnswerInfoService.getCurrentAnswer();
+      this.closeModal();
     }
   }
 

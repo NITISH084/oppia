@@ -18,13 +18,13 @@
               rows="5"
               [(ngModel)]="reportMessage"
               [ngModelOptions]="{standalone: true}"
-              [attr.maxlength]="MAX_REPORT_LENGTH"
+              [attr.maxlength]="MAX_REPORT_MESSAGE_LENGTH"
               class="form-control oppia-site-feedback-textarea"
               placeholder="What's broken? Let us know if an image is missing, a button isn't working, or text is overlapping."
               oppiaFocusOn="flagMessageTextarea">
     </textarea>
     <div class="oppia-character-count">
-      {{ reportMessage.length }} / {{ MAX_REPORT_LENGTH }}
+      {{ reportMessage.length }} / {{ MAX_REPORT_MESSAGE_LENGTH }}
     </div>
 
   <div class="oppia-feedback-section">

@@ -1,0 +1,228 @@
+.oppia-report-an-issue-feedback-modal {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    overflow-y: hidden;
+}
+
+.oppia-flag-lesson-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+}
+
+.oppia-flag-lesson-header-left {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+}
+
+.oppia-flag-lesson-header-icon {
+  align-items: center;
+  background: #e9f6f3;
+  border-radius: 50%;
+  color: #00645c;
+  display: flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-top: 2px;
+  width: 32px;
+}
+
+.oppia-flag-lesson-header-icon mat-icon {
+  font-size: 16px;
+  height: 16px;
+  line-height: 16px;
+  width: 16px;
+}
+
+.oppia-flag-lesson-header h3 {
+  color: #00645c;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.oppia-flag-lesson-header p {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.oppia-report-an-issue-feedback-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.oppia-flag-section-label {
+  color: #888;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.oppia-flag-category-chips {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+}
+
+.oppia-flag-category-chip {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  gap: 7px;
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.oppia-flag-category-chip mat-icon {
+  font-size: 16px;
+  height: 16px;
+  line-height: 16px;
+  opacity: 0.7;
+  width: 16px;
+}
+
+.oppia-flag-category-chip:hover {
+  background: #f0faf8;
+  border-color: #00645c;
+  color: #00645c;
+}
+
+.oppia-flag-category-chip:hover mat-icon {
+  opacity: 1;
+}
+
+.oppia-flag-category-chip.selected {
+  background: #e9f6f3;
+  border-color: #00645c;
+  border-width: 1.5px;
+  color: #00645c;
+}
+
+.oppia-flag-category-chip.selected mat-icon {
+  opacity: 1;
+}
+
+.oppia-flag-lesson-label {
+  color: #333;
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 7px;
+}
+
+.report-exploration-textarea {
+  resize: vertical;
+}
+
+.oppia-flag-character-count {
+  color: #999;
+  font-size: 12px;
+  margin: 5px 0 10px;
+  text-align: right;
+}
+
+.oppia-feedback-section {
+  margin-bottom: 16px;
+}
+
+.oppia-feedback-label {
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.oppia-feedback-label-optional {
+  color: #999;
+  font-weight: 400;
+}
+
+.oppia-feedback-screenshot-preview {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.oppia-feedback-screenshot-preview img {
+  display: block;
+  max-height: 180px;
+  max-width: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.oppia-feedback-screenshot-remove-button {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  height: 26px;
+  justify-content: center;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 26px;
+}
+
+.oppia-feedback-screenshot-remove-button:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.oppia-feedback-screenshot-remove-button mat-icon {
+  font-size: 15px;
+  height: 15px;
+  line-height: 15px;
+  width: 15px;
+}
+
+.oppia-feedback-error-text {
+  color: #b00020;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.oppia-feedback-upload-text {
+  align-items: center;
+  color: #666;
+  display: flex;
+  font-size: 13px;
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.oppia-flag-technical-logs-checkbox {
+  align-items: flex-start;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  font-weight: 400;
+  gap: 9px;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.oppia-flag-technical-logs-checkbox input[type="checkbox"] {
+  accent-color: #00645c;
+  flex-shrink: 0;
+  height: 15px;
+  margin-top: 2px;
+  width: 15px;
+}
