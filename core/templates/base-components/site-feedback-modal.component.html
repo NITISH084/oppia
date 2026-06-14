@@ -1,0 +1,76 @@
+<div class="oppia-site-feedback-modal">
+<div class="modal-header oppia-site-feedback-header">
+    <div class="oppia-site-feedback-header-left">
+        <div class="oppia-site-feedback-header-icon">
+            <mat-icon aria-hidden="true">flag</mat-icon>
+        </div>
+        <div>
+            <h3>Report a website issue</h3>
+            <p>
+                Your report helps our engineering team fix website bugs.
+            </p>
+        </div>
+    </div>
+</div>
+  <div class="modal-body oppia-site-feedback-body">
+
+    <textarea id="flagMessageTextarea"
+              rows="5"
+              [(ngModel)]="reportMessage"
+              [ngModelOptions]="{standalone: true}"
+              [attr.maxlength]="MAX_REPORT_LENGTH"
+              class="form-control oppia-site-feedback-textarea"
+              placeholder="What's broken? Let us know if an image is missing, a button isn't working, or text is overlapping."
+              oppiaFocusOn="flagMessageTextarea">
+    </textarea>
+    <div class="oppia-character-count">
+      {{ reportMessage.length }} / {{ MAX_REPORT_LENGTH }}
+    </div>
+
+  <div class="oppia-feedback-section">
+    <div class="oppia-feedback-label">
+      Screenshot (optional)
+    </div>
+    <div class="oppia-feedback-screenshot">
+      <div *ngIf="!screenshotPreviewDataUrl">
+        <oppia-image-receiver
+          [allowedImageFormats]="allowedScreenshotImageFormats"
+          [maxImageSizeInKB]="maxScreenshotSizeInKB"
+          (fileChanged)="onScreenshotFileReceived($event)">
+        </oppia-image-receiver>
+      </div>
+      <div *ngIf="screenshotPreviewDataUrl"
+           class="oppia-feedback-screenshot-preview">
+        <button type="button"
+                class="btn btn-secondary oppia-feedback-screenshot-remove-button"
+                aria-label="Remove screenshot"
+                (click)="removeScreenshot()">
+          <i class="fas fa-times oppia-vcenter"></i>
+        </button>
+        <img [src]="screenshotPreviewDataUrl" alt="Feedback Screenshot preview">
+      </div>
+      <div *ngIf="screenshotFileError" class="oppia-feedback-error-text">
+        {{ screenshotFileError | translate }}
+      </div>
+      <div *ngIf="isUploadingScreenshot" class="oppia-feedback-upload-text">
+        Uploading screenshot...
+      </div>
+    </div>
+  </div>
+
+    <label class="oppia-site-feedback-technical-logs-checkbox">
+      <input type="checkbox"
+             [(ngModel)]="includeTechnicalLogs"
+             [ngModelOptions]="{standalone: true}">
+      <span>Include technical error logs to help the team fix this faster.</span>
+    </label>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="closeModal()">
+        Cancel
+    </button>
+    <button class="btn btn-success" (click)="submitReport()" [disabled]="!isReportFormValid()">
+        Submit
+    </button>
+  </div>
+</div>

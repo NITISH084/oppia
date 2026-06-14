@@ -1,0 +1,59 @@
+<div class="oppia-send-a-lesson-feedback" *ngIf="isUserLoggedIn">
+  <div class="modal-header oppia-lesson-feedback-header">
+    Send Feedback to the Lessons Team
+    <p class="oppia-lesson-feedback-microcopy">
+      Your message and recent lesson path will be shared with the Lessons Team
+      to help improve this lesson.
+    </p>
+  </div>
+
+  <div class="modal-body">
+    <p class="oppia-lesson-feedback-microcopy">
+      To protect your safety, do not type names, phone numbers, or email
+      addresses in your note. Responses or updates from authors will appear
+      directly in your Learner Dashboard.
+    </p>
+    <textarea
+      [(ngModel)]="feedbackText"
+      class="oppia-lesson-feedback-textarea"
+      rows="5"
+      [attr.maxlength]="MAX_REVIEW_MESSAGE_LENGTH"
+      aria-label="Send feedback to the Lessons Team"
+      placeholder="Write a note here! What did you like? Do you have an idea to make this lesson better?">
+    </textarea>
+    <div class="oppia-lesson-feedback-character-count">
+      {{ feedbackText.length }} / {{ MAX_REVIEW_MESSAGE_LENGTH }}
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="closeModal()">
+      Cancel
+    </button>
+    <button
+      class="btn btn-success"
+      (click)="sendFeedback()"
+      [disabled]="!isFeedbackFormValid()">
+      Submit
+    </button>
+  </div>
+</div>
+
+<div class="oppia-guest-feedback" *ngIf="!isUserLoggedIn">
+  <div class="modal-header oppia-lesson-feedback-header">
+    Want to chat with our Lessons Team?
+    <p class="oppia-lesson-feedback-text">
+      Create a free profile to send direct recommendations, track creator
+      responses and save your checkpoint milestones permanently!
+    </p>
+  </div>
+
+  <div class="modal-body oppia-guest-feedback-body">
+    <button class="oppia-guest-signup-btn" tabindex="0" (click)="signIn()">
+      Sign up or Login
+    </button>
+    <button class="oppia-guest-continue-btn" (click)="closeModal()">
+      Continue as Guest
+    </button>
+  </div>
+</div>

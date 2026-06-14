@@ -1,0 +1,125 @@
+.oppia-site-feedback-modal {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  overflow-y: hidden;
+}
+
+.oppia-site-feedback-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+}
+
+.oppia-site-feedback-header-left {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+}
+
+.oppia-site-feedback-header-icon {
+  align-items: center;
+  background: #e9f6f3;
+  border-radius: 50%;
+  color: #00645c;
+  display: flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-top: 2px;
+  width: 32px;
+}
+
+.oppia-site-feedback-header-icon mat-icon {
+  font-size: 16px;
+  height: 16px;
+  line-height: 16px;
+  width: 16px;
+}
+
+.oppia-site-feedback-header h3 {
+  color: #00645c;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.oppia-site-feedback-header p {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.oppia-site-feedback-body{
+  flex: 1;
+  overflow-y: auto;
+}
+
+.oppia-site-feedback-textarea {
+  resize: vertical;
+}
+
+.oppia-character-count {
+  color: #999;
+  font-size: 12px;
+  margin: 5px 0 10px;
+  text-align: right;
+}
+
+.oppia-site-feedback-technical-logs-checkbox {
+  align-items: flex-start;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  font-weight: 400;
+  gap: 9px;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.oppia-site-feedback-technical-logs-checkbox input[type="checkbox"] {
+  accent-color: #00645c;
+  flex-shrink: 0;
+  height: 15px;
+  margin-top: 2px;
+  width: 15px;
+}
+
+.oppia-feedback-screenshot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.oppia-feedback-screenshot-preview {
+  align-items: center;
+  background: #e4e4e4;
+  border-radius: 4px;
+  box-shadow: 0 4.5px 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 10px;
+  max-width: 100%;
+  min-height: 220px;
+  padding: 16px 16px 12px;
+  position: relative;
+}
+
+.oppia-feedback-screenshot-preview img {
+  border-radius: 4px;
+  max-height: 220px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.oppia-feedback-screenshot-remove-button {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 1;
+}

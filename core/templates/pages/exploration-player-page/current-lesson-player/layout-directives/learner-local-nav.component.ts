@@ -24,6 +24,7 @@ import {AlertsService} from 'services/alerts.service';
 import {AttributionService} from 'services/attribution.service';
 import {LoaderService} from 'services/loader.service';
 import {UserService} from 'services/user.service';
+import {PlatformFeatureService} from 'services/platform-feature.service';
 import {ExplorationSuccessfullyFlaggedModalComponent} from '../modals/exploration-successfully-flagged-modal.component';
 import {
   FlagExplorationModalComponent,
@@ -31,6 +32,8 @@ import {
 } from '../modals/flag-exploration-modal.component';
 import {PageContextService} from 'services/page-context.service';
 import {LearnerLocalNavBackendApiService} from '../../services/learner-local-nav-backend-api.service';
+import {ReportAnIssueFeedbackModalComponent} from '../../../../base-components/report-an-issue-feedback-modal.component';
+import {SendALessonFeedbackModalComponent} from '../../../../base-components/send-a-lesson-feedback-modal.component';
 
 @Component({
   selector: 'oppia-learner-local-nav',
@@ -50,6 +53,7 @@ export class LearnerLocalNavComponent implements OnInit {
     private alertsService: AlertsService,
     private attributionService: AttributionService,
     private loaderService: LoaderService,
+    private platformFeatureService: PlatformFeatureService,
     private readOnlyExplorationBackendApiService: ReadOnlyExplorationBackendApiService,
     private userService: UserService,
     private learnerLocalNavBackendApiService: LearnerLocalNavBackendApiService,
@@ -130,5 +134,21 @@ export class LearnerLocalNavComponent implements OnInit {
 
   closePopover(): void {
     this.feedbackPopOver.close();
+  }
+
+  isWebFeedbackModalFeatureFlagEnabled(): boolean {
+    return this.platformFeatureService.status.WebFeedbackModalEnabled.isEnabled;
+  }
+
+  showReportAnIssueModal(): void {
+    this.ngbModal.open(ReportAnIssueFeedbackModalComponent, {
+      backdrop: 'static',
+    });
+  }
+
+  showSendLessonFeedbackModal(): void {
+    this.ngbModal.open(SendALessonFeedbackModalComponent, {
+      backdrop: 'static',
+    });
   }
 }

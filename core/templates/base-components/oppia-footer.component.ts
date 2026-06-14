@@ -25,6 +25,7 @@ import {AppConstants} from 'app.constants';
 import {NavbarAndFooterGATrackingPages} from 'app.constants';
 import {AlertsService} from 'services/alerts.service';
 import {ThanksForSubscribingModalComponent} from './thanks-for-subscribing-modal.component';
+import {SiteFeedbackModalComponent} from './site-feedback-modal.component';
 import {MailingListBackendApiService} from 'domain/mailing-list/mailing-list-backend-api.service';
 import {WindowRef} from 'services/contextual/window-ref.service';
 import {SiteAnalyticsService} from 'services/site-analytics.service';
@@ -144,5 +145,15 @@ export class OppiaFooterComponent {
     this.siteAnalyticsService.registerClickFooterButtonEvent(
       NavbarAndFooterGATrackingPages.TEACH
     );
+  }
+
+  openSiteFeedbackModal(): void {
+    this.ngbModal.open(SiteFeedbackModalComponent, {
+      backdrop: 'static',
+    });
+  }
+
+  isWebFeedbackModalFeatureFlagEnabled(): boolean {
+    return this.platformFeatureService.status.WebFeedbackModalEnabled.isEnabled;
   }
 }

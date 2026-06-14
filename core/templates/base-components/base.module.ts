@@ -26,6 +26,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DirectivesModule} from 'directives/directives.module';
 import {SharedPipesModule} from 'filters/shared-pipes.module';
 import {I18nModule} from 'i18n/i18n.module';
+import {MatIconModule} from '@angular/material/icon';
+import {CustomFormsComponentsModule} from 'components/forms/custom-forms-directives/custom-form-components.module';
 
 // Components.
 import {CreateActivityButtonComponent} from 'components/button-directives/create-activity-button.component';
@@ -40,6 +42,9 @@ import {ThanksForSubscribingModalComponent} from './thanks-for-subscribing-modal
 import {WarningsAndAlertsComponent} from './warnings-and-alerts.component';
 import {ClassroomNavigationLinksComponent} from 'components/common-layout-directives/common-elements/classroom-navigation-links.component';
 import {LanguageBannerComponent} from 'components/language-banner/language-banner.component';
+import {SiteFeedbackModalComponent} from './site-feedback-modal.component';
+import {ReportAnIssueFeedbackModalComponent} from './report-an-issue-feedback-modal.component';
+import {SendALessonFeedbackModalComponent} from './send-a-lesson-feedback-modal.component';
 
 // Directives.
 import {
@@ -69,6 +74,8 @@ import {RouterModule} from '@angular/router';
     NgBootstrapModule,
     RouterModule,
     SharedPipesModule,
+    CustomFormsComponentsModule,
+    MatIconModule,
   ],
 
   declarations: [
@@ -92,6 +99,9 @@ import {RouterModule} from '@angular/router';
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
     LanguageBannerComponent,
+    SiteFeedbackModalComponent,
+    ReportAnIssueFeedbackModalComponent,
+    SendALessonFeedbackModalComponent,
   ],
 
   entryComponents: [
@@ -109,6 +119,9 @@ import {RouterModule} from '@angular/router';
     ThanksForSubscribingModalComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
+    SiteFeedbackModalComponent,
+    ReportAnIssueFeedbackModalComponent,
+    SendALessonFeedbackModalComponent,
   ],
 
   exports: [
@@ -117,6 +130,8 @@ import {RouterModule} from '@angular/router';
     DirectivesModule,
     I18nModule,
     SharedPipesModule,
+    CustomFormsComponentsModule,
+    MatIconModule,
 
     // Components and Directives.
     AlertMessageComponent,
@@ -136,6 +151,9 @@ import {RouterModule} from '@angular/router';
     TopNavigationBarComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
+    SiteFeedbackModalComponent,
+    ReportAnIssueFeedbackModalComponent,
+    SendALessonFeedbackModalComponent,
   ],
 })
 export class BaseModule {}
