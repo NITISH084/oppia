@@ -53,8 +53,8 @@
 }
 
 .oppia-report-an-issue-feedback-body {
-    flex: 1;
-    overflow-y: auto;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .oppia-flag-section-label {
@@ -109,10 +109,6 @@
   border-color: #00645c;
   border-width: 1.5px;
   color: #00645c;
-}
-
-.oppia-flag-category-chip.selected mat-icon {
-  opacity: 1;
 }
 
 .oppia-flag-lesson-label {
@@ -190,6 +186,10 @@
 
 .oppia-feedback-screenshot-remove-button:hover {
   background: rgba(0, 0, 0, 0.75);
+}
+
+.oppia-flag-category-chip.selected mat-icon {
+  opacity: 1;
 }
 
 .oppia-feedback-error-text {

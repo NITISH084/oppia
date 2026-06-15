@@ -70,7 +70,6 @@ export class ReportAnIssueFeedbackModalComponent {
 
     this.ShowTechnicalLogsCheckbox =
       category === 'broken_layout_or_image' || category === 'other_or_not_sure';
-    console.log(category, this.ShowTechnicalLogsCheckbox);
   }
 
   onScreenshotFileReceived(file: File): void {
