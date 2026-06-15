@@ -52,7 +52,7 @@
   margin: 0;
 }
 
-.oppia-site-feedback-body{
+.oppia-site-feedback-body {
   flex: 1;
   overflow-y: auto;
 }

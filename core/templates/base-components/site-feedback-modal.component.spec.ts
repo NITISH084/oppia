@@ -37,6 +37,7 @@ import {SiteFeedbackModalComponent} from './site-feedback-modal.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {FormsModule} from '@angular/forms';
 import {FeedbackSessionInfoService} from 'services/feedback-session-info.service';
+import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 import {FeedbackScreenshotStagingService} from 'domain/feedback/feedback-screenshot-staging.service';
 import {MockTranslatePipe} from 'tests/unit-test-utils';
 
@@ -54,15 +55,63 @@ class MockActiveModal {
   dismiss(): void {}
 }
 
+const feedbackSessionInfo: FeedbackSessionInfoService = {
+  console_logs_json: [
+    {
+      error_message: 'TypeError: Something went wrong',
+      log_level: 'error',
+      timestamp_msecs: 1234567890,
+      stack_trace: 'Error stack trace',
+    },
+  ],
+  failed_requests_json: [
+    {
+      url: '/createhandler/web_feedback',
+      method: 'POST',
+      status_code: 500,
+      timestamp_msecs: 1234567891,
+      status_text: 'Internal Server Error',
+      error_message: 'Request failed',
+    },
+  ],
+  navigation_history_json: [
+    {
+      path: '/learn/math',
+      timestamp_msecs: 1234567892,
+    },
+  ],
+  environment_json: {
+    client_time_msecs: 1234567893,
+    timezone_offset_mins: -330,
+    user_agent: 'Mozilla/5.0 Chrome/136.0',
+    viewport: {
+      width: 1920,
+      height: 1080,
+    },
+    page: {
+      url: 'http://localhost:8181/explore/test',
+      title: 'Test Exploration',
+    },
+    locale: {
+      language_code: 'en',
+      direction: 'ltr',
+    },
+  },
+};
+
 describe('SiteFeedbackModalComponent', () => {
   let fixture: ComponentFixture<SiteFeedbackModalComponent>;
   let component: SiteFeedbackModalComponent;
   let activeModal: MockActiveModal;
   let feedbackScreenshotStagingService: jasmine.SpyObj<FeedbackScreenshotStagingService>;
+  let feedbackSessionInfoService: FeedbackSessionInfoService;
+  let feedbackBackendApiService: FeedbackBackendApiService;
 
   const createComponent = (): void => {
     fixture = TestBed.createComponent(SiteFeedbackModalComponent);
     component = fixture.componentInstance;
+    feedbackSessionInfoService = TestBed.inject(FeedbackSessionInfoService);
+    feedbackBackendApiService = TestBed.inject(FeedbackBackendApiService);
     fixture.detectChanges();
   };
 
@@ -81,6 +130,8 @@ describe('SiteFeedbackModalComponent', () => {
         MockTranslatePipe,
       ],
       providers: [
+        FeedbackBackendApiService,
+        FeedbackSessionInfoService,
         {
           provide: NgbActiveModal,
           useValue: activeModal,
@@ -111,13 +162,63 @@ describe('SiteFeedbackModalComponent', () => {
     expect(component.isReportFormValid()).toBe(true);
   });
 
-  it('should send feedback', () => {
+  it('should close modal when feedback is valid', fakeAsync(() => {
     createComponent();
     spyOn(component, 'closeModal');
-    component.reportMessage = 'Feedback';
+
+    spyOn(
+      feedbackBackendApiService,
+      'submitSiteAndLessonIssueReportAsync'
+    ).and.returnValue(Promise.resolve());
+
+    component.reportMessage = 'Valid feedback';
+    component.includeTechnicalLogs = true;
+    spyOn(feedbackSessionInfoService, 'getSessionInfo').and.returnValue(
+      feedbackSessionInfo
+    );
     component.submitReport();
+    tick();
+
     expect(component.closeModal).toHaveBeenCalled();
-  });
+  }));
+
+  it('should send feedback', fakeAsync(() => {
+    createComponent();
+    spyOn(feedbackSessionInfoService, 'getSessionInfo').and.returnValue(
+      feedbackSessionInfo
+    );
+
+    const submitSpy = spyOn(
+      feedbackBackendApiService,
+      'submitSiteAndLessonIssueReportAsync'
+    ).and.returnValue(Promise.resolve());
+
+    component.reportMessage = 'Feedback';
+    component.includeTechnicalLogs = true;
+
+    component.submitReport();
+    tick();
+
+    expect(submitSpy).toHaveBeenCalled();
+  }));
+
+  it('should log error when feedback submission fails', fakeAsync(() => {
+    createComponent();
+    spyOn(
+      feedbackBackendApiService,
+      'submitSiteAndLessonIssueReportAsync'
+    ).and.returnValue(Promise.reject(new Error('Backend failed')));
+
+    const consoleSpy = spyOn(console, 'error');
+
+    component.reportMessage = 'Feedback';
+    component.includeTechnicalLogs = false;
+
+    component.submitReport();
+    tick();
+
+    expect(consoleSpy).toHaveBeenCalled();
+  }));
 
   it('should not close modal when feedback is invalid', () => {
     createComponent();
@@ -126,15 +227,6 @@ describe('SiteFeedbackModalComponent', () => {
     component.submitReport();
 
     expect(component.closeModal).not.toHaveBeenCalled();
-  });
-
-  it('should close modal when feedback is valid', () => {
-    createComponent();
-    spyOn(component, 'closeModal');
-    component.reportMessage = 'Valid feedback';
-    component.submitReport();
-
-    expect(component.closeModal).toHaveBeenCalled();
   });
 
   it('should return false when feedback exceeds max length', () => {

@@ -68,11 +68,10 @@ class MockPlatformFeatureService {
 }
 
 class MockNgbModal {
-  open() {
-    return {
-      result: Promise.resolve(),
-    };
-  }
+  open = jasmine.createSpy('open').and.returnValue({
+    componentInstance: {},
+    result: Promise.resolve(),
+  });
 }
 
 class MockWindowRef {

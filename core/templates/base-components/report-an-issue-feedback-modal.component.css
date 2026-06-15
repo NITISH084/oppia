@@ -1,8 +1,8 @@
 .oppia-report-an-issue-feedback-modal {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-    overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  overflow-y: hidden;
 }
 
 .oppia-flag-lesson-header {
@@ -181,15 +181,15 @@
   width: 26px;
 }
 
-.oppia-feedback-screenshot-remove-button:hover {
-  background: rgba(0, 0, 0, 0.75);
-}
-
 .oppia-feedback-screenshot-remove-button mat-icon {
   font-size: 15px;
   height: 15px;
   line-height: 15px;
   width: 15px;
+}
+
+.oppia-feedback-screenshot-remove-button:hover {
+  background: rgba(0, 0, 0, 0.75);
 }
 
 .oppia-feedback-error-text {

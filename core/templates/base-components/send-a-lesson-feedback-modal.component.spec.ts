@@ -30,6 +30,7 @@ import {SendALessonFeedbackModalComponent} from './send-a-lesson-feedback-modal.
 import {PlayerPositionService} from 'pages/exploration-player-page/services/player-position.service';
 import {PageContextService} from 'services/page-context.service';
 import {LearnerAnswerInfoService} from 'pages/exploration-player-page/services/learner-answer-info.service';
+import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {FormsModule} from '@angular/forms';
 import {UserInfo} from 'domain/user/user-info.model';
@@ -67,6 +68,7 @@ describe('SendALessonFeedbackModalComponent', () => {
   let pageContextService: PageContextService;
   let playerPositionService: PlayerPositionService;
   let learnerAnswerInfoService: LearnerAnswerInfoService;
+  let feedbackBackendApiService: FeedbackBackendApiService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -77,6 +79,7 @@ describe('SendALessonFeedbackModalComponent', () => {
         PageContextService,
         PlayerPositionService,
         LearnerAnswerInfoService,
+        FeedbackBackendApiService,
         {
           provide: WindowRef,
           useClass: MockWindowRef,
@@ -95,6 +98,7 @@ describe('SendALessonFeedbackModalComponent', () => {
     component = fixture.componentInstance;
     activeModal = TestBed.inject(NgbActiveModal);
     userService = TestBed.inject(UserService);
+    feedbackBackendApiService = TestBed.inject(FeedbackBackendApiService);
     pageContextService = TestBed.inject(PageContextService);
     playerPositionService = TestBed.inject(PlayerPositionService);
     learnerAnswerInfoService = TestBed.inject(LearnerAnswerInfoService);
@@ -125,11 +129,35 @@ describe('SendALessonFeedbackModalComponent', () => {
     expect(component.isFeedbackFormValid()).toBe(true);
   });
 
-  it('should send feedback', () => {
-    component.feedbackText = 'Feedback';
+  it('should close modal when feedback is valid', fakeAsync(() => {
+    spyOn(component, 'closeModal');
+
+    spyOn(pageContextService, 'getExplorationId').and.returnValue('exp1');
+
+    spyOn(pageContextService, 'getExplorationVersion').and.returnValue(1);
+
+    spyOn(playerPositionService, 'getCurrentStateName').and.returnValue(
+      'Intro'
+    );
+
+    spyOn(playerPositionService, 'getDisplayedCardIndex').and.returnValue(0);
+
+    spyOn(learnerAnswerInfoService, 'getCurrentAnswer').and.returnValue(
+      'Answer'
+    );
+
+    spyOn(
+      feedbackBackendApiService,
+      'submitLessonFeedbackAsync'
+    ).and.returnValue(Promise.resolve());
+
+    component.feedbackText = 'Valid feedback';
+
     component.sendFeedback();
-    expect(component.feedbackText).toBe('');
-  });
+    tick();
+
+    expect(component.closeModal).toHaveBeenCalled();
+  }));
 
   it('should not close modal when feedback is invalid', () => {
     spyOn(component, 'closeModal');
@@ -140,14 +168,63 @@ describe('SendALessonFeedbackModalComponent', () => {
     expect(component.closeModal).not.toHaveBeenCalled();
   });
 
-  it('should close modal when feedback is valid', () => {
-    spyOn(component, 'closeModal');
+  it('should send feedback', fakeAsync(() => {
+    spyOn(pageContextService, 'getExplorationId').and.returnValue('exp1');
 
-    component.feedbackText = 'Valid feedback';
+    spyOn(pageContextService, 'getExplorationVersion').and.returnValue(1);
+
+    spyOn(playerPositionService, 'getCurrentStateName').and.returnValue(
+      'Intro'
+    );
+
+    spyOn(playerPositionService, 'getDisplayedCardIndex').and.returnValue(0);
+
+    spyOn(learnerAnswerInfoService, 'getCurrentAnswer').and.returnValue(
+      'Answer'
+    );
+
+    const submitSpy = spyOn(
+      feedbackBackendApiService,
+      'submitLessonFeedbackAsync'
+    ).and.returnValue(Promise.resolve());
+
+    component.feedbackText = 'Feedback';
+
     component.sendFeedback();
+    tick();
 
-    expect(component.closeModal).toHaveBeenCalled();
-  });
+    expect(submitSpy).toHaveBeenCalled();
+  }));
+
+  it('should log error when feedback submission fails', fakeAsync(() => {
+    spyOn(pageContextService, 'getExplorationId').and.returnValue('exp1');
+
+    spyOn(pageContextService, 'getExplorationVersion').and.returnValue(1);
+
+    spyOn(playerPositionService, 'getCurrentStateName').and.returnValue(
+      'Intro'
+    );
+
+    spyOn(playerPositionService, 'getDisplayedCardIndex').and.returnValue(0);
+
+    spyOn(learnerAnswerInfoService, 'getCurrentAnswer').and.returnValue(
+      'Answer'
+    );
+
+    spyOn(
+      feedbackBackendApiService,
+      'submitLessonFeedbackAsync'
+    ).and.returnValue(Promise.reject(new Error('Backend failed')));
+
+    const consoleSpy = spyOn(console, 'error');
+
+    component.feedbackText = 'Feedback';
+
+    component.sendFeedback();
+    tick();
+
+    expect(consoleSpy).toHaveBeenCalled();
+  }));
 
   it('should return false when feedback exceeds max length', () => {
     component.feedbackText = 'a'.repeat(

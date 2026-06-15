@@ -19,8 +19,13 @@ import {Component} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FeedbackScreenshotStagingService} from 'domain/feedback/feedback-screenshot-staging.service';
 import {FeedbackSessionInfoService} from 'services/feedback-session-info.service';
+import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 
 import './site-feedback-modal.component.css';
+import {
+  FeedbackSessionInfo,
+  IssueReportModel,
+} from 'domain/feedback/feedback.model';
 
 @Component({
   selector: 'oppia-site-feedback-modal',
@@ -36,11 +41,13 @@ export class SiteFeedbackModalComponent {
   screenshotFileError: string | null = null;
   allowedScreenshotImageFormats: string[] = ['png', 'jpg', 'jpeg'];
   maxScreenshotSizeInKB: number = 1024;
+  session_info: FeedbackSessionInfo | null = null;
 
   constructor(
     private ngbActiveModal: NgbActiveModal,
     private feedbackScreenshotStagingService: FeedbackScreenshotStagingService,
-    private feedbackSessionInfoService: FeedbackSessionInfoService
+    private feedbackSessionInfoService: FeedbackSessionInfoService,
+    private feedbackBackendApiService: FeedbackBackendApiService
   ) {}
 
   onScreenshotFileReceived(file: File): void {
@@ -80,16 +87,40 @@ export class SiteFeedbackModalComponent {
     );
   }
 
-  submitReport(): void {
+  async submitReport(): Promise<void> {
     if (!this.isReportFormValid()) {
       return;
     }
-    // const sessionInfo = this.feedbackSessionInfoService.getSessionInfo();
+    this.session_info = this.includeTechnicalLogs
+      ? this.feedbackSessionInfoService.getSessionInfo()
+      : null;
+
+    const feedbackPayload = IssueReportModel.createForSubmission({
+      source: 'site',
+      reportMessage: this.reportMessage,
+      explorationContext: null,
+      category: null,
+      includeTechnicalLogs: this.includeTechnicalLogs,
+      sessionInfo: this.session_info,
+      screenshotFilename: this.screenshotFilename,
+    });
+
+    try {
+      await this.feedbackBackendApiService.submitSiteAndLessonIssueReportAsync(
+        feedbackPayload
+      );
+      // Show success toast.
+    } catch (error) {
+      // Show error toast.
+      console.error('Failed to submit site issue report', error);
+      return;
+    }
     this.closeModal();
   }
 
   closeModal(): void {
     this.reportMessage = '';
+    this.session_info = null;
     this.includeTechnicalLogs = true;
     this.removeScreenshot();
     this.ngbActiveModal.dismiss('cancel');

@@ -23,14 +23,14 @@ import {PlayerPositionService} from 'pages/exploration-player-page/services/play
 import {PageContextService} from 'services/page-context.service';
 import {LearnerAnswerInfoService} from 'pages/exploration-player-page/services/learner-answer-info.service';
 import {FeedbackSessionInfoService} from 'services/feedback-session-info.service';
+import {
+  FeedbackSessionInfo,
+  ReportAnIssueCategory,
+  IssueReportModel,
+} from 'domain/feedback/feedback.model';
+import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 
 import './report-an-issue-feedback-modal.component.css';
-
-type LessonissueCategory =
-  | 'typo'
-  | 'broken_layout_or_image'
-  | 'confusing_or_incorrect_answer'
-  | 'other_or_not_sure';
 
 @Component({
   selector: 'oppia-report-an-issue-feedback-modal',
@@ -38,7 +38,7 @@ type LessonissueCategory =
 })
 export class ReportAnIssueFeedbackModalComponent {
   readonly MAX_REPORT_MESSAGE_LENGTH = 2500;
-  category: LessonissueCategory | '' = '';
+  category: ReportAnIssueCategory | null = null;
   ShowTechnicalLogsCheckbox: boolean = true;
   includeTechnicalLogs: boolean = true;
   reportMessage: string = '';
@@ -48,6 +48,12 @@ export class ReportAnIssueFeedbackModalComponent {
   screenshotFileError: string | null = null;
   allowedScreenshotImageFormats: string[] = ['png', 'jpg', 'jpeg'];
   maxScreenshotSizeInKB: number = 1024;
+  explorationId: string = '';
+  explorationVersion: number | null = 0;
+  stateName: string = '';
+  stateIndex: number = 0;
+  learnerCurrentAnswer: string | null = null;
+  session_info: FeedbackSessionInfo | null = null;
 
   constructor(
     private ngbActiveModal: NgbActiveModal,
@@ -55,10 +61,11 @@ export class ReportAnIssueFeedbackModalComponent {
     private playerPositionService: PlayerPositionService,
     private pageContextService: PageContextService,
     private learnerAnswerInfoService: LearnerAnswerInfoService,
-    private feedbackSessionInfoService: FeedbackSessionInfoService
+    private feedbackSessionInfoService: FeedbackSessionInfoService,
+    private feedbackBackendApiService: FeedbackBackendApiService
   ) {}
 
-  selectCategory(category: LessonissueCategory): void {
+  selectCategory(category: ReportAnIssueCategory): void {
     this.category = category;
 
     this.ShowTechnicalLogsCheckbox =
@@ -103,37 +110,54 @@ export class ReportAnIssueFeedbackModalComponent {
     );
   }
 
-  submitReport(): void {
+  async submitReport(): Promise<void> {
     if (!this.isReportFormValid()) {
       return;
     }
 
-    // const explorationId = this.pageContextService.getExplorationId();
-    // const explorationVersion = this.pageContextService.getExplorationVersion();
-    // const stateName = this.playerPositionService.getCurrentStateName();
-    // const stateIndex = this.playerPositionService.getDisplayedCardIndex();
-    // const learnerAnswerInfo = this.learnerAnswerInfoService.getCurrentAnswer();
-    // const sessioninfo = this.feedbackSessionInfoService.getSessionInfo()
+    this.explorationId = this.pageContextService.getExplorationId();
+    this.explorationVersion = this.pageContextService.getExplorationVersion();
+    this.stateName = this.playerPositionService.getCurrentStateName();
+    this.stateIndex = this.playerPositionService.getDisplayedCardIndex();
+    this.learnerCurrentAnswer =
+      this.learnerAnswerInfoService.getCurrentAnswer();
+    this.session_info = this.includeTechnicalLogs
+      ? this.feedbackSessionInfoService.getSessionInfo()
+      : null;
 
-    // console.log({
-    //   explorationId,
-    //   explorationVersion,
-    //   stateName,
-    //   stateIndex,
-    //   learnerAnswerInfo,
-    //   sessioninfo,
-    //   category: this.category,
-    //   includeTechnicalLogs: this.includeTechnicalLogs,
-    //   reportMessage: this.reportMessage,
-    //   screenshotFilename: this.screenshotFilename
-    // });
+    const feedbackPayload = IssueReportModel.createForSubmission({
+      source: 'lesson',
+      reportMessage: this.reportMessage,
+      explorationContext: {
+        explorationId: this.explorationId,
+        explorationVersion: this.explorationVersion ?? 0,
+        stateName: this.stateName,
+        stateIndex: this.stateIndex,
+        learnerCurrentAnswer: this.learnerCurrentAnswer,
+      },
+      category: this.category,
+      includeTechnicalLogs: this.includeTechnicalLogs,
+      sessionInfo: this.session_info,
+      screenshotFilename: this.screenshotFilename,
+    });
 
+    try {
+      await this.feedbackBackendApiService.submitSiteAndLessonIssueReportAsync(
+        feedbackPayload
+      );
+      // Show success toast.
+    } catch (error) {
+      // Show error toast.
+      console.error('Failed to submit Lesson issue report', error);
+      return;
+    }
     this.closeModal();
   }
 
   closeModal(): void {
     this.reportMessage = '';
-    this.category = '';
+    this.category = null;
+    this.session_info = null;
     this.includeTechnicalLogs = true;
     this.removeScreenshot();
     this.ngbActiveModal.dismiss();

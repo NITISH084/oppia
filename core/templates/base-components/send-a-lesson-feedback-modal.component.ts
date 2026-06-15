@@ -23,6 +23,8 @@ import {UserService} from 'services/user.service';
 import {PlayerPositionService} from 'pages/exploration-player-page/services/player-position.service';
 import {PageContextService} from 'services/page-context.service';
 import {LearnerAnswerInfoService} from 'pages/exploration-player-page/services/learner-answer-info.service';
+import {SendALessonFeedbackModel} from 'domain/feedback/feedback.model';
+import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 import './send-a-lesson-feedback-modal.component.css';
 
 @Component({
@@ -33,6 +35,11 @@ export class SendALessonFeedbackModalComponent {
   readonly MAX_REVIEW_MESSAGE_LENGTH = 2500;
   isUserLoggedIn: boolean = false;
   feedbackText: string = '';
+  explorationId: string = '';
+  explorationVersion: number | null = 0;
+  stateName: string = '';
+  stateIndex: number = 0;
+  learnerCurrentAnswer: string | null = null;
 
   constructor(
     private userService: UserService,
@@ -40,7 +47,8 @@ export class SendALessonFeedbackModalComponent {
     private windowRef: WindowRef,
     private playerPositionService: PlayerPositionService,
     private pageContextService: PageContextService,
-    private learnerAnswerInfoService: LearnerAnswerInfoService
+    private learnerAnswerInfoService: LearnerAnswerInfoService,
+    private feedbackBackendApiService: FeedbackBackendApiService
   ) {}
 
   ngOnInit(): void {
@@ -72,19 +80,48 @@ export class SendALessonFeedbackModalComponent {
     );
   }
 
-  sendFeedback(): void {
-    if (this.isFeedbackFormValid()) {
-      // const explorationId = this.pageContextService.getExplorationId();
-      // const explorationVersion = this.pageContextService.getExplorationVersion();
-      // const stateName = this.playerPositionService.getCurrentStateName();
-      // const stateIndex = this.playerPositionService.getDisplayedCardIndex();
-      // const learnerAnswerInfo = this.learnerAnswerInfoService.getCurrentAnswer();
-      this.closeModal();
+  async sendFeedback(): Promise<void> {
+    if (!this.isFeedbackFormValid()) {
+      return;
     }
+    this.explorationId = this.pageContextService.getExplorationId();
+    this.explorationVersion = this.pageContextService.getExplorationVersion();
+    this.stateName = this.playerPositionService.getCurrentStateName();
+    this.stateIndex = this.playerPositionService.getDisplayedCardIndex();
+    this.learnerCurrentAnswer =
+      this.learnerAnswerInfoService.getCurrentAnswer();
+
+    const feedbackPayload = SendALessonFeedbackModel.createForSubmission({
+      feedbackText: this.feedbackText,
+      exploration_context: {
+        explorationId: this.explorationId,
+        explorationVersion: this.explorationVersion ?? 0,
+        stateName: this.stateName,
+        stateIndex: this.stateIndex,
+        learnerCurrentAnswer: this.learnerCurrentAnswer,
+      },
+    });
+
+    try {
+      await this.feedbackBackendApiService.submitLessonFeedbackAsync(
+        feedbackPayload
+      );
+      // Show success toast.
+    } catch (error) {
+      // Show error toast.
+      console.error('Failed to submit Lesson Feedback', error);
+      return;
+    }
+    this.closeModal();
   }
 
   closeModal(): void {
     this.feedbackText = '';
+    this.explorationId = '';
+    this.explorationVersion = 0;
+    this.stateName = '';
+    this.stateIndex = 0;
+    this.learnerCurrentAnswer = null;
     this.activeModal.dismiss();
   }
 }

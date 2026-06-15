@@ -4,6 +4,7 @@
 }
 
 .oppia-lesson-feedback-header {
+  border-bottom: 1px solid #e8f5f4;
   color: #00645c;
   display: flex;
   flex-direction: column;
@@ -11,7 +12,6 @@
   font-weight: 500;
   gap: 6px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #e8f5f4;
 }
 
 .oppia-lesson-feedback-microcopy {
@@ -23,21 +23,21 @@
 }
 
 .oppia-lesson-feedback-textarea {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 10px 12px;
-  margin-top: 12px;
-  margin-bottom: 6px;
-  resize: vertical;
-  min-height: 96px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #333;
   background-color: #fff;
   border: 1.5px solid #c8e6e4;
   border-radius: 6px;
+  box-sizing: border-box;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  min-height: 96px;
+  padding: 10px 12px;
   outline: none;
+  resize: vertical;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
 }
 
 .oppia-lesson-feedback-textarea:hover {
@@ -50,8 +50,8 @@
 }
 
 .oppia-lesson-feedback-character-count {
-  font-size: 12px;
   color: #999;
+  font-size: 12px;
   text-align: right;
   transition: color 0.2s ease;
 }
@@ -71,19 +71,19 @@
 }
  
 .oppia-guest-signup-btn {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 11px 20px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #fff;
   background-color: #00645c;
   border: 1.5px solid transparent;
   border-radius: 6px;
+  color: #fff;
   cursor: pointer;
+  display: flex;
+  font-size: 15px;
+  font-weight: 500;
+  gap: 10px;
+  justify-content: center;
+  padding: 11px 20px;
+  width: 100%;
 }
  
 .oppia-guest-signup-btn:hover {
@@ -92,15 +92,15 @@
 }
  
 .oppia-guest-continue-btn {
-  width: 100%;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 400;
-  color: #555;
   background-color: transparent;
   border: 1.5px solid #d0d0d0;
   border-radius: 6px;
+  color: #555;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 20px;
+  width: 100%;
 }
  
 .oppia-guest-continue-btn:hover {
