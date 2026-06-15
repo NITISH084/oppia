@@ -39,6 +39,7 @@ import {FormsModule} from '@angular/forms';
 import {FeedbackSessionInfoService} from 'services/feedback-session-info.service';
 import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 import {FeedbackScreenshotStagingService} from 'domain/feedback/feedback-screenshot-staging.service';
+import {FeedbackSessionInfo} from 'domain/feedback/feedback.model';
 import {MockTranslatePipe} from 'tests/unit-test-utils';
 
 @Component({
@@ -55,7 +56,7 @@ class MockActiveModal {
   dismiss(): void {}
 }
 
-const feedbackSessionInfo: FeedbackSessionInfoService = {
+const feedbackSessionInfo: FeedbackSessionInfo = {
   console_logs_json: [
     {
       error_message: 'TypeError: Something went wrong',
