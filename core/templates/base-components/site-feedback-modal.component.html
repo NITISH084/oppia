@@ -66,10 +66,13 @@
     </label>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-secondary" (click)="closeModal()">
+    <button class="btn btn-secondary"
+            (click)="closeModal()">
         Cancel
     </button>
-    <button class="btn btn-success" (click)="submitReport()" [disabled]="!isReportFormValid()">
+    <button class="btn btn-success"
+            (click)="submitReport()"
+            [disabled]="!isReportFormValid()">
         Submit
     </button>
   </div>
