@@ -32,6 +32,7 @@ import {PageContextService} from 'services/page-context.service';
 import {LearnerAnswerInfoService} from 'pages/exploration-player-page/services/learner-answer-info.service';
 import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MockTranslatePipe} from 'tests/unit-test-utils';
 import {FormsModule} from '@angular/forms';
 import {UserInfo} from 'domain/user/user-info.model';
 
@@ -73,7 +74,7 @@ describe('SendALessonFeedbackModalComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, FormsModule],
-      declarations: [SendALessonFeedbackModalComponent],
+      declarations: [SendALessonFeedbackModalComponent, MockTranslatePipe],
       providers: [
         UserService,
         PageContextService,

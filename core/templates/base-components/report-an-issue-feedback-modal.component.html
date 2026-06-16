@@ -5,16 +5,16 @@
         <mat-icon aria-hidden="true">flag</mat-icon>
       </div>
       <div>
-        <h3>Report an issue</h3>
+        <h3>{{ 'I18N_REPORT_LESSON_BUG_TITLE' | translate }}</h3>
         <p>
-          Your feedback goes directly to our lesson creators to help improve this card.
+          {{'I18N_REPORT_LESSON_BUG_SUBTITLE' | translate}}
         </p>
       </div>
     </div>
   </div>
 
   <div class="modal-body oppia-report-an-issue-feedback-body">
-    <div class="oppia-feedback-label">What type of issue?
+    <div class="oppia-feedback-label"> {{'I18N_REPORT_LESSON_BUG_ISSUE_TYPE_LABEL' | translate}}
       <span class="oppia-feedback-label-optional">(optional)</span>
     </div>
     <div class="oppia-flag-category-chips" aria-label="Issue category">
@@ -23,33 +23,33 @@
               [class.selected]="category === 'typo'"
               (click)="selectCategory('typo')">
         <mat-icon aria-hidden="true">spellcheck</mat-icon>
-        Typo
+        {{'I18N_REPORT_LESSON_BUG_CATEGORY_TYPO' | translate}}
       </button>
       <button type="button"
               class="oppia-flag-category-chip"
               [class.selected]="category === 'broken_layout_or_image'"
               (click)="selectCategory('broken_layout_or_image')">
         <mat-icon aria-hidden="true">broken_image</mat-icon>
-        Broken layout / image
+        {{'I18N_REPORT_LESSON_BUG_CATEGORY_BROKEN_LAYOUT' | translate}}
       </button>
       <button type="button"
               class="oppia-flag-category-chip"
               [class.selected]="category === 'confusing_or_incorrect_answer'"
               (click)="selectCategory('confusing_or_incorrect_answer')">
         <mat-icon aria-hidden="true">error_outline</mat-icon>
-        Confusing or incorrect answer
+        {{'I18N_REPORT_LESSON_BUG_CATEGORY_CONFUSING' | translate}}
       </button>
       <button type="button"
               class="oppia-flag-category-chip"
               [class.selected]="category === 'other_or_not_sure'"
               (click)="selectCategory('other_or_not_sure')">
         <mat-icon aria-hidden="true">help_outline</mat-icon>
-        Other / not sure
+        {{'I18N_REPORT_LESSON_BUG_CATEGORY_OTHER' | translate}}
       </button>
     </div>
 
     <label class="oppia-flag-lesson-label" for="flagMessageTextarea">
-      Describe the issue
+      {{'I18N_REPORT_LESSON_BUG_DESCRIPTION_LABEL' | translate}}
     </label>
     <textarea id="flagMessageTextarea"
               rows="5"
@@ -57,7 +57,7 @@
               [ngModelOptions]="{standalone: true}"
               [attr.maxlength]="MAX_REPORT_MESSAGE_LENGTH"
               class="form-control report-exploration-textarea"
-              placeholder="What's broken? Let us know if an image is missing, a button isn't working, or the lesson has an error."
+              placeholder="{{ 'I18N_REPORT_LESSON_BUG_TEXTAREA_PLACEHOLDER' | translate}}"
               oppiaFocusOn="flagMessageTextarea">
     </textarea>
     <div class="oppia-flag-character-count">
@@ -66,8 +66,8 @@
 
     <div class="oppia-feedback-section">
       <div class="oppia-feedback-label">
-        Screenshot
-        <span class="oppia-feedback-label-optional">(optional)</span>
+        {{'I18N_REPORT_LESSON_BUG_SCREENSHOT_LABEL' | translate}}
+        <span class="oppia-feedback-label-optional">{{'I18N_REPORT_LESSON_BUG_OPTIONAL_LABEL' | translate}}</span>
       </div>
       <div class="oppia-feedback-screenshot">
         <div *ngIf="!screenshotPreviewDataUrl">
@@ -89,7 +89,7 @@
           {{ screenshotFileError | translate }}
         </div>
         <div *ngIf="isUploadingScreenshot" class="oppia-feedback-upload-text">
-          Uploading screenshot...
+          {{'I18N_REPORT_LESSON_BUG_UPLOADING_SCREENSHOT' | translate}}
         </div>
       </div>
     </div>
@@ -98,19 +98,19 @@
       <input type="checkbox"
              [(ngModel)]="includeTechnicalLogs"
              [ngModelOptions]="{standalone: true}">
-      <span>Include technical error logs to help the team fix this faster.</span>
+      <span>{{'I18N_TECHNICAL_ERROR_LOG_CHECKBOX_TEXT' | translate}}</span>
     </label>
   </div>
 
   <div class="modal-footer">
     <button class="btn btn-secondary"
             (click)="closeModal()">
-      Cancel
+      {{'I18N_MODAL_CANCEL_BUTTON' | translate}}
     </button>
     <button class="btn btn-success"
             (click)="submitReport()"
             [disabled]="!isReportFormValid()">
-      Submit
+      {{ 'I18N_PLAYER_REPORT_MODAL_FOOTER_SUBMIT' | translate }}
     </button>
   </div>
 </div>

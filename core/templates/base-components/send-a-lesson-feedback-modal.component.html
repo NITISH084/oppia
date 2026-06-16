@@ -1,24 +1,21 @@
 <div class="oppia-send-a-lesson-feedback" *ngIf="isUserLoggedIn">
   <div class="modal-header oppia-lesson-feedback-header">
-    Send Feedback to the Lessons Team
+    {{ 'I18N_LESSON_FEEDBACK_MODAL_TITLE' | translate }}
     <p class="oppia-lesson-feedback-microcopy">
-      Your message and recent lesson path will be shared with the Lessons Team
-      to help improve this lesson.
+      {{ 'I18N_LESSON_FEEDBACK_MODAL_SUBTITLE' | translate }}
     </p>
   </div>
 
   <div class="modal-body">
     <p class="oppia-lesson-feedback-microcopy">
-      To protect your safety, do not type names, phone numbers, or email
-      addresses in your note. Responses or updates from authors will appear
-      directly in your Learner Dashboard.
+      {{ 'I18N_LESSON_FEEDBACK_MODAL_SAFETY_NOTICE' | translate }}
     </p>
     <textarea [(ngModel)]="feedbackText"
               class="oppia-lesson-feedback-textarea"
               rows="5"
               [attr.maxlength]="MAX_REVIEW_MESSAGE_LENGTH"
               aria-label="Send feedback to the Lessons Team"
-              placeholder="Write a note here! What did you like? Do you have an idea to make this lesson better?">
+              placeholder="{{ 'I18N_LESSON_FEEDBACK_MODAL_TEXTAREA_PLACEHOLDER' | translate }}">
     </textarea>
     <div class="oppia-lesson-feedback-character-count">
       {{ feedbackText.length }} / {{ MAX_REVIEW_MESSAGE_LENGTH }}
@@ -27,32 +24,31 @@
 
   <div class="modal-footer">
     <button class="btn btn-secondary" (click)="closeModal()">
-      Cancel
+        {{'I18N_MODAL_CANCEL_BUTTON' | translate}}
     </button>
     <button class="btn btn-success"
             (click)="sendFeedback()"
             [disabled]="!isFeedbackFormValid()">
-      Submit
+      {{ 'I18N_PLAYER_REPORT_MODAL_FOOTER_SUBMIT' | translate }}
     </button>
   </div>
 </div>
 
 <div class="oppia-guest-feedback" *ngIf="!isUserLoggedIn">
   <div class="modal-header oppia-lesson-feedback-header border-bottom-0">
-    Want to chat with our Lessons Team?
+    {{ 'I18N_LESSON_FEEDBACK_GUEST_TITLE' | translate }}
     <p class="oppia-lesson-feedback-text">
-      Create a free profile to send direct recommendations, track creator
-      responses and save your checkpoint milestones permanently!
+      {{ 'I18N_LESSON_FEEDBACK_GUEST_SUBTITLE' | translate }}
     </p>
     <div class="oppia-guest-feedback-body">
       <button class="oppia-guest-signup-btn"
               tabindex="0"
               (click)="signIn()">
-        Sign up or Login
+        {{ 'I18N_LESSON_FEEDBACK_SIGN_IN_BUTTON' | translate }}
       </button>
       <button class="oppia-guest-continue-btn"
               (click)="closeModal()">
-        Continue as Guest
+        {{ 'I18N_LESSON_FEEDBACK_CONTINUE_AS_GUEST_BUTTON' | translate }}
       </button>
     </div>
   </div>

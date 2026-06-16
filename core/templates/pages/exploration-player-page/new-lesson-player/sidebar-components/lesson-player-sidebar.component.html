@@ -58,12 +58,12 @@
       </button>
       <button class="player-sidebar-button" aria-label="Report an issue" (click)="showReportAnIssueModal()"
           *ngIf="isWebFeedbackModalFeatureFlagEnabled()"
-          matTooltip="Report an Issue"
+          matTooltip="{{ 'I18N_REPORT_LESSON_BUG_TITLE' | translate }}"
           matTooltipPosition="above">
         <i *ngIf="!sidebarIsExpanded" class="fa fa-lg fa-flag"></i>
         <span *ngIf="sidebarIsExpanded">
           <i class="fa fa-lg fa-flag"></i>
-            Report an issue
+            {{ 'I18N_REPORT_LESSON_BUG_TITLE' | translate }}
         </span>
       </button>
       <button class="player-sidebar-button" aria-label="Send Lesson Feedback" (click)="showSendLessonFeedbackModal()"
@@ -95,7 +95,7 @@
         <button (click)="showReportAnIssueModal()"
                 *ngIf="isWebFeedbackModalFeatureFlagEnabled()">
           <i class="fa fa-lg fa-flag"></i>
-          Report an issue
+          {{ 'I18N_REPORT_LESSON_BUG_TITLE' | translate }}
         </button>
         <button (click)="showSendLessonFeedbackModal()"
                 *ngIf="isWebFeedbackModalFeatureFlagEnabled()">
