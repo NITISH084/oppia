@@ -13,97 +13,101 @@
     </div>
   </div>
 
-<div class="modal-body oppia-report-an-issue-feedback-body">
-
-  <div class="oppia-feedback-label">What type of issue?
-    <span class="oppia-feedback-label-optional">(optional)</span>
-  </div>
-  <div class="oppia-flag-category-chips" aria-label="Issue category">
-    <button type="button"
-        class="oppia-flag-category-chip"
-        [class.selected]="category === 'typo'"
-        (click)="selectCategory('typo')">
-      <mat-icon aria-hidden="true">spellcheck</mat-icon>
-      Typo
-    </button>
-    <button type="button"
-        class="oppia-flag-category-chip"
-        [class.selected]="category === 'broken_layout_or_image'"
-        (click)="selectCategory('broken_layout_or_image')">
-      <mat-icon aria-hidden="true">broken_image</mat-icon>
-      Broken layout / image
-    </button>
-    <button type="button"
-        class="oppia-flag-category-chip"
-        [class.selected]="category === 'confusing_or_incorrect_answer'"
-        (click)="selectCategory('confusing_or_incorrect_answer')">
-      <mat-icon aria-hidden="true">error_outline</mat-icon>
-      Confusing or incorrect answer
-    </button>
-    <button type="button"
-        class="oppia-flag-category-chip"
-        [class.selected]="category === 'other_or_not_sure'"
-        (click)="selectCategory('other_or_not_sure')">
-      <mat-icon aria-hidden="true">help_outline</mat-icon>
-      Other / not sure
-    </button>
-  </div>
-
-  <label class="oppia-flag-lesson-label" for="flagMessageTextarea">
-    Describe the issue
-  </label>
-  <textarea id="flagMessageTextarea"
-        rows="5"
-        [(ngModel)]="reportMessage"
-        [ngModelOptions]="{standalone: true}"
-        [attr.maxlength]="MAX_REPORT_MESSAGE_LENGTH" class="form-control report-exploration-textarea"
-        placeholder="What's broken? Let us know if an image is missing, a button isn't working, or the lesson has an error."
-        oppiaFocusOn="flagMessageTextarea">
-  </textarea>
-  <div class="oppia-flag-character-count">
-    {{ reportMessage.length }} / {{ MAX_REPORT_MESSAGE_LENGTH }}
-  </div>
-
-  <div class="oppia-feedback-section">
-    <div class="oppia-feedback-label">
-      Screenshot
+  <div class="modal-body oppia-report-an-issue-feedback-body">
+    <div class="oppia-feedback-label">What type of issue?
       <span class="oppia-feedback-label-optional">(optional)</span>
     </div>
-    <div class="oppia-feedback-screenshot">
-      <div *ngIf="!screenshotPreviewDataUrl">
-        <oppia-image-receiver [allowedImageFormats]="allowedScreenshotImageFormats"
-          [maxImageSizeInKB]="maxScreenshotSizeInKB" (fileChanged)="onScreenshotFileReceived($event)">
-        </oppia-image-receiver>
+    <div class="oppia-flag-category-chips" aria-label="Issue category">
+      <button type="button"
+              class="oppia-flag-category-chip"
+              [class.selected]="category === 'typo'"
+              (click)="selectCategory('typo')">
+        <mat-icon aria-hidden="true">spellcheck</mat-icon>
+        Typo
+      </button>
+      <button type="button"
+              class="oppia-flag-category-chip"
+              [class.selected]="category === 'broken_layout_or_image'"
+              (click)="selectCategory('broken_layout_or_image')">
+        <mat-icon aria-hidden="true">broken_image</mat-icon>
+        Broken layout / image
+      </button>
+      <button type="button"
+              class="oppia-flag-category-chip"
+              [class.selected]="category === 'confusing_or_incorrect_answer'"
+              (click)="selectCategory('confusing_or_incorrect_answer')">
+        <mat-icon aria-hidden="true">error_outline</mat-icon>
+        Confusing or incorrect answer
+      </button>
+      <button type="button"
+              class="oppia-flag-category-chip"
+              [class.selected]="category === 'other_or_not_sure'"
+              (click)="selectCategory('other_or_not_sure')">
+        <mat-icon aria-hidden="true">help_outline</mat-icon>
+        Other / not sure
+      </button>
+    </div>
+
+    <label class="oppia-flag-lesson-label" for="flagMessageTextarea">
+      Describe the issue
+    </label>
+    <textarea id="flagMessageTextarea"
+              rows="5"
+              [(ngModel)]="reportMessage"
+              [ngModelOptions]="{standalone: true}"
+              [attr.maxlength]="MAX_REPORT_MESSAGE_LENGTH"
+              class="form-control report-exploration-textarea"
+              placeholder="What's broken? Let us know if an image is missing, a button isn't working, or the lesson has an error."
+              oppiaFocusOn="flagMessageTextarea">
+    </textarea>
+    <div class="oppia-flag-character-count">
+      {{ reportMessage.length }} / {{ MAX_REPORT_MESSAGE_LENGTH }}
+    </div>
+
+    <div class="oppia-feedback-section">
+      <div class="oppia-feedback-label">
+        Screenshot
+        <span class="oppia-feedback-label-optional">(optional)</span>
       </div>
-      <div *ngIf="screenshotPreviewDataUrl" class="oppia-feedback-screenshot-preview">
-        <button type="button"
-            class="oppia-feedback-screenshot-remove-button" aria-label="Remove screenshot"
-            (click)="removeScreenshot()">
-          <mat-icon aria-hidden="true">close</mat-icon>
-        </button>
-        <img [src]="screenshotPreviewDataUrl" alt="Feedback screenshot preview">
-      </div>
-      <div *ngIf="screenshotFileError" class="oppia-feedback-error-text">
-        {{ screenshotFileError | translate }}
-      </div>
-      <div *ngIf="isUploadingScreenshot" class="oppia-feedback-upload-text">
-        Uploading screenshot...
+      <div class="oppia-feedback-screenshot">
+        <div *ngIf="!screenshotPreviewDataUrl">
+          <oppia-image-receiver [allowedImageFormats]="allowedScreenshotImageFormats"
+                                [maxImageSizeInKB]="maxScreenshotSizeInKB"
+                                (fileChanged)="onScreenshotFileReceived($event)">
+          </oppia-image-receiver>
+        </div>
+        <div *ngIf="screenshotPreviewDataUrl" class="oppia-feedback-screenshot-preview">
+          <button type="button"
+                  class="oppia-feedback-screenshot-remove-button"
+                  aria-label="Remove screenshot"
+                  (click)="removeScreenshot()">
+            <mat-icon aria-hidden="true">close</mat-icon>
+          </button>
+          <img [src]="screenshotPreviewDataUrl" alt="Feedback screenshot preview">
+        </div>
+        <div *ngIf="screenshotFileError" class="oppia-feedback-error-text">
+          {{ screenshotFileError | translate }}
+        </div>
+        <div *ngIf="isUploadingScreenshot" class="oppia-feedback-upload-text">
+          Uploading screenshot...
+        </div>
       </div>
     </div>
+
+    <label class="oppia-flag-technical-logs-checkbox" *ngIf="ShowTechnicalLogsCheckbox">
+      <input type="checkbox"
+             [(ngModel)]="includeTechnicalLogs"
+             [ngModelOptions]="{standalone: true}">
+      <span>Include technical error logs to help the team fix this faster.</span>
+    </label>
   </div>
 
-  <label class="oppia-flag-technical-logs-checkbox" *ngIf="ShowTechnicalLogsCheckbox">
-    <input type="checkbox" [(ngModel)]="includeTechnicalLogs" [ngModelOptions]="{standalone: true}">
-    <span>Include technical error logs to help the team fix this faster.</span>
-  </label>
-
-</div>
-<div class="modal-footer">
-  <button class="btn btn-secondary" (click)="closeModal()">
-    Cancel
-  </button>
-  <button class="btn btn-success" (click)="submitReport()" [disabled]="!isReportFormValid()">
-    Submit
-  </button>
-</div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="closeModal()">
+      Cancel
+    </button>
+    <button class="btn btn-success" (click)="submitReport()" [disabled]="!isReportFormValid()">
+      Submit
+    </button>
+  </div>
 </div>

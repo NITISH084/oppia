@@ -13,13 +13,12 @@
       addresses in your note. Responses or updates from authors will appear
       directly in your Learner Dashboard.
     </p>
-    <textarea
-      [(ngModel)]="feedbackText"
-      class="oppia-lesson-feedback-textarea"
-      rows="5"
-      [attr.maxlength]="MAX_REVIEW_MESSAGE_LENGTH"
-      aria-label="Send feedback to the Lessons Team"
-      placeholder="Write a note here! What did you like? Do you have an idea to make this lesson better?">
+    <textarea [(ngModel)]="feedbackText"
+              class="oppia-lesson-feedback-textarea"
+              rows="5"
+              [attr.maxlength]="MAX_REVIEW_MESSAGE_LENGTH"
+              aria-label="Send feedback to the Lessons Team"
+              placeholder="Write a note here! What did you like? Do you have an idea to make this lesson better?">
     </textarea>
     <div class="oppia-lesson-feedback-character-count">
       {{ feedbackText.length }} / {{ MAX_REVIEW_MESSAGE_LENGTH }}
@@ -30,10 +29,9 @@
     <button class="btn btn-secondary" (click)="closeModal()">
       Cancel
     </button>
-    <button
-      class="btn btn-success"
-      (click)="sendFeedback()"
-      [disabled]="!isFeedbackFormValid()">
+    <button class="btn btn-success"
+            (click)="sendFeedback()"
+            [disabled]="!isFeedbackFormValid()">
       Submit
     </button>
   </div>
