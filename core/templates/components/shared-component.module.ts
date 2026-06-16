@@ -49,6 +49,9 @@ import {DeleteAnswerGroupModalComponent} from 'pages/exploration-editor-page/edi
 import {ExplorationEmbedButtonModalComponent} from './button-directives/exploration-embed-button-modal.component';
 import {CheckpointCelebrationModalComponent} from './checkpoint-celebration-modal/checkpoint-celebration-modal.component';
 import {BackgroundBannerModule} from './common-layout-directives/common-elements/background-banner.module';
+import {SiteFeedbackModalComponent} from '../base-components/site-feedback-modal.component';
+import {ReportAnIssueFeedbackModalComponent} from '../base-components/report-an-issue-feedback-modal.component';
+import {SendALessonFeedbackModalComponent} from '../base-components/send-a-lesson-feedback-modal.component';
 import {AttributionGuideComponent} from './common-layout-directives/common-elements/attribution-guide.component';
 import {LazyLoadingComponent} from './common-layout-directives/common-elements/lazy-loading.component';
 import {KeyboardShortcutHelpModalComponent} from 'components/keyboard-shortcut-help/keyboard-shortcut-help-modal.component';
@@ -442,6 +445,9 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     SaveValidationFailModalComponent,
     ModifyTranslationsModalComponent,
     ConfirmTranslationExitModalComponent,
+    SiteFeedbackModalComponent,
+    ReportAnIssueFeedbackModalComponent,
+    SendALessonFeedbackModalComponent,
   ],
 
   entryComponents: [
@@ -616,6 +622,9 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     SaveValidationFailModalComponent,
     ModifyTranslationsModalComponent,
     ConfirmTranslationExitModalComponent,
+    SiteFeedbackModalComponent,
+    ReportAnIssueFeedbackModalComponent,
+    SendALessonFeedbackModalComponent,
   ],
 
   exports: [
@@ -787,6 +796,9 @@ import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-pa
     ExplorationTitleEditorComponent,
     ExplorationObjectiveEditorComponent,
     ConfirmTranslationExitModalComponent,
+    SiteFeedbackModalComponent,
+    ReportAnIssueFeedbackModalComponent,
+    SendALessonFeedbackModalComponent,
   ],
 })
 export class SharedComponentsModule {}

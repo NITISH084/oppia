@@ -24,7 +24,7 @@ import {
   TestBed,
   tick,
 } from '@angular/core/testing';
-import {NgbModal, NgbModalRef, NgbPopover} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbPopover} from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
 import {MockTranslateService} from '../../../../components/forms/schema-based-editors/integration-tests/schema-based-editors.integration.spec';
 import {PlatformFeatureService} from 'services/platform-feature.service';

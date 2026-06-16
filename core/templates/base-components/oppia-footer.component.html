@@ -98,9 +98,9 @@
                tabindex="0"
                *ngIf="isWebFeedbackModalFeatureFlagEnabled()"
                class="e2e-test-report-website-issue-link"
-               (click)="openSiteFeedbackModal($event)"
+               (click)="openSiteFeedbackModal()"
                (keydown.enter)
-               ="openSiteFeedbackModal($event)">
+               ="openSiteFeedbackModal()">
               Report a Website Issue
             </a>
           </li>
