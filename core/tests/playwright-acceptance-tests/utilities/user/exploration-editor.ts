@@ -16,7 +16,7 @@
  * @fileoverview Utility functions for the Exploration Editor page.
  */
 
-import {Page, expect, ElementHandle} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 import {BaseUser} from '../common/playwright-utils';
 import testConstants from '../common/test-constants';
 import {showMessage} from '../common/show-message';
@@ -83,6 +83,7 @@ const customizeInteractionHeaderSelector =
 
 // Common Selectors.
 const commonModalTitleSelector = '.e2e-test-modal-header';
+const loadingFullPageOverlaySelector = '.oppia-loading-full-page';
 
 export enum INTERACTION_TYPES {
   ALGEBRAIC_EXPRESSION = 'Algebraic Expression Input',
@@ -144,10 +145,10 @@ export class ExplorationEditor extends BaseUser {
     interactionToAdd: string,
     skipInteractionCustoization: boolean = true
   ): Promise<void> {
-    await this.page.waitForSelector(addInteractionButton, {
-      state: 'visible',
-    });
+    await this.expectElementToBeVisible(addInteractionButton);
 
+    // Wait for any loading overlays to detach before clicking.
+    await this.expectElementToBeVisible(loadingFullPageOverlaySelector, false);
     await this.clickOnElementWithSelector(addInteractionButton);
 
     // Check if modal title is correct.
@@ -157,19 +158,25 @@ export class ExplorationEditor extends BaseUser {
       interactionToAdd as INTERACTION_TYPES
     );
 
-    await this.waitForNetworkIdle();
-    await this.clickOnElementWithText(interactionToAdd);
+    await this.page.waitForLoadState('networkidle');
+    // Use a higher timeout for math interactions as they are heavy to render.
+    let tileText = interactionToAdd;
+
+    const interactionElement = await this.page.waitForSelector(
+      `xpath=//*[contains(normalize-space(text()), "${tileText}")]`,
+      {timeout: 90000}
+    );
+    if (!interactionElement) {
+      throw new Error(`Interaction "${interactionToAdd}" not found in modal.`);
+    }
+    await this.clickOnElement(interactionElement);
     if (skipInteractionCustoization) {
       await this.expectCustomizeInteractionTitleToBe(
         `Customize Interaction (${interactionToAdd})`
       );
-      await this.page.waitForSelector(saveInteractionButton, {
-        state: 'visible',
-      });
+      await this.expectElementToBeVisible(saveInteractionButton);
       await this.clickOnElementWithSelector(saveInteractionButton);
-      await this.page.waitForSelector(addInteractionModalSelector, {
-        state: 'hidden',
-      });
+      await this.expectElementToBeVisible(addInteractionModalSelector, false);
     }
     showMessage(`${interactionToAdd} interaction has been added successfully.`);
   }
@@ -253,6 +260,8 @@ export class ExplorationEditor extends BaseUser {
 
   /**
    * Function for creating an exploration with only EndExploration interaction with given title.
+   * @param {string} title - The title of the exploration.
+   * @param {string} category - The category of the exploration. Defaults to 'Algebra'.
    * @param {boolean} flag - Determines whether to dismiss the welcome modal.
    */
   async createAndPublishAMinimalExplorationWithTitle(
@@ -443,16 +452,11 @@ export class ExplorationEditor extends BaseUser {
    * Function to navigate to exploration editor from Creator Dashboard.
    */
   async navigateToExplorationEditorFromCreatorDashboard(): Promise<void> {
-    const createExplButton = this.page.locator(createExplorationButtonSelector);
-    await expect(createExplButton).toBeVisible();
-    await createExplButton.click();
+    await this.expectElementToBeVisible(createExplorationButtonSelector);
+    await this.clickAndWaitForNavigation(createExplorationButtonSelector, true);
     await this.page.waitForURL(url => url.href.includes(`${baseUrl}/create/`), {
       timeout: 10000,
     });
-    // Puppeteer used waitForNetworkIdle here via clickAndWaitForNavigation.
-    // Without this, Angular hasn't finished bootstrapping the modal
-    // by the time dismissWelcomeModal fires.
-    await this.page.waitForLoadState('networkidle');
   }
 
   /**
@@ -460,14 +464,12 @@ export class ExplorationEditor extends BaseUser {
    * @param {string} content - The content to be added to the card.
    */
   async updateCardContent(content: string): Promise<void> {
-    await this.page.waitForSelector(stateEditSelector, {
-      state: 'visible',
-    });
+    await this.expectElementToBeVisible(stateEditSelector);
     await this.clickOnElementWithSelector(stateEditSelector);
     await this.clearAllTextFrom(stateContentInputField);
     await this.typeInInputField(stateContentInputField, `${content}`);
     await this.clickOnElementWithSelector(saveContentButton);
-    await this.page.waitForSelector(stateContentInputField, {state: 'hidden'});
+    await this.expectElementToBeVisible(stateContentInputField, false);
 
     // TODO(#23019): Currently, the content automatically changes spaces in the
     // card content. So, skipping the post-check. Once the issue is resolved,
@@ -478,7 +480,7 @@ export class ExplorationEditor extends BaseUser {
 
   /**
    * Function to save an exploration draft.
-   * @param commitMessage - The commit message text to be saved.
+   * @param {string} commitMessage - The commit message text to be saved.
    */
   async saveExplorationDraft(
     commitMessage: string = 'Testing Testing'
@@ -489,9 +491,7 @@ export class ExplorationEditor extends BaseUser {
       // The option to save changes appears only in the mobile view after clicking on the mobile options button,
       // which expands the mobile navigation bar.
       if (!element) {
-        await this.page.waitForSelector(mobileOptionsButtonSelector, {
-          state: 'visible',
-        });
+        await this.expectElementToBeVisible(mobileOptionsButtonSelector);
         await this.clickOnElementWithSelector(mobileOptionsButtonSelector);
       }
 
@@ -501,9 +501,7 @@ export class ExplorationEditor extends BaseUser {
       );
       await this.clickOnElementWithSelector(mobileSaveChangesButtonSelector);
     } else {
-      await this.page.waitForSelector(saveChangesButton, {
-        state: 'visible',
-      });
+      await this.expectElementToBeVisible(saveChangesButton);
       await this.clickOnElementWithSelector(saveChangesButton);
     }
     // We skip the commit message if it's an empty string.
@@ -512,15 +510,11 @@ export class ExplorationEditor extends BaseUser {
       await this.typeInInputField(commitMessageSelector, commitMessage);
     }
     await this.clickOnElementWithSelector(saveDraftButton);
-    await this.page.waitForSelector(saveDraftButton, {state: 'hidden'});
+    await this.expectElementToBeVisible(saveDraftButton, false);
 
     // Toast message confirms that the draft has been saved.
-    await this.page.waitForSelector(toastMessage, {
-      state: 'visible',
-    });
-    await this.page.waitForSelector(toastMessage, {
-      state: 'hidden',
-    });
+    await this.expectElementToBeVisible(toastMessage);
+    await this.expectElementToBeVisible(toastMessage, false);
     showMessage('Exploration is saved successfully.');
     await this.waitForPageToFullyLoad();
   }
@@ -542,9 +536,7 @@ export class ExplorationEditor extends BaseUser {
     const publishExploration = async () => {
       if (this.isViewportAtMobileWidth()) {
         await this.waitForPageToFullyLoad();
-        await this.page.waitForSelector(mobileNavbarDropdown, {
-          state: 'visible',
-        });
+        await this.expectElementToBeVisible(mobileNavbarDropdown);
         const element = await this.page.$(mobileNavbarOptions);
         // If the element is not present, it means the mobile navigation bar is not expanded.
         // The option to save changes appears only in the mobile view after clicking on the mobile options button,
@@ -555,9 +547,7 @@ export class ExplorationEditor extends BaseUser {
         await this.clickOnElementWithSelector(mobileChangesDropdownSelector);
         await this.clickOnElementWithSelector(mobilePublishButtonSelector);
       } else {
-        await this.page.waitForSelector(publishExplorationButtonSelector, {
-          state: 'visible',
-        });
+        await this.expectElementToBeVisible(publishExplorationButtonSelector);
         await this.clickOnElementWithSelector(publishExplorationButtonSelector);
       }
     };
@@ -577,25 +567,16 @@ export class ExplorationEditor extends BaseUser {
     const confirmPublish = async (): Promise<string> => {
       await this.clickOnElementWithSelector(saveExplorationChangesButton);
       await this.waitForPageToFullyLoad();
-      await this.page.waitForSelector(explorationConfirmPublishButton, {
-        state: 'visible',
-      });
+      await this.expectElementToBeVisible(explorationConfirmPublishButton);
       await this.clickOnElementWithSelector(explorationConfirmPublishButton);
-      const success = await this.page
-        .waitForSelector(explorationIdElement, {
-          state: 'visible',
-          timeout: 20000,
-        })
+      const success = await this.expectElementToBeVisible(explorationIdElement)
         .then(() => true)
         .catch(() => false);
       if (!success) {
         await this.reloadPage();
-        await this.page.waitForSelector(explorationIdElement, {
-          state: 'visible',
-          timeout: 30000,
-        });
+        await this.expectElementToBeVisible(explorationIdElement);
       }
-      await this.page.waitForSelector(explorationIdElement);
+      await this.expectElementToBeVisible(explorationIdElement);
       const explorationIdUrl = await this.page.$eval(
         explorationIdElement,
         element => (element as HTMLElement).innerText
@@ -645,21 +626,6 @@ export class ExplorationEditor extends BaseUser {
     await this.page.waitForSelector(oppiaFeebackEditorContainerSelector, {
       state: 'visible',
     });
-  }
-
-  /**
-   * Waits for the page to fully load.
-   */
-  async waitForPageToFullyLoad(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
-  }
-
-  /**
-   * Waits for network to be idle.
-   * @param idleTime Time in milliseconds to wait for network to be idle.
-   */
-  async waitForNetworkIdle(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
   }
 }
 
