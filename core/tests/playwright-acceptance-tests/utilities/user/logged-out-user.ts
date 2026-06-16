@@ -42,26 +42,6 @@ const returnToLibraryButtonSelector = '.e2e-test-exploration-return-to-library';
 
 export class LoggedOutUser extends BaseUser {
   /**
-   * Waits for Angular to finish any pending async operations.
-   * This ensures the UI is stable before interacting with elements.
-   */
-  private async waitForAngularStability(): Promise<void> {
-    await this.page.evaluate(async () => {
-      const win = window as unknown as {
-        getAllAngularTestabilities?: () => {
-          whenStable: (cb: () => void) => void;
-        }[];
-      };
-      const testabilities = win.getAllAngularTestabilities?.();
-      if (testabilities?.[0]) {
-        await new Promise<void>(resolve =>
-          testabilities[0].whenStable(() => resolve())
-        );
-      }
-    });
-  }
-
-  /**
    * Clicks an element using JavaScript's native click() method.
    * This ensures Angular properly handles the event in its change detection
    * cycle, which is more reliable than Puppeteer's simulated clicks for
@@ -130,7 +110,10 @@ export class LoggedOutUser extends BaseUser {
 
     showMessage('Exploration has completed successfully');
 
-    await this.expectElementToBeVisible(explorationCompletionToastMessage, false);
+    await this.expectElementToBeVisible(
+      explorationCompletionToastMessage,
+      false
+    );
   }
 
   async expectToBeOnCommunityLibraryPage(): Promise<void> {

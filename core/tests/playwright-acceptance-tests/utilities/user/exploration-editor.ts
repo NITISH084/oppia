@@ -16,7 +16,7 @@
  * @fileoverview Utility functions for the Exploration Editor page.
  */
 
-import {Page, expect} from '@playwright/test';
+import {Page, ElementHandle} from '@playwright/test';
 import {BaseUser} from '../common/playwright-utils';
 import testConstants from '../common/test-constants';
 import {showMessage} from '../common/show-message';
@@ -422,7 +422,7 @@ export class ExplorationEditor extends BaseUser {
       el.scrollIntoView({block: 'center', inline: 'center'})
     );
     await this.clickOnElement(nodeBackground);
-    await this.waitForNetworkIdle();
+    await this.page.waitForLoadState('networkidle');
 
     const headingName = !cardName.trimEnd().endsWith('...')
       ? cardName
