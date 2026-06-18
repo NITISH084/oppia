@@ -32,8 +32,8 @@ import {
 } from '../modals/flag-exploration-modal.component';
 import {PageContextService} from 'services/page-context.service';
 import {LearnerLocalNavBackendApiService} from '../../services/learner-local-nav-backend-api.service';
-import {ReportAnIssueFeedbackModalComponent} from '../../../../base-components/report-an-issue-feedback-modal.component';
-import {SendALessonFeedbackModalComponent} from '../../../../base-components/send-a-lesson-feedback-modal.component';
+import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
+import {FeedbackModalType} from 'domain/feedback/feedback.model';
 
 @Component({
   selector: 'oppia-learner-local-nav',
@@ -141,14 +141,20 @@ export class LearnerLocalNavComponent implements OnInit {
   }
 
   showReportAnIssueModal(): void {
-    this.ngbModal.open(ReportAnIssueFeedbackModalComponent, {
+    const modalRef = this.ngbModal.open(FeedbackModalComponent, {
       backdrop: 'static',
     });
+
+    modalRef.componentInstance.feedbackModalType =
+      FeedbackModalType.LESSON_ISSUE;
   }
 
   showSendLessonFeedbackModal(): void {
-    this.ngbModal.open(SendALessonFeedbackModalComponent, {
+    const modalRef = this.ngbModal.open(FeedbackModalComponent, {
       backdrop: 'static',
     });
+
+    modalRef.componentInstance.feedbackModalType =
+      FeedbackModalType.LESSON_FEEDBACK;
   }
 }

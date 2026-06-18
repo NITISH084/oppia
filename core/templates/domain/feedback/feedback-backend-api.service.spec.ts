@@ -170,7 +170,7 @@ describe('Feedback backend api service', () => {
     const onSuccess = jasmine.createSpy('onSuccess');
 
     feedbackBackendApiService
-      .submitLessonFeedbackAsync(sendALessonFeedbackPayload)
+      .submitLessonFeedbackAsync(sendALessonFeedbackPayload, null)
       .then(onSuccess);
 
     const req = httpTestingController.expectOne('/feedback');
@@ -188,7 +188,7 @@ describe('Feedback backend api service', () => {
     const onFailure = jasmine.createSpy('onFailure');
 
     feedbackBackendApiService
-      .submitLessonFeedbackAsync(sendALessonFeedbackPayload)
+      .submitLessonFeedbackAsync(sendALessonFeedbackPayload, null)
       .catch(onFailure);
 
     const req = httpTestingController.expectOne('/feedback');
@@ -229,7 +229,7 @@ describe('Feedback backend api service', () => {
     const onSuccess = jasmine.createSpy('onSuccess');
 
     feedbackBackendApiService
-      .submitSiteAndLessonIssueReportAsync(issueReportPayload)
+      .submitSiteAndLessonIssueReportAsync(issueReportPayload, 'captcha-token')
       .then(onSuccess);
     flushMicrotasks();
     const req = httpTestingController.expectOne('/report');
@@ -237,6 +237,7 @@ describe('Feedback backend api service', () => {
     expect(req.request.body).toEqual({
       ...issueReportPayload.toBackendDict(),
       screenshot_file: null,
+      captcha_token: 'captcha-token',
     });
     req.flush({id: 'thread_id'});
     flushMicrotasks();
@@ -248,7 +249,7 @@ describe('Feedback backend api service', () => {
     const onFailure = jasmine.createSpy('onFailure');
 
     feedbackBackendApiService
-      .submitSiteAndLessonIssueReportAsync(issueReportPayload)
+      .submitSiteAndLessonIssueReportAsync(issueReportPayload, 'captcha-token')
       .catch(onFailure);
     flushMicrotasks();
 

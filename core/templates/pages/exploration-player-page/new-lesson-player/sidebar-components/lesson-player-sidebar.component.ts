@@ -37,8 +37,8 @@ import {
 import {WindowDimensionsService} from 'services/contextual/window-dimensions.service';
 import {ConversationFlowService} from 'pages/exploration-player-page/services/conversation-flow.service';
 import {PlatformFeatureService} from 'services/platform-feature.service';
-import {ReportAnIssueFeedbackModalComponent} from '../../../../base-components/report-an-issue-feedback-modal.component';
-import {SendALessonFeedbackModalComponent} from '../../../../base-components/send-a-lesson-feedback-modal.component';
+import {FeedbackModalType} from 'domain/feedback/feedback.model';
+import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
 
 const MOBILE_SCREEN_BREAKPOINT = 480;
 
@@ -176,14 +176,20 @@ export class LessonPlayerSidebarComponent implements OnInit {
   }
 
   showReportAnIssueModal(): void {
-    this.ngbModal.open(ReportAnIssueFeedbackModalComponent, {
+    const modalRef = this.ngbModal.open(FeedbackModalComponent, {
       backdrop: 'static',
     });
+
+    modalRef.componentInstance.feedbackModalType =
+      FeedbackModalType.LESSON_ISSUE;
   }
 
   showSendLessonFeedbackModal(): void {
-    this.ngbModal.open(SendALessonFeedbackModalComponent, {
+    const modalRef = this.ngbModal.open(FeedbackModalComponent, {
       backdrop: 'static',
     });
+
+    modalRef.componentInstance.feedbackModalType =
+      FeedbackModalType.LESSON_FEEDBACK;
   }
 }

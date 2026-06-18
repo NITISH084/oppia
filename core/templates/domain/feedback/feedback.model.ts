@@ -16,7 +16,13 @@
  * @fileoverview Type definitions for web user feedback APIs
  */
 
-export interface ExplorationFeedbackContext {
+export enum FeedbackModalType {
+  LESSON_FEEDBACK = 'lesson_feedback',
+  LESSON_ISSUE = 'lesson_issue',
+  SITE_ISSUE = 'site_issue',
+}
+
+export interface LessonFeedbackMetadata {
   explorationId: string;
   explorationVersion: number;
   stateName: string;
@@ -24,7 +30,7 @@ export interface ExplorationFeedbackContext {
   learnerCurrentAnswer: string | null;
 }
 
-export interface ExplorationFeedbackContextBackendDict {
+export interface LessonFeedbackMetadataBackendDict {
   exploration_id: string;
   exploration_version: number;
   state_name: string;
@@ -34,18 +40,18 @@ export interface ExplorationFeedbackContextBackendDict {
 
 export interface SendALessonFeedbackBackendDict {
   feedback_text: string;
-  exploration_context: ExplorationFeedbackContextBackendDict;
+  exploration_context: LessonFeedbackMetadataBackendDict;
 }
 
 export class SendALessonFeedbackModel {
   constructor(
     public readonly feedbackText: string,
-    public readonly explorationContext: ExplorationFeedbackContext
+    public readonly explorationContext: LessonFeedbackMetadata
   ) {}
 
   static createForSubmission(params: {
     feedbackText: string;
-    exploration_context: ExplorationFeedbackContext;
+    exploration_context: LessonFeedbackMetadata;
   }): SendALessonFeedbackModel {
     return new SendALessonFeedbackModel(
       params.feedbackText,
@@ -78,7 +84,7 @@ export type ReportType = 'lesson' | 'site';
 export interface IssueReportBackendDict {
   source: ReportType;
   report_message: string;
-  exploration_context: ExplorationFeedbackContextBackendDict | null;
+  exploration_context: LessonFeedbackMetadataBackendDict | null;
   category: ReportAnIssueCategory | null;
   include_technical_logs: boolean;
   session_info: FeedbackSessionInfo | null;
@@ -89,7 +95,7 @@ export class IssueReportModel {
   constructor(
     public readonly source: ReportType,
     public readonly reportMessage: string,
-    public readonly explorationContext: ExplorationFeedbackContext | null,
+    public readonly explorationContext: LessonFeedbackMetadata | null,
     public readonly category: ReportAnIssueCategory | null,
     public readonly includeTechnicalLogs: boolean,
     public readonly sessionInfo: FeedbackSessionInfo | null,
@@ -99,7 +105,7 @@ export class IssueReportModel {
   static createForSubmission(params: {
     source: ReportType;
     reportMessage: string;
-    explorationContext: ExplorationFeedbackContext | null;
+    explorationContext: LessonFeedbackMetadata | null;
     category: ReportAnIssueCategory | null;
     includeTechnicalLogs: boolean;
     sessionInfo: FeedbackSessionInfo | null;

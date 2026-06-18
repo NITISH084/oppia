@@ -52,10 +52,11 @@ import {FeedbackThreadSummaryBackendDict} from 'domain/feedback_thread/feedback-
 import {LanguageBannerService} from 'components/language-banner/language-banner.service';
 import {SignInEventService} from 'services/sign-in-event.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {SiteFeedbackModalComponent} from '../../../base-components/site-feedback-modal.component';
 
 import './top-navigation-bar.component.css';
 import {ContentTranslationManagerService} from 'pages/exploration-player-page/services/content-translation-manager.service';
+import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
+import {FeedbackModalType} from 'domain/feedback/feedback.model';
 
 interface LanguageInfo {
   id: string;
@@ -671,8 +672,10 @@ export class TopNavigationBarComponent implements OnInit, OnDestroy {
   }
 
   openSiteFeedbackModal(): void {
-    this.ngbModal.open(SiteFeedbackModalComponent, {
+    const modalRef = this.ngbModal.open(FeedbackModalComponent, {
       backdrop: 'static',
     });
+
+    modalRef.componentInstance.feedbackModalType = FeedbackModalType.SITE_ISSUE;
   }
 }

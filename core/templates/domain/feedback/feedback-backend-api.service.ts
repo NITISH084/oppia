@@ -94,14 +94,16 @@ export class FeedbackBackendApiService {
 
   // Called by SendALessonFeedbackModalComponent.
   async submitLessonFeedbackAsync(
-    payload: SendALessonFeedbackModel
+    payload: SendALessonFeedbackModel,
+    captchaToken: string | null
   ): Promise<FeedbackSubmitResponse> {
+    const requestPayload = {
+      ...payload.toBackendDict(),
+      ...(captchaToken ? {captcha_token: captchaToken} : {}),
+    };
     try {
       return await this.http
-        .post<FeedbackSubmitResponse>(
-          this.lessonFeedbackUrl,
-          payload.toBackendDict()
-        )
+        .post<FeedbackSubmitResponse>(this.lessonFeedbackUrl, requestPayload)
         .toPromise();
       // We use unknown type because we are unsure of the type of error
       // that was thrown. Since the catch block cannot identify the
@@ -117,7 +119,8 @@ export class FeedbackBackendApiService {
 
   // Called by SiteFeedbackModalComponent and ReportAnIssueFeedbackModalComponent.
   async submitSiteAndLessonIssueReportAsync(
-    payload: IssueReportModel
+    payload: IssueReportModel,
+    captchaToken: string | null
   ): Promise<FeedbackSubmitResponse> {
     try {
       const screenshotData = await this.getStagedScreenshotSubmissionDataAsync(
@@ -127,6 +130,7 @@ export class FeedbackBackendApiService {
         .post<FeedbackSubmitResponse>(this.reportUrl, {
           ...payload.toBackendDict(),
           screenshot_file: screenshotData.screenshotFile,
+          ...(captchaToken ? {captcha_token: captchaToken} : {}),
         })
         .toPromise();
       // We use unknown type because we are unsure of the type of error
