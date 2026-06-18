@@ -132,6 +132,8 @@ export class FeedbackModalComponent implements OnInit {
 
       case FeedbackModalType.SITE_ISSUE:
         return 'I18N_FOOTER_REPORT_WEBSITE_ISSUE';
+      default:
+        throw new Error('Invalid feedback modal type.');
     }
   }
 
@@ -145,6 +147,8 @@ export class FeedbackModalComponent implements OnInit {
 
       case FeedbackModalType.SITE_ISSUE:
         return 'I18N_REPORT_WEBSITE_ISSUE_SUBTITLE';
+      default:
+        throw new Error('Invalid feedback modal type.');
     }
   }
 
@@ -158,6 +162,8 @@ export class FeedbackModalComponent implements OnInit {
 
       case FeedbackModalType.SITE_ISSUE:
         return 'I18N_REPORT_WEBSITE_ISSUE_TEXTAREA_PLACEHOLDER';
+      default:
+        throw new Error('Invalid feedback modal type.');
     }
   }
 
@@ -281,7 +287,7 @@ export class FeedbackModalComponent implements OnInit {
       return;
     }
     const lessonFeedbackMetadata = this.getLessonFeedbackMetadata();
-    const session_info = this.includeTechnicalLogs
+    const sessionInfo = this.includeTechnicalLogs
       ? this.feedbackSessionInfoService.getSessionInfo()
       : null;
 
@@ -297,7 +303,7 @@ export class FeedbackModalComponent implements OnInit {
       },
       category: this.category,
       includeTechnicalLogs: this.includeTechnicalLogs,
-      sessionInfo: session_info,
+      sessionInfo: sessionInfo,
       screenshotFilename: this.screenshotFilename,
     });
 
@@ -350,7 +356,7 @@ export class FeedbackModalComponent implements OnInit {
     if (!this.isFormValid()) {
       return;
     }
-    const session_info = this.includeTechnicalLogs
+    const sessionInfo = this.includeTechnicalLogs
       ? this.feedbackSessionInfoService.getSessionInfo()
       : null;
 
@@ -360,7 +366,7 @@ export class FeedbackModalComponent implements OnInit {
       explorationContext: null,
       category: null,
       includeTechnicalLogs: this.includeTechnicalLogs,
-      sessionInfo: session_info,
+      sessionInfo: sessionInfo,
       screenshotFilename: this.screenshotFilename,
     });
 
