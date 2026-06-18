@@ -320,6 +320,34 @@ describe('FeedbackModalComponent', () => {
     expect(component.isLessonIssueMode).toBeFalse();
   });
 
+  it('should throw error for invalid title modal type', () => {
+    createComponent();
+
+    component.feedbackModalType = 'invalid' as unknown as FeedbackModalType;
+
+    expect(() => component.title).toThrowError('Invalid feedback modal type.');
+  });
+
+  it('should throw error for invalid subtitle modal type', () => {
+    createComponent();
+
+    component.feedbackModalType = 'invalid' as unknown as FeedbackModalType;
+
+    expect(() => component.subTitle).toThrowError(
+      'Invalid feedback modal type.'
+    );
+  });
+
+  it('should throw error for invalid textarea placeholder modal type', () => {
+    createComponent();
+
+    component.feedbackModalType = 'invalid' as unknown as FeedbackModalType;
+
+    expect(() => component.textarePlaceholder).toThrowError(
+      'Invalid feedback modal type.'
+    );
+  });
+
   it('should show category selector only in lesson issue mode', () => {
     createComponent();
 
