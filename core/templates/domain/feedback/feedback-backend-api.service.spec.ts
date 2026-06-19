@@ -203,7 +203,7 @@ describe('Feedback backend api service', () => {
 
     expect(
       onFailure.calls.mostRecent().args[0] instanceof HttpErrorResponse
-    ).toBeTrue();
+    ).toBe(true);
   }));
 
   it('should rethrow non-http errors during feedback submission', fakeAsync(() => {
@@ -218,7 +218,7 @@ describe('Feedback backend api service', () => {
     const onFailure = jasmine.createSpy('onFailure');
 
     serviceWithFailingHttp
-      .submitLessonFeedbackAsync(sendALessonFeedbackPayload)
+      .submitLessonFeedbackAsync(sendALessonFeedbackPayload, null)
       .catch(onFailure);
     flushMicrotasks();
 
@@ -265,7 +265,7 @@ describe('Feedback backend api service', () => {
 
     expect(
       onFailure.calls.mostRecent().args[0] instanceof HttpErrorResponse
-    ).toBeTrue();
+    ).toBe(true);
   }));
 
   it('should rethrow non-http errors during feedback submission', fakeAsync(() => {
@@ -280,7 +280,7 @@ describe('Feedback backend api service', () => {
     const onFailure = jasmine.createSpy('onFailure');
 
     serviceWithFailingHttp
-      .submitSiteAndLessonIssueReportAsync(issueReportPayload)
+      .submitSiteAndLessonIssueReportAsync(issueReportPayload, null)
       .catch(onFailure);
     flushMicrotasks();
 

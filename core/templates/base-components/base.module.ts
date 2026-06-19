@@ -144,6 +144,7 @@ import {RouterModule} from '@angular/router';
     TopNavigationBarComponent,
     WarningsAndAlertsComponent,
     ClassroomNavigationLinksComponent,
+    FeedbackModalComponent,
   ],
 })
 export class BaseModule {}

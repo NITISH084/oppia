@@ -209,8 +209,8 @@ describe('FeedbackModalComponent', () => {
 
     component.feedbackModalType = modalType;
 
-    windowRef = TestBed.inject(WindowRef);
-    userService = TestBed.inject(UserService);
+    windowRef = TestBed.inject(WindowRef) as unknown as MockWindowRef;
+    userService = TestBed.inject(UserService) as unknown as MockUserService;
     feedbackBackendApiService = TestBed.inject(FeedbackBackendApiService);
     pageContextService = TestBed.inject(PageContextService);
     playerPositionService = TestBed.inject(PlayerPositionService);
@@ -297,27 +297,27 @@ describe('FeedbackModalComponent', () => {
     createComponent();
     component.feedbackModalType = FeedbackModalType.LESSON_FEEDBACK;
 
-    expect(component.isLessonFeedbackMode).toBeTrue();
-    expect(component.isLessonIssueMode).toBeFalse();
-    expect(component.isSiteIssueMode).toBeFalse();
+    expect(component.isLessonFeedbackMode).toBe(true);
+    expect(component.isLessonIssueMode).toBe(false);
+    expect(component.isSiteIssueMode).toBe(false);
   });
 
   it('should identify lesson issue mode correctly', () => {
     createComponent();
     component.feedbackModalType = FeedbackModalType.LESSON_ISSUE;
 
-    expect(component.isLessonIssueMode).toBeTrue();
-    expect(component.isLessonFeedbackMode).toBeFalse();
-    expect(component.isSiteIssueMode).toBeFalse();
+    expect(component.isLessonIssueMode).toBe(true);
+    expect(component.isLessonFeedbackMode).toBe(false);
+    expect(component.isSiteIssueMode).toBe(false);
   });
 
   it('should identify site issue mode correctly', () => {
     createComponent();
     component.feedbackModalType = FeedbackModalType.SITE_ISSUE;
 
-    expect(component.isSiteIssueMode).toBeTrue();
-    expect(component.isLessonFeedbackMode).toBeFalse();
-    expect(component.isLessonIssueMode).toBeFalse();
+    expect(component.isSiteIssueMode).toBe(true);
+    expect(component.isLessonFeedbackMode).toBe(false);
+    expect(component.isLessonIssueMode).toBe(false);
   });
 
   it('should throw error for invalid title modal type', () => {
@@ -352,33 +352,33 @@ describe('FeedbackModalComponent', () => {
     createComponent();
 
     component.feedbackModalType = FeedbackModalType.LESSON_ISSUE;
-    expect(component.shouldShowCategorySelector).toBeTrue();
+    expect(component.shouldShowCategorySelector).toBe(true);
 
     component.feedbackModalType = FeedbackModalType.LESSON_FEEDBACK;
-    expect(component.shouldShowCategorySelector).toBeFalse();
+    expect(component.shouldShowCategorySelector).toBe(false);
 
     component.feedbackModalType = FeedbackModalType.SITE_ISSUE;
-    expect(component.shouldShowCategorySelector).toBeFalse();
+    expect(component.shouldShowCategorySelector).toBe(false);
   });
 
   it('should show screenshot upload in lesson issue and site issue modes', () => {
     createComponent();
 
     component.feedbackModalType = FeedbackModalType.LESSON_ISSUE;
-    expect(component.shouldShowScreenshotUpload).toBeTrue();
+    expect(component.shouldShowScreenshotUpload).toBe(true);
 
     component.feedbackModalType = FeedbackModalType.SITE_ISSUE;
-    expect(component.shouldShowScreenshotUpload).toBeTrue();
+    expect(component.shouldShowScreenshotUpload).toBe(true);
 
     component.feedbackModalType = FeedbackModalType.LESSON_FEEDBACK;
-    expect(component.shouldShowScreenshotUpload).toBeFalse();
+    expect(component.shouldShowScreenshotUpload).toBe(false);
   });
 
   it('should not show technical logs in lesson feedback mode', () => {
     createComponent();
     component.feedbackModalType = FeedbackModalType.LESSON_FEEDBACK;
 
-    expect(component.shouldShowTechnicalLogs).toBeFalse();
+    expect(component.shouldShowTechnicalLogs).toBe(false);
   });
 
   it('should show technical logs in site issue mode when checkbox is enabled', () => {
@@ -386,7 +386,7 @@ describe('FeedbackModalComponent', () => {
     component.feedbackModalType = FeedbackModalType.SITE_ISSUE;
     component.showTechnicalLogsCheckbox = true;
 
-    expect(component.shouldShowTechnicalLogs).toBeTrue();
+    expect(component.shouldShowTechnicalLogs).toBe(true);
   });
 
   it('should show technical logs in lesson issue mode when category enables it', () => {
@@ -394,7 +394,7 @@ describe('FeedbackModalComponent', () => {
     component.feedbackModalType = FeedbackModalType.LESSON_ISSUE;
     component.selectCategory('broken_layout_or_image');
 
-    expect(component.shouldShowTechnicalLogs).toBeTrue();
+    expect(component.shouldShowTechnicalLogs).toBe(true);
   });
 
   it('should not show technical logs in lesson issue mode when category disables it', () => {
@@ -402,7 +402,7 @@ describe('FeedbackModalComponent', () => {
     component.feedbackModalType = FeedbackModalType.LESSON_ISSUE;
     component.selectCategory('typo');
 
-    expect(component.shouldShowTechnicalLogs).toBeFalse();
+    expect(component.shouldShowTechnicalLogs).toBe(false);
   });
 
   it('should return lesson feedback title', () => {
@@ -486,7 +486,7 @@ describe('FeedbackModalComponent', () => {
     flushMicrotasks();
 
     expect(userService.getUserInfoAsync).toHaveBeenCalled();
-    expect(component.isUserLoggedIn).toBeTrue();
+    expect(component.isUserLoggedIn).toBe(true);
   }));
 
   it('should mark user as not logged in when userInfo resolves to false', fakeAsync(() => {
@@ -504,7 +504,7 @@ describe('FeedbackModalComponent', () => {
     component.ngOnInit();
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeFalse();
+    expect(component.isUserLoggedIn).toBe(false);
   }));
 
   it('should reset showTechnicalLogsCheckbox to true on init', () => {
@@ -513,7 +513,7 @@ describe('FeedbackModalComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.showTechnicalLogsCheckbox).toBeTrue();
+    expect(component.showTechnicalLogsCheckbox).toBe(true);
   });
 
   it('should clear form error when clearFormError is called with an existing error', () => {
@@ -564,7 +564,7 @@ describe('FeedbackModalComponent', () => {
     component.selectCategory('typo');
 
     expect(component.category).toBe('typo');
-    expect(component.showTechnicalLogsCheckbox).toBeFalse();
+    expect(component.showTechnicalLogsCheckbox).toBe(false);
   });
 
   it('should select broken_layout_or_image category and enable technical logs checkbox', () => {
@@ -572,7 +572,7 @@ describe('FeedbackModalComponent', () => {
     component.selectCategory('broken_layout_or_image');
 
     expect(component.category).toBe('broken_layout_or_image');
-    expect(component.showTechnicalLogsCheckbox).toBeTrue();
+    expect(component.showTechnicalLogsCheckbox).toBe(true);
   });
 
   it('should select confusing_or_incorrect_answer category and disable technical logs checkbox', () => {
@@ -580,7 +580,7 @@ describe('FeedbackModalComponent', () => {
     component.selectCategory('confusing_or_incorrect_answer');
 
     expect(component.category).toBe('confusing_or_incorrect_answer');
-    expect(component.showTechnicalLogsCheckbox).toBeFalse();
+    expect(component.showTechnicalLogsCheckbox).toBe(false);
   });
 
   it('should select other_or_not_sure category and enable technical logs checkbox', () => {
@@ -588,7 +588,7 @@ describe('FeedbackModalComponent', () => {
     component.selectCategory('other_or_not_sure');
 
     expect(component.category).toBe('other_or_not_sure');
-    expect(component.showTechnicalLogsCheckbox).toBeTrue();
+    expect(component.showTechnicalLogsCheckbox).toBe(true);
   });
 
   it('should update category when a different chip is selected', () => {
@@ -604,7 +604,7 @@ describe('FeedbackModalComponent', () => {
     createComponent();
     component.feedbackText = '';
 
-    expect(component.isFormValid()).toBeFalse();
+    expect(component.isFormValid()).toBe(false);
     expect(component.formError).toBe(
       'Please add a description before submitting.'
     );
@@ -614,7 +614,7 @@ describe('FeedbackModalComponent', () => {
     createComponent();
     component.feedbackText = '   ';
 
-    expect(component.isFormValid()).toBeFalse();
+    expect(component.isFormValid()).toBe(false);
     expect(component.formError).toBe(
       'Please add a description before submitting.'
     );
@@ -626,7 +626,7 @@ describe('FeedbackModalComponent', () => {
       component.MAX_REPORT_MESSAGE_LENGTH + 1
     );
 
-    expect(component.isFormValid()).toBeFalse();
+    expect(component.isFormValid()).toBe(false);
     expect(component.formError).toContain('Please keep your feedback under');
   });
 
@@ -634,7 +634,7 @@ describe('FeedbackModalComponent', () => {
     createComponent();
     component.feedbackText = 'Valid feedback';
 
-    expect(component.isFormValid()).toBeTrue();
+    expect(component.isFormValid()).toBe(true);
     expect(component.formError).toBeNull();
   });
 
@@ -642,7 +642,7 @@ describe('FeedbackModalComponent', () => {
     createComponent();
     component.feedbackText = 'a'.repeat(component.MAX_REPORT_MESSAGE_LENGTH);
 
-    expect(component.isFormValid()).toBeTrue();
+    expect(component.isFormValid()).toBe(true);
     expect(component.formError).toBeNull();
   });
 
@@ -657,7 +657,7 @@ describe('FeedbackModalComponent', () => {
 
     createComponent();
     component.onScreenshotFileReceived(file);
-    expect(component.isUploadingScreenshot).toBeTrue();
+    expect(component.isUploadingScreenshot).toBe(true);
     flushMicrotasks();
 
     expect(
@@ -668,7 +668,7 @@ describe('FeedbackModalComponent', () => {
       'data:image/png;base64,image'
     );
     expect(component.screenshotFileError).toBeNull();
-    expect(component.isUploadingScreenshot).toBeFalse();
+    expect(component.isUploadingScreenshot).toBe(false);
   }));
 
   it('should set upload error and clear filename/preview when staging fails', fakeAsync(() => {
@@ -686,7 +686,7 @@ describe('FeedbackModalComponent', () => {
     expect(component.screenshotFileError).toBe(
       'I18N_FEEDBACK_SCREENSHOT_UPLOAD_ERROR'
     );
-    expect(component.isUploadingScreenshot).toBeFalse();
+    expect(component.isUploadingScreenshot).toBe(false);
   }));
 
   it('should clear an existing staged screenshot before staging a new one', fakeAsync(() => {
@@ -1116,7 +1116,7 @@ describe('FeedbackModalComponent', () => {
     expect(component.screenshotPreviewDataUrl).toBeNull();
     expect(component.feedbackText).toBe('');
     expect(component.category).toBeNull();
-    expect(component.includeTechnicalLogs).toBeTrue();
+    expect(component.includeTechnicalLogs).toBe(true);
     expect(component.formError).toBeNull();
   });
 
@@ -1147,7 +1147,7 @@ describe('FeedbackModalComponent', () => {
 
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeFalse();
+    expect(component.isUserLoggedIn).toBe(false);
     expect(captchaSpy).toHaveBeenCalled();
 
     expect(insertScriptService.loadScript).toHaveBeenCalledWith(
@@ -1177,7 +1177,7 @@ describe('FeedbackModalComponent', () => {
 
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeTrue();
+    expect(component.isUserLoggedIn).toBe(true);
     expect(captchaSpy).not.toHaveBeenCalled();
     expect(insertScriptService.loadScript).not.toHaveBeenCalled();
   }));
@@ -1194,7 +1194,7 @@ describe('FeedbackModalComponent', () => {
 
     flushMicrotasks();
 
-    expect(component.isUserLoggedIn).toBeFalse();
+    expect(component.isUserLoggedIn).toBe(false);
     expect(captchaSpy).toHaveBeenCalled();
   }));
 

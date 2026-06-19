@@ -230,7 +230,6 @@ import {CheckpointBarComponent} from 'pages/exploration-player-page/new-lesson-p
 import {SaveProgressModalComponent} from 'pages/exploration-player-page/new-lesson-player/conversation-skin-components/lesson-player-footer/save-progress-modal.component';
 import {CheckpointCelebrationFooterComponent} from 'pages/exploration-player-page/new-lesson-player/conversation-skin-components/lesson-player-footer/checkpoint-celebration-footer.component';
 import {NewRatingsAndRecommendationsComponent} from 'pages/exploration-player-page/new-lesson-player/conversation-skin-components/conversation-display-components/new-ratings-and-recommendations.component';
-import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
 
 @NgModule({
   imports: [
@@ -444,7 +443,6 @@ import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
     SaveValidationFailModalComponent,
     ModifyTranslationsModalComponent,
     ConfirmTranslationExitModalComponent,
-    FeedbackModalComponent,
   ],
 
   entryComponents: [
@@ -619,7 +617,6 @@ import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
     SaveValidationFailModalComponent,
     ModifyTranslationsModalComponent,
     ConfirmTranslationExitModalComponent,
-    FeedbackModalComponent,
   ],
 
   exports: [
@@ -791,7 +788,6 @@ import {FeedbackModalComponent} from 'base-components/feedback-modal.component';
     ExplorationTitleEditorComponent,
     ExplorationObjectiveEditorComponent,
     ConfirmTranslationExitModalComponent,
-    FeedbackModalComponent,
   ],
 })
 export class SharedComponentsModule {}
