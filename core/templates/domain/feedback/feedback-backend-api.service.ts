@@ -26,8 +26,8 @@ import {
 } from 'services/image-local-storage.service';
 import {
   FeedbackCaptchaConfigResponse,
-  SendALessonFeedbackModel,
-  IssueReportModel,
+  LessonFeedbackModel,
+  PlatformFeedbackModel,
   FeedbackSubmitResponse,
 } from './feedback.model';
 
@@ -41,7 +41,7 @@ interface FeedbackScreenshotSubmissionData {
 })
 export class FeedbackBackendApiService {
   private lessonFeedbackUrl = '/feedback';
-  private reportUrl = '/report';
+  private reportUrl = '/platform-feedback';
   private captchaConfigUrl = '/feedback_captcha_config_handler';
 
   constructor(
@@ -93,7 +93,7 @@ export class FeedbackBackendApiService {
   }
 
   async submitLessonFeedbackAsync(
-    payload: SendALessonFeedbackModel,
+    payload: LessonFeedbackModel,
     captchaToken: string | null
   ): Promise<FeedbackSubmitResponse> {
     const requestPayload = {
@@ -117,7 +117,7 @@ export class FeedbackBackendApiService {
   }
 
   async submitSiteAndLessonIssueReportAsync(
-    payload: IssueReportModel,
+    payload: PlatformFeedbackModel,
     captchaToken: string | null
   ): Promise<FeedbackSubmitResponse> {
     try {

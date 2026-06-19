@@ -17,8 +17,8 @@
  */
 
 import {
-  SendALessonFeedbackModel,
-  IssueReportModel,
+  LessonFeedbackModel,
+  PlatformFeedbackModel,
   FeedbackSessionInfo,
 } from './feedback.model';
 
@@ -66,11 +66,11 @@ const feedbackSessionInfo: FeedbackSessionInfo = {
   },
 };
 
-describe('SendALessonFeedbackModel', () => {
-  it('should create a new SendALessonFeedbackModel from arguments', () => {
-    const feedback = SendALessonFeedbackModel.createForSubmission({
+describe('LessonFeedbackModel', () => {
+  it('should create a new LessonFeedbackModel from arguments', () => {
+    const feedback = LessonFeedbackModel.createForSubmission({
       feedbackText: 'text',
-      exploration_context: {
+      lesson_metadata_json: {
         explorationId: 'test',
         explorationVersion: 1,
         stateName: 'intro',
@@ -90,9 +90,9 @@ describe('SendALessonFeedbackModel', () => {
   });
 
   it('should convert to backend dict', () => {
-    const feedback = SendALessonFeedbackModel.createForSubmission({
+    const feedback = LessonFeedbackModel.createForSubmission({
       feedbackText: 'text',
-      exploration_context: {
+      lesson_metadata_json: {
         explorationId: 'test',
         explorationVersion: 1,
         stateName: 'intro',
@@ -103,7 +103,7 @@ describe('SendALessonFeedbackModel', () => {
 
     expect(feedback.toBackendDict()).toEqual({
       feedback_text: 'text',
-      exploration_context: {
+      lesson_metadata_json: {
         exploration_id: 'test',
         exploration_version: 1,
         state_name: 'intro',
@@ -116,7 +116,7 @@ describe('SendALessonFeedbackModel', () => {
 
 describe('ReportAnIssueModel', () => {
   it('should create a new ReportAnIssueModel from arguments', () => {
-    const feedback = IssueReportModel.createForSubmission({
+    const feedback = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: 'text',
       explorationContext: {
@@ -148,7 +148,7 @@ describe('ReportAnIssueModel', () => {
   });
 
   it('should convert to backend dict', () => {
-    const feedback = IssueReportModel.createForSubmission({
+    const feedback = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: 'text',
       explorationContext: {
@@ -167,7 +167,7 @@ describe('ReportAnIssueModel', () => {
     expect(feedback.toBackendDict()).toEqual({
       source: 'lesson',
       report_message: 'text',
-      exploration_context: {
+      lesson_metadata_json: {
         exploration_id: 'test',
         exploration_version: 1,
         state_name: 'intro',

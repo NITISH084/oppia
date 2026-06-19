@@ -256,7 +256,7 @@ ENTITY_TYPE_STORY = 'story'
 ENTITY_TYPE_QUESTION = 'question'
 ENTITY_TYPE_USER = 'user'
 ENTITY_TYPE_CLASSROOM = 'classroom'
-ENTITY_TYPE_FEEDBACK_SCREENSHOT = 'feedback_screenshot'
+ENTITY_TYPE_FEEDBACK = 'feedback'
 
 DIAGNOSTIC_TEST_QUESTION_TYPE_MAIN = 'main_question'
 DIAGNOSTIC_TEST_QUESTION_TYPE_BACKUP = 'backup_question'
@@ -383,6 +383,10 @@ CURRENT_SESSION_INFO_SCHEMA_VERSION = 1
 
 # This is the minimum version of the FeedbackSessionLogModel schema that is supported.
 MINIMUM_SESSION_INFO_SCHEMA_VERSION = 1
+
+# This value should be updated if the schema OF Lesson Metadata
+# schema changes.
+CURRENT_LESSON_METADATA_SCHEMA_VERSION = 1
 
 # The default number of exploration tiles to load at a time in the search
 # results page.
@@ -937,7 +941,6 @@ CONTRIBUTOR_OPPORTUNITIES_DATA_V2_URL = '/opportunitieshandlerv2'
 PINNED_OPPORTUNITIES_URL = '/pinned-opportunities'
 CREATOR_DASHBOARD_DATA_URL = '/creatordashboardhandler/data'
 CREATOR_DASHBOARD_URL = '/creator-dashboard'
-CREATOR_FEEDBACK_HANDLER_URL = '/creator_feedback_handler'
 CSRF_HANDLER_URL = '/csrfhandler'
 CUSTOM_NONPROFITS_LANDING_PAGE_URL = '/nonprofits'
 CUSTOM_PARENTS_LANDING_PAGE_URL = '/parents'
@@ -973,7 +976,6 @@ FEEDBACK_UPDATES_THREAD_DATA_URL = '/feedbackupdatesthreadhandler'
 FETCH_SKILLS_URL_PREFIX = '/fetch_skills'
 FLAG_EXPLORATION_URL_PREFIX = '/flagexplorationhandler'
 FRACTIONS_LANDING_PAGE_URL = '/fractions'
-GENERAL_FEEDBACK_SUBMISSION_URL = '/give_general_feedback'
 GENERAL_FEEDBACK_CAPTCHA_CONFIG_URL = '/feedback_captcha_config_handler'
 IMPROVEMENTS_URL_PREFIX = '/improvements'
 IMPROVEMENTS_HISTORY_URL_PREFIX = '/improvements/history'
@@ -999,6 +1001,7 @@ LEARNER_DASHBOARD_IDS_DATA_URL = '/learnerdashboardidshandler/data'
 LEARNER_GOALS_DATA_URL = '/learnergoalshandler'
 LEARNER_PLAYLIST_DATA_URL = '/learnerplaylistactivityhandler'
 LEARNER_INCOMPLETE_ACTIVITY_DATA_URL = '/learnerincompleteactivityhandler'
+LESSON_FEEDBACK_URL = '/feedback'
 LIBRARY_GROUP_DATA_URL = '/librarygrouphandler'
 LIBRARY_INDEX_URL = '/community-library'
 LIBRARY_INDEX_DATA_URL = '/libraryindexhandler'
@@ -1020,6 +1023,7 @@ PREFERENCES_URL = '/preferences'
 PRACTICE_SESSION_URL_PREFIX = '/practice/session'
 PRACTICE_SESSION_DATA_URL_PREFIX = '/practice_session/data'
 PREFERENCES_DATA_URL = '/preferenceshandler/data'
+PLATFORM_FEEDBACK_URL = '/platform-feedback'
 QUESTION_EDITOR_DATA_URL_PREFIX = '/question_editor_handler/data'
 QUESTION_SKILL_LINK_URL_PREFIX = '/manage_question_skill_link'
 QUESTIONS_LIST_URL_PREFIX = '/questions_list_handler'

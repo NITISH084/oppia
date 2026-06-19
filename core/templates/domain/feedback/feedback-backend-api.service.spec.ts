@@ -25,8 +25,8 @@ import {fakeAsync, flushMicrotasks, TestBed} from '@angular/core/testing';
 
 import {FeedbackBackendApiService} from 'domain/feedback/feedback-backend-api.service';
 import {
-  SendALessonFeedbackModel,
-  IssueReportModel,
+  LessonFeedbackModel,
+  PlatformFeedbackModel,
 } from 'domain/feedback/feedback.model';
 import {ImageLocalStorageService} from 'services/image-local-storage.service';
 import {ImageUploadHelperService} from 'services/image-upload-helper.service';
@@ -38,19 +38,18 @@ describe('Feedback backend api service', () => {
   let imageLocalStorageService: ImageLocalStorageService;
   let imageUploadHelperService: ImageUploadHelperService;
 
-  const sendALessonFeedbackPayload =
-    SendALessonFeedbackModel.createForSubmission({
-      feedbackText: 'Hello',
-      exploration_context: {
-        explorationId: 'test',
-        explorationVersion: 1,
-        stateName: 'intro',
-        stateIndex: 1,
-        learnerCurrentAnswer: 'test',
-      },
-    });
+  const sendALessonFeedbackPayload = LessonFeedbackModel.createForSubmission({
+    feedbackText: 'Hello',
+    lesson_metadata_json: {
+      explorationId: 'test',
+      explorationVersion: 1,
+      stateName: 'intro',
+      stateIndex: 1,
+      learnerCurrentAnswer: 'test',
+    },
+  });
 
-  const issueReportPayload = IssueReportModel.createForSubmission({
+  const issueReportPayload = PlatformFeedbackModel.createForSubmission({
     source: 'lesson',
     reportMessage: 'text',
     explorationContext: {

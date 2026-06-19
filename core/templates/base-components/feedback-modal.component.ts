@@ -30,8 +30,8 @@ import {LearnerAnswerInfoService} from 'pages/exploration-player-page/services/l
 import {FeedbackSessionInfoService} from 'services/feedback-session-info.service';
 import {
   ReportAnIssueCategory,
-  IssueReportModel,
-  SendALessonFeedbackModel,
+  PlatformFeedbackModel,
+  LessonFeedbackModel,
   FeedbackModalType,
   LessonFeedbackMetadata,
 } from 'domain/feedback/feedback.model';
@@ -291,7 +291,7 @@ export class FeedbackModalComponent implements OnInit {
       ? this.feedbackSessionInfoService.getSessionInfo()
       : null;
 
-    const feedbackPayload = IssueReportModel.createForSubmission({
+    const feedbackPayload = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: this.feedbackText,
       explorationContext: {
@@ -327,9 +327,9 @@ export class FeedbackModalComponent implements OnInit {
     }
 
     const lessonFeedbackMetadata = this.getLessonFeedbackMetadata();
-    const feedbackPayload = SendALessonFeedbackModel.createForSubmission({
+    const feedbackPayload = LessonFeedbackModel.createForSubmission({
       feedbackText: this.feedbackText,
-      exploration_context: {
+      lesson_metadata_json: {
         explorationId: lessonFeedbackMetadata.explorationId,
         explorationVersion: lessonFeedbackMetadata.explorationVersion,
         stateName: lessonFeedbackMetadata.stateName,
@@ -360,7 +360,7 @@ export class FeedbackModalComponent implements OnInit {
       ? this.feedbackSessionInfoService.getSessionInfo()
       : null;
 
-    const feedbackPayload = IssueReportModel.createForSubmission({
+    const feedbackPayload = PlatformFeedbackModel.createForSubmission({
       source: 'site',
       reportMessage: this.feedbackText,
       explorationContext: null,

@@ -1183,15 +1183,13 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             valid_screenshot_payload
         )
 
-    def test_validate_general_feedback_screenshot_file(self) -> None:
+    def test_validate_feedback_screenshot_file(self) -> None:
         self.assertIsNone(
-            domain_objects_validator.validate_general_feedback_screenshot_file(
-                None
-            )
+            domain_objects_validator.validate_feedback_screenshot_file(None)
         )
         valid_file = {'screenshot.png': 'data'}
         self.assertEqual(
-            domain_objects_validator.validate_general_feedback_screenshot_file(
+            domain_objects_validator.validate_feedback_screenshot_file(
                 valid_file
             ),
             valid_file,
@@ -1200,7 +1198,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Only one screenshot file is allowed.'
         ):
-            domain_objects_validator.validate_general_feedback_screenshot_file(
+            domain_objects_validator.validate_feedback_screenshot_file(
                 {
                     'first.png': 'data',
                     'second.png': 'data',
@@ -1208,7 +1206,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             )
         invalid_files = self._cast_to_screenshot_files({1: 'data'})
         with self.assertRaisesRegex(Exception, 'Filename should be a string.'):
-            domain_objects_validator.validate_general_feedback_screenshot_file(
+            domain_objects_validator.validate_feedback_screenshot_file(
                 invalid_files
             )
 
@@ -1216,15 +1214,17 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Screenshot data should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_screenshot_file(
+            domain_objects_validator.validate_feedback_screenshot_file(
                 invalid_files
             )
 
-    def test_validate_general_feedback_session_info_log_entries_happy_path(
+    def test_validate_feedback_session_info_log_entries_happy_path(
         self,
     ) -> None:
-        validated_info = domain_objects_validator.validate_general_feedback_session_info_log_entries(
-            self.session_info
+        validated_info = (
+            domain_objects_validator.validate_feedback_session_info_log_entries(
+                self.session_info
+            )
         )
         environment_json = self._as_dict(validated_info['environment_json'])
         page_json = self._as_dict(environment_json['page'])
@@ -1241,7 +1241,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info contains unknown keys: unknown_key'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1275,7 +1275,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             invalid_session_info[key] = value
             with self.assertRaisesRegex(Exception, expected_error):
                 (
-                    domain_objects_validator.validate_general_feedback_session_info_log_entries(
+                    domain_objects_validator.validate_feedback_session_info_log_entries(
                         invalid_session_info
                     )
                 )
@@ -1290,7 +1290,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info log entries exceed maximum allowed limit.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1302,7 +1302,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'console_logs_json should be a list of dicts.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1315,7 +1315,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'error_message in console_logs_json should be a string.',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1331,7 +1331,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'error_message in console_logs_json exceeds maximum length of %d characters.'
             % feconf.MAX_SESSION_INFO_LOG_MESSAGE_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1344,7 +1344,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'Session info console_logs_json.timestamp_msecs should be an int.',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1356,7 +1356,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Invalid log_level in console_logs_json.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1368,7 +1368,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'stack_trace in console_logs_json should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1384,7 +1384,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'stack_trace in console_logs_json exceeds maximum length of %d characters.'
             % feconf.MAX_SESSION_INFO_STACK_TRACE_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1396,7 +1396,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'failed_requests_json should be a list of dicts.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1408,7 +1408,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'url in failed_requests_json should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1422,7 +1422,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'url in failed_requests_json exceeds maximum length of %d characters.'
             % feconf.MAX_PAGE_URL_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1434,7 +1434,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'method in failed_requests_json should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1450,7 +1450,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'method in failed_requests_json exceeds maximum length of %d characters.'
             % feconf.MAX_SESSION_INFO_METHOD_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1463,7 +1463,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'Session info failed_requests_json.status_code should be an int.',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1476,7 +1476,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'Session info failed_requests_json.timestamp_msecs should be an int.',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1488,7 +1488,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'status_text in failed_requests_json should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1500,7 +1500,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'navigation_history_json should be a list of dicts.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1516,7 +1516,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'status_text in failed_requests_json exceeds maximum length of %d characters.'
             % feconf.MAX_SESSION_INFO_STATUS_TEXT_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1529,7 +1529,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'error_message in failed_requests_json should be a string.',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1545,7 +1545,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'error_message in failed_requests_json exceeds maximum length of %d characters.'
             % feconf.MAX_SESSION_INFO_LOG_MESSAGE_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1557,7 +1557,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'navigation_history_json should be a list of dicts.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1569,7 +1569,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'path in navigation_history_json should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1585,7 +1585,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'path in navigation_history_json exceeds maximum length of %d characters.'
             % feconf.MAX_PAGE_URL_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1598,7 +1598,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'Session info navigation_history_json.timestamp_msecs should be an int.',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1613,7 +1613,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'page in environment_json should be a dict.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1626,7 +1626,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info page.url should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1639,7 +1639,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info page.title should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1654,7 +1654,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info page.title is too long.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1666,7 +1666,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info viewport should be a dict.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1679,7 +1679,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info viewport.width should be an int.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1691,7 +1691,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info locale should be a dict.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1704,7 +1704,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info locale.language_code should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1717,7 +1717,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info locale.language_code is invalid.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1731,7 +1731,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             Exception,
             'Session info locale.direction should be "ltr" or "rtl".',
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1746,7 +1746,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'user_agent in environment_json should be a string.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1758,7 +1758,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info client_time_msecs should be an int.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1774,7 +1774,7 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             'user_agent in environment_json exceeds maximum length of %d characters.'
             % feconf.MAX_SESSION_INFO_USER_AGENT_LENGTH,
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
 
@@ -1786,6 +1786,6 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         with self.assertRaisesRegex(
             Exception, 'Session info timezone_offset_mins should be an int.'
         ):
-            domain_objects_validator.validate_general_feedback_session_info_log_entries(
+            domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )

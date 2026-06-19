@@ -163,7 +163,7 @@ class WebFeedbackThreadDomainUnitTests(test_utils.GenericTestBase):
                 'target_type': 'exploration',
                 'target_id': self.EXP_ID,
                 'has_screenshot': True,
-                'has_session_info': True,
+                'include_technical_logs': True,
                 'description_preview': 'test description',
                 'created_on_msecs': utils.get_time_in_millisecs(fake_date),
             },
