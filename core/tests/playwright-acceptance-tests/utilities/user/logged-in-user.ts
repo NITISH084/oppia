@@ -29,6 +29,7 @@ const feedbackTextareaSelector = '.e2e-test-exploration-feedback-textarea';
 const submitButtonSelector = '.e2e-test-exploration-feedback-submit-btn';
 const submittedMessageSelector = '.e2e-test-rating-submitted-message';
 
+const homeTabSectionInLearnerDashboard = '.e2e-test-learner-dash-home-tab';
 const explorationCard = '.e2e-test-exploration-dashboard-card';
 const desktopLessonCardTitleSelector = '.e2e-test-exploration-tile-title';
 const lessonCardTitleSelector = '.e2e-test-exploration-tile-title';
@@ -53,7 +54,6 @@ const filledRatingStarSelector = '.fas.fa-star';
 // Learner dashboard selectors.
 const communityLessonsSectionInLearnerDashboard =
   '.e2e-test-community-lessons-section';
-const homeTabSectionInLearnerDashboard = '.e2e-test-learner-dash-home-tab';
 const profileDropdown = '.e2e-test-profile-dropdown';
 const learnerDashboardMenuLink = '.e2e-test-learner-dashboard-menu-link';
 
@@ -359,11 +359,20 @@ export class LoggedInUser extends BaseUser {
    * Check if rating stars are displayed.
    */
   async expectRatingStarsToBeVisible(): Promise<void> {
-    await this.page.waitForSelector(ratingsHeaderSelector);
-    const ratingStars = await this.page.$$(ratingStarSelector);
-    if (ratingStars.length !== 5) {
-      throw new Error('Rating stars are not visible.');
-    }
+    await this.page.waitForFunction(
+      ({headerSelector, starSelector, expectedCount}) => {
+        const header = document.querySelector(headerSelector);
+        if (!header) {
+          return false;
+        }
+        return document.querySelectorAll(starSelector).length === expectedCount;
+      },
+      {
+        headerSelector: ratingsHeaderSelector,
+        starSelector: ratingStarSelector,
+        expectedCount: 5,
+      }
+    );
   }
 
   /**
