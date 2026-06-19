@@ -92,7 +92,6 @@ export class FeedbackBackendApiService {
     };
   }
 
-  // Called by SendALessonFeedbackModalComponent.
   async submitLessonFeedbackAsync(
     payload: SendALessonFeedbackModel,
     captchaToken: string | null
@@ -117,7 +116,6 @@ export class FeedbackBackendApiService {
     }
   }
 
-  // Called by SiteFeedbackModalComponent and ReportAnIssueFeedbackModalComponent.
   async submitSiteAndLessonIssueReportAsync(
     payload: IssueReportModel,
     captchaToken: string | null

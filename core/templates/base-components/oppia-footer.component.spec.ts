@@ -40,7 +40,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PlatformFeatureService} from 'services/platform-feature.service';
 import {ThanksForSubscribingModalComponent} from './thanks-for-subscribing-modal.component';
 import {FormsModule} from '@angular/forms';
-import {SiteFeedbackModalComponent} from './site-feedback-modal.component';
+import {FeedbackModalComponent} from './feedback-modal.component';
 
 class MockWindowRef {
   nativeWindow = {
@@ -154,7 +154,7 @@ describe('OppiaFooterComponent', () => {
 
   it('should open site feedback modal', () => {
     component.openSiteFeedbackModal();
-    expect(ngbModal.open).toHaveBeenCalledWith(SiteFeedbackModalComponent, {
+    expect(ngbModal.open).toHaveBeenCalledWith(FeedbackModalComponent, {
       backdrop: 'static',
     });
   });

@@ -46,8 +46,7 @@ import {ShareLessonModalComponent} from './share-lesson-modal.component';
 import {NewFlagExplorationModalComponent} from './flag-lesson-modal.component';
 import {LessonFeedbackModalComponent} from './lesson-feedback-modal.component';
 import {ConversationFlowService} from '../../services/conversation-flow.service';
-import {ReportAnIssueFeedbackModalComponent} from '../../../../base-components/report-an-issue-feedback-modal.component';
-import {SendALessonFeedbackModalComponent} from '../../../../base-components/send-a-lesson-feedback-modal.component';
+import {FeedbackModalComponent} from '../../../../base-components/feedback-modal.component';
 
 @Pipe({name: 'truncateAndCapitalize'})
 class MockTruncteAndCapitalizePipe {
@@ -260,22 +259,16 @@ describe('LessonPlayerSidebarComponent', () => {
 
   it('should open report an issue modal', () => {
     component.showReportAnIssueModal();
-    expect(mockNgbModal.open).toHaveBeenCalledWith(
-      ReportAnIssueFeedbackModalComponent,
-      {
-        backdrop: 'static',
-      }
-    );
+    expect(mockNgbModal.open).toHaveBeenCalledWith(FeedbackModalComponent, {
+      backdrop: 'static',
+    });
   });
 
   it('should open send a lesson feedback modal', () => {
     component.showSendLessonFeedbackModal();
-    expect(mockNgbModal.open).toHaveBeenCalledWith(
-      SendALessonFeedbackModalComponent,
-      {
-        backdrop: 'static',
-      }
-    );
+    expect(mockNgbModal.open).toHaveBeenCalledWith(FeedbackModalComponent, {
+      backdrop: 'static',
+    });
   });
 
   it('should show share lesson modal on mobile', () => {

@@ -42,8 +42,7 @@ import {LearnerLocalNavBackendApiService} from '../../services/learner-local-nav
 import {LearnerLocalNavComponent} from './learner-local-nav.component';
 import {FlagExplorationModalComponent} from '../modals/flag-exploration-modal.component';
 import {UserInfo} from '../../../../domain/user/user-info.model';
-import {ReportAnIssueFeedbackModalComponent} from '../../../../base-components/report-an-issue-feedback-modal.component';
-import {SendALessonFeedbackModalComponent} from '../../../../base-components/send-a-lesson-feedback-modal.component';
+import {FeedbackModalComponent} from '../../../../base-components/feedback-modal.component';
 
 class MockPlatformFeatureService {
   status = {
@@ -256,22 +255,16 @@ describe('Learner Local Nav Component ', () => {
 
   it('should open report an issue modal', () => {
     component.showReportAnIssueModal();
-    expect(ngbModal.open).toHaveBeenCalledWith(
-      ReportAnIssueFeedbackModalComponent,
-      {
-        backdrop: 'static',
-      }
-    );
+    expect(ngbModal.open).toHaveBeenCalledWith(FeedbackModalComponent, {
+      backdrop: 'static',
+    });
   });
 
   it('should open send a lesson feedback modal', () => {
     component.showSendLessonFeedbackModal();
-    expect(ngbModal.open).toHaveBeenCalledWith(
-      SendALessonFeedbackModalComponent,
-      {
-        backdrop: 'static',
-      }
-    );
+    expect(ngbModal.open).toHaveBeenCalledWith(FeedbackModalComponent, {
+      backdrop: 'static',
+    });
   });
 
   it('should show attribution modal', () => {

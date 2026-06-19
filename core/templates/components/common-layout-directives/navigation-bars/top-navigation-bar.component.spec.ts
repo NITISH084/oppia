@@ -54,7 +54,7 @@ import {UrlInterpolationService} from 'domain/utilities/url-interpolation.servic
 import {UrlService} from 'services/contextual/url.service';
 import {ContentTranslationManagerService} from 'pages/exploration-player-page/services/content-translation-manager.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {SiteFeedbackModalComponent} from '../../../base-components/site-feedback-modal.component';
+import {FeedbackModalComponent} from '../../../base-components/feedback-modal.component';
 
 class MockPlatformFeatureService {
   status = {
@@ -973,7 +973,7 @@ describe('TopNavigationBarComponent', () => {
 
   it('should open site feedback modal', () => {
     component.openSiteFeedbackModal();
-    expect(ngbModal.open).toHaveBeenCalledWith(SiteFeedbackModalComponent, {
+    expect(ngbModal.open).toHaveBeenCalledWith(FeedbackModalComponent, {
       backdrop: 'static',
     });
   });
