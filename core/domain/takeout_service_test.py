@@ -477,7 +477,7 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
         'state_name': 'state_1',
         'state_index': 0,
     }
-    LESSON_FEEDBACK_RESPONSE_LIST = []
+    LESSON_FEEDBACK_RESPONSE_LIST: List[Dict[str, Union[str, float]]] = []
     LESSON_FEEDBACK_RESPONSE_COUNT = 0
     LESSON_FEEDBACK_SEEN_RESPONSE_COUNT = 1
     LESSON_FEEDBACK_CREATED_ON = datetime.datetime.utcnow()
