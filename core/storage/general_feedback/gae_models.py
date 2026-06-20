@@ -514,14 +514,6 @@ class PlatformFeedbackModel(BaseFeedbackModel):
                 'screenshot_entity_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'created_on': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'last_updated': base_models.EXPORT_POLICY.NOT_APPLICABLE,
-                # author_id is pseudonymized, not exported directly.
-                'author_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
-                'feedback_text': base_models.EXPORT_POLICY.NOT_APPLICABLE,
-                'status': base_models.EXPORT_POLICY.NOT_APPLICABLE,
-                'lesson_metadata_schema_version': (
-                    base_models.EXPORT_POLICY.NOT_APPLICABLE
-                ),
-                'lesson_metadata_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
         )
 
