@@ -178,6 +178,7 @@ class PlatformFeedbackSubmitHandler(
                     'type': 'basestring',
                     'choices': _ALLOWED_REPORT_CATEGORIES,
                 },
+                'default_value': None,
             },
             'lesson_metadata_json': {
                 'schema': {
@@ -186,6 +187,7 @@ class PlatformFeedbackSubmitHandler(
                         domain_objects_validator.validate_lesson_metadata_fields
                     ),
                 },
+                'default_value': None,
             },
             'include_technical_logs': {
                 'schema': {
@@ -200,6 +202,7 @@ class PlatformFeedbackSubmitHandler(
                         domain_objects_validator.validate_feedback_session_info_log_entries
                     ),
                 },
+                'default_value': None,
             },
             'screenshot_filename': {
                 'schema': {

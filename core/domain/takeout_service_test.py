@@ -54,6 +54,7 @@ if MYPY:  # pragma: no cover
     from mypy_imports import exp_models as exploration_models
     from mypy_imports import (
         feedback_models,
+        general_feedback_models,
         improvements_models,
         learner_group_models,
         question_models,
@@ -75,6 +76,7 @@ if MYPY:  # pragma: no cover
     config_models,
     exploration_models,
     feedback_models,
+    general_feedback_models,
     improvements_models,
     learner_group_models,
     question_models,
@@ -95,6 +97,7 @@ if MYPY:  # pragma: no cover
         models.Names.CONFIG,
         models.Names.EXPLORATION,
         models.Names.FEEDBACK,
+        models.Names.GENERAL_FEEDBACK,
         models.Names.IMPROVEMENTS,
         models.Names.LEARNER_GROUP,
         models.Names.QUESTION,
@@ -465,6 +468,20 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
     PROFILE_PICTURE_DATA_WEBP: Final = (
         'data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADQAQCdASoHAAYAAgA0JaQAAv%2B5x9YuAAD%2B%2B0nD9oP5zmavp/Nyl8%2Bf/REL9weER482Ugrc/6dmq28Kx1pj/se/CsMAAAAA'  # pylint: disable=line-too-long
     )
+    LESSON_FEEDBACK_ID_1 = 'lesson_feedback_id_1'
+    PARENT_FEEDBACK_ID_1 = 'parent_feedback_id_1'
+    LESSON_FEEDBACK_TEXT_1 = 'lesson_feedback_text_1'
+    LESSON_METADATA_JSON = {
+        'exploration_id': 'exp_id_1',
+        'exploration_version': 1,
+        'state_name': 'state_1',
+        'state_index': 0,
+    }
+    LESSON_FEEDBACK_RESPONSE_LIST = []
+    LESSON_FEEDBACK_RESPONSE_COUNT = 0
+    LESSON_FEEDBACK_SEEN_RESPONSE_COUNT = 1
+    LESSON_FEEDBACK_CREATED_ON = datetime.datetime.utcnow()
+    LESSON_FEEDBACK_LAST_UPDATED = datetime.datetime.utcnow()
 
     def set_up_non_trivial(self) -> None:
         """Set up all models for use in testing.
@@ -1230,6 +1247,7 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
         last_playthrough_data: Dict[str, Dict[str, Union[int, str]]] = {}
         learner_goals_data: Dict[str, List[str]] = {}
         learner_playlist_data: Dict[str, List[str]] = {}
+        lesson_feedback_model_data: Dict[str, Dict[str, Union[int, str]]] = {}
         incomplete_activities_data: Dict[str, List[str]] = {}
         user_settings_data: Dict[str, Union[List[str], Optional[str], int]] = {
             'email': 'user1@example.com',
@@ -1361,6 +1379,7 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
             'learner_playlist': learner_playlist_data,
             'learner_group': expected_learner_group_model_data,
             'learner_groups_user': expected_learner_grp_user_model_data,
+            'lesson_feedback': lesson_feedback_model_data,
             'exploration_stats_task_entry': task_entry_data,
             'topic_rights': topic_rights_data,
             'collection_progress': collection_progress_data,
@@ -1461,7 +1480,6 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
         MULTIPLE_INSTANCES_PER_USER.
         """
         self.set_up_non_trivial()
-
         # We set up the feedback_thread_model here so that we can easily
         # access it when computing the expected data later.
         feedback_thread_model = feedback_models.GeneralFeedbackThreadModel(
@@ -1658,6 +1676,22 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
     def test_export_data_for_full_user_nontrivial_is_correct(self) -> None:
         """Nontrivial test of export_data functionality."""
         self.set_up_non_trivial()
+        lesson_feedback_model = general_feedback_models.LessonFeedbackModel(
+            id=self.LESSON_FEEDBACK_ID_1,
+            author_id=self.USER_ID_1,
+            feedback_text=self.LESSON_FEEDBACK_TEXT_1,
+            status=feedback_models.STATUS_CHOICES_OPEN,
+            lesson_metadata_schema_version=(
+                feconf.CURRENT_LESSON_METADATA_SCHEMA_VERSION
+            ),
+            lesson_metadata_json=self.LESSON_METADATA_JSON,
+            parent_feedback_id=self.PARENT_FEEDBACK_ID_1,
+            response_list=self.LESSON_FEEDBACK_RESPONSE_LIST,
+            response_count=self.LESSON_FEEDBACK_RESPONSE_COUNT,
+            seen_response_count=self.LESSON_FEEDBACK_SEEN_RESPONSE_COUNT,
+        )
+        lesson_feedback_model.update_timestamps()
+        lesson_feedback_model.put()
         # We set up the feedback_thread_model here so that we can easily
         # access it when computing the expected data later.
         feedback_thread_model = feedback_models.GeneralFeedbackThreadModel(
@@ -2038,6 +2072,25 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
                 }
             ],
         }
+        expected_lesson_feedback_data = {
+            self.LESSON_FEEDBACK_ID_1: {
+                'feedback_text': self.LESSON_FEEDBACK_TEXT_1,
+                'status': feedback_models.STATUS_CHOICES_OPEN,
+                'lesson_metadata_json': self.LESSON_METADATA_JSON,
+                'parent_feedback_id': self.PARENT_FEEDBACK_ID_1,
+                'response_list': self.LESSON_FEEDBACK_RESPONSE_LIST,
+                'response_count': self.LESSON_FEEDBACK_RESPONSE_COUNT,
+                'seen_response_count': (
+                    self.LESSON_FEEDBACK_SEEN_RESPONSE_COUNT
+                ),
+                'created_on_msec': utils.get_time_in_millisecs(
+                    lesson_feedback_model.created_on
+                ),
+                'last_updated_msec': utils.get_time_in_millisecs(
+                    lesson_feedback_model.last_updated
+                ),
+            }
+        }
 
         expected_translation_contribution_stats_data = {
             '%s.%s.%s'
@@ -2276,6 +2329,7 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
             'learner_playlist': expected_learner_playlist_data,
             'learner_group': expected_learner_group_data,
             'learner_groups_user': expected_learner_groups_user_data,
+            'lesson_feedback': expected_lesson_feedback_data,
             'exploration_stats_task_entry': expected_task_entry_data,
             'topic_rights': expected_topic_data,
             'collection_progress': expected_collection_progress_data,

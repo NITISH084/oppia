@@ -158,30 +158,13 @@ class BaseFeedbackModel(base_models.BaseModel):
             **{
                 # author_id is pseudonymized, not exported directly.
                 'author_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
-                'feedback_text': base_models.EXPORT_POLICY.EXPORTED,
-                'status': base_models.EXPORT_POLICY.EXPORTED,
+                'feedback_text': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'status': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'lesson_metadata_schema_version': (
                     base_models.EXPORT_POLICY.NOT_APPLICABLE
                 ),
-                'lesson_metadata_json': base_models.EXPORT_POLICY.EXPORTED,
+                'lesson_metadata_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
-        )
-
-    @classmethod
-    def has_reference_to_user_id(cls, user_id: str) -> bool:
-        """Checks whether any non-deleted entry references the given user ID.
-
-        Args:
-            user_id: str. The ID of the user to check.
-
-        Returns:
-            bool. True if the user ID appears in any non-deleted entry.
-        """
-        return (
-            cls.query(cls.author_id == user_id)
-            .filter(cls.deleted.IN([False]))
-            .get(keys_only=True)
-            is not None
         )
 
     # Subclasses must override this with their own prefix string, e.g.
@@ -301,7 +284,32 @@ class LessonFeedbackModel(BaseFeedbackModel):
                 'seen_response_count': base_models.EXPORT_POLICY.EXPORTED,
                 'created_on': base_models.EXPORT_POLICY.EXPORTED,
                 'last_updated': base_models.EXPORT_POLICY.EXPORTED,
+                # author_id is pseudonymized, not exported directly.
+                'author_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'feedback_text': base_models.EXPORT_POLICY.EXPORTED,
+                'status': base_models.EXPORT_POLICY.EXPORTED,
+                'lesson_metadata_schema_version': (
+                    base_models.EXPORT_POLICY.NOT_APPLICABLE
+                ),
+                'lesson_metadata_json': base_models.EXPORT_POLICY.EXPORTED,
             },
+        )
+
+    @classmethod
+    def has_reference_to_user_id(cls, user_id: str) -> bool:
+        """Checks whether any non-deleted entry references the given user ID.
+
+        Args:
+            user_id: str. The ID of the user to check.
+
+        Returns:
+            bool. True if the user ID appears in any non-deleted entry.
+        """
+        return (
+            cls.query(cls.author_id == user_id)
+            .filter(cls.deleted.IN([False]))
+            .get(keys_only=True)
+            is not None
         )
 
     @classmethod
@@ -506,7 +514,32 @@ class PlatformFeedbackModel(BaseFeedbackModel):
                 'screenshot_entity_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'created_on': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'last_updated': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                # author_id is pseudonymized, not exported directly.
+                'author_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'feedback_text': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'status': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'lesson_metadata_schema_version': (
+                    base_models.EXPORT_POLICY.NOT_APPLICABLE
+                ),
+                'lesson_metadata_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
+        )
+
+    @classmethod
+    def has_reference_to_user_id(cls, user_id: str) -> bool:
+        """Checks whether any non-deleted entry references the given user ID.
+
+        Args:
+            user_id: str. The ID of the user to check.
+
+        Returns:
+            bool. True if the user ID appears in any non-deleted entry.
+        """
+        return (
+            cls.query(cls.author_id == user_id)
+            .filter(cls.deleted.IN([False]))
+            .get(keys_only=True)
+            is not None
         )
 
     @classmethod

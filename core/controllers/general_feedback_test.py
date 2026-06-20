@@ -63,9 +63,9 @@ class FeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             created_on_msecs=0,
         )
         create_lesson_feedback_mock = mock.Mock(return_value=feedback)
-        csrf_token = self.get_new_csrf_token()
 
         with self.login_context(self.VIEWER_EMAIL):
+            csrf_token = self.get_new_csrf_token()
             with self.swap(
                 general_feedback_services,
                 'create_lesson_feedback',
@@ -106,9 +106,9 @@ class FeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         )
 
     def test_submit_lesson_feedback_rejects_missing_metadata(self) -> None:
-        csrf_token = self.get_new_csrf_token()
 
         with self.login_context(self.VIEWER_EMAIL):
+            csrf_token = self.get_new_csrf_token()
             response = self.post_json(
                 feconf.LESSON_FEEDBACK_URL,
                 {
@@ -119,9 +119,9 @@ class FeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 expected_status_int=400,
             )
 
-        self.assertEqual(
+        self.assertIn(
+            'Missing key in handler args: lesson_metadata_json',
             response['error'],
-            'lesson_metadata_json is required for lesson feedback.',
         )
 
 
