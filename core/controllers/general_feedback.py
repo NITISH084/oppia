@@ -23,7 +23,6 @@ from core import feconf, utils
 from core.controllers import acl_decorators, base, domain_objects_validator
 from core.domain import (
     captcha_services,
-    exp_fetchers,
     fs_services,
     general_feedback_domain,
     general_feedback_services,

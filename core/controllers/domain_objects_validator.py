@@ -830,7 +830,7 @@ def validate_lesson_metadata_fields(
     exploration_version = lesson_metadata_json.get('exploration_version')
     if not isinstance(exploration_version, int):
         raise base.BaseHandler.InvalidInputException(
-            'lesson_metadata_json.exploration_version must be an' 'integer.'
+            'lesson_metadata_json.exploration_version must be an integer.'
         )
 
     state_name = lesson_metadata_json.get('state_name')
@@ -844,8 +844,4 @@ def validate_lesson_metadata_fields(
         raise base.BaseHandler.InvalidInputException(
             'lesson_metadata_json.state_index must be a non-negative integer.'
         )
-
-    learner_current_answer = lesson_metadata_json.get(
-        'learner_current_answer', None
-    )
     return lesson_metadata_json

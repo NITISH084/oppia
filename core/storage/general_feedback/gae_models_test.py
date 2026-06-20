@@ -18,13 +18,11 @@
 
 from __future__ import annotations
 
-import datetime
-
-from core import feconf, utils
+from core import utils
 from core.platform import models
 from core.tests import test_utils
 
-from typing import List, Sequence, cast
+from typing import Dict, Union
 
 MYPY = False
 if MYPY:  # pragma: no cover
@@ -53,22 +51,18 @@ class BaseFeedbackModelTests(test_utils.GenericTestBase):
     """Tests for BaseFeedbackModel."""
 
     def test_get_deletion_policy_raises_not_implemented_error(self) -> None:
-        with self.assertRaisesRegex(
-            NotImplementedError,
-            'Subclasses of BaseFeedbackModel must implement '
-            'get_deletion_policy()',
-        ):
-            general_feedback_models.BaseFeedbackModel.get_deletion_policy()
+        self.assertEqual(
+            general_feedback_models.BaseFeedbackModel.get_deletion_policy(),
+            base_models.DELETION_POLICY.NOT_APPLICABLE,
+        )
 
     def test_get_model_association_to_user_raises_not_implemented_error(
         self,
     ) -> None:
-        with self.assertRaisesRegex(
-            NotImplementedError,
-            'Subclasses of BaseFeedbackModel must implement '
-            'get_model_association_to_user()',
-        ):
-            general_feedback_models.BaseFeedbackModel.get_model_association_to_user()
+        self.assertEqual(
+            general_feedback_models.BaseFeedbackModel.get_model_association_to_user(),
+            base_models.MODEL_ASSOCIATION_TO_USER.NOT_CORRESPONDING_TO_USER,
+        )
 
     def test_generate_new_id_raises_error_when_id_prefix_is_empty(
         self,
@@ -78,7 +72,7 @@ class BaseFeedbackModelTests(test_utils.GenericTestBase):
             'Subclasses of BaseFeedbackModel must define a non-empty '
             'ID_PREFIX',
         ):
-            general_feedback_models.BaseFeedbackModel._generate_new_id()
+            general_feedback_models.BaseFeedbackModel._generate_new_id()  # pylint: disable=protected-access
 
 
 class LessonFeedbackModelTests(test_utils.GenericTestBase):
@@ -144,7 +138,6 @@ class LessonFeedbackModelTests(test_utils.GenericTestBase):
                 'seen_response_count': base_models.EXPORT_POLICY.EXPORTED,
                 'created_on': base_models.EXPORT_POLICY.EXPORTED,
                 'last_updated': base_models.EXPORT_POLICY.EXPORTED,
-                # deleted is set to NOT_APPLICABLE by BaseModel.
                 'deleted': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
         )
@@ -261,7 +254,7 @@ class LessonFeedbackModelTests(test_utils.GenericTestBase):
                 'LessonFeedbackModel ID generator is producing too many '
                 'collisions.',
             ):
-                general_feedback_models.LessonFeedbackModel._generate_new_id()
+                general_feedback_models.LessonFeedbackModel._generate_new_id()  # pylint: disable=protected-access
 
 
 class PlatformFeedbackModelTests(test_utils.GenericTestBase):
@@ -350,7 +343,6 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 'screenshot_entity_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'created_on': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'last_updated': base_models.EXPORT_POLICY.NOT_APPLICABLE,
-                # deleted is set to NOT_APPLICABLE by BaseModel.
                 'deleted': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
         )
@@ -544,7 +536,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 'PlatformFeedbackModel ID generator is producing too many '
                 'collisions.',
             ):
-                general_feedback_models.PlatformFeedbackModel._generate_new_id()
+                general_feedback_models.PlatformFeedbackModel._generate_new_id()  # pylint: disable=protected-access
 
 
 class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
@@ -595,7 +587,7 @@ class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
 
     def test_create(self) -> None:
         general_feedback_models.FeedbackSessionLogModel.create(
-            thread_id=self.feedback_id1,
+            report_id=self.feedback_id1,
             console_logs_json=[{'message': 'err'}],
             failed_requests_json=[{'url': '/test'}],
             navigation_history_json=[{'url': '/learn/math'}],
@@ -624,7 +616,7 @@ class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
 
     def test_create_raises_error_for_duplicate_thread_id(self) -> None:
         general_feedback_models.FeedbackSessionLogModel.create(
-            thread_id=self.feedback_id1,
+            report_id=self.feedback_id1,
             console_logs_json=[{'message': 'err'}],
             failed_requests_json=[{'url': '/test'}],
             navigation_history_json=[{'url': '/learn/math'}],
@@ -635,7 +627,7 @@ class FeedbackSessionLogModelTests(test_utils.GenericTestBase):
             'Session log for thread ID %s already exists.' % self.feedback_id1,
         ):
             general_feedback_models.FeedbackSessionLogModel.create(
-                thread_id=self.feedback_id1,
+                report_id=self.feedback_id1,
                 console_logs_json=[{'message': 'err2'}],
                 failed_requests_json=[{'url': '/test2'}],
                 navigation_history_json=[{'url': '/learn/science'}],

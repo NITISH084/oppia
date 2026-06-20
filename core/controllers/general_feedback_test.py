@@ -27,7 +27,7 @@ from core.domain import (
 )
 from core.tests import test_utils
 
-from typing import Dict, Optional
+from typing import Optional
 
 
 class FeedbackSubmitHandlerTests(test_utils.GenericTestBase):
@@ -149,7 +149,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
     ) -> general_feedback_domain.PlatformFeedback:
         """Returns a PlatformFeedback domain object."""
         return general_feedback_domain.PlatformFeedback(
-            id=report_id,
+            report_id=report_id,
             feedback_text='The card image is broken.',
             source=source,
             platform='web',

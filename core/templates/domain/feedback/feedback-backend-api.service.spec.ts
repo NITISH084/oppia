@@ -231,7 +231,7 @@ describe('Feedback backend api service', () => {
       .submitSiteAndLessonIssueReportAsync(issueReportPayload, 'captcha-token')
       .then(onSuccess);
     flushMicrotasks();
-    const req = httpTestingController.expectOne('/report');
+    const req = httpTestingController.expectOne('/platform-feedback');
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toEqual({
       ...issueReportPayload.toBackendDict(),
@@ -252,7 +252,7 @@ describe('Feedback backend api service', () => {
       .catch(onFailure);
     flushMicrotasks();
 
-    const req = httpTestingController.expectOne('/report');
+    const req = httpTestingController.expectOne('/platform-feedback');
     req.flush(
       {error: 'Invalid feedback.'},
       {

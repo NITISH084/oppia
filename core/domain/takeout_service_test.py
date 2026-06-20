@@ -54,7 +54,6 @@ if MYPY:  # pragma: no cover
     from mypy_imports import exp_models as exploration_models
     from mypy_imports import (
         feedback_models,
-        general_feedback_models,
         improvements_models,
         learner_group_models,
         question_models,
@@ -76,7 +75,6 @@ if MYPY:  # pragma: no cover
     config_models,
     exploration_models,
     feedback_models,
-    general_feedback_models,
     improvements_models,
     learner_group_models,
     question_models,
@@ -97,7 +95,6 @@ if MYPY:  # pragma: no cover
         models.Names.CONFIG,
         models.Names.EXPLORATION,
         models.Names.FEEDBACK,
-        models.Names.GENERAL_FEEDBACK,
         models.Names.IMPROVEMENTS,
         models.Names.LEARNER_GROUP,
         models.Names.QUESTION,
@@ -412,14 +409,6 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
     ANDROID_DEVICE_MODEL: Final = 'Pixel 4a'
     ANDROID_SDK_VERSION: Final = 28
     ENTRY_POINT_NAVIGATION_DRAWER: Final = 'navigation_drawer'
-    WEB_FEEDBACK_CATEGORY: Final = 'platform'
-    WEB_FEEDBACK_PAGE_URL: Final = '/learn'
-    WEB_FEEDBACK_LANGUAGE_CODE: Final = 'en'
-    WEB_FEEDBACK_RATING: Final = 5
-    WEB_FEEDBACK_TARGET_TYPE: Final = 'general'
-    WEB_FEEDBACK_TARGET_ID: Final = 'learn_page'
-    WEB_FEEDBACK_STATUS: Final = 'open'
-    WEB_FEEDBACK_TEXT: Final = 'Web feedback export test.'
     TEXT_LANGUAGE_CODE_ENGLISH: Final = 'en'
     AUDIO_LANGUAGE_CODE_ENGLISH: Final = 'en'
     ANDROID_REPORT_INFO: Dict[
@@ -1348,16 +1337,6 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
         expected_blog_author_details: Dict[str, Dict[str, str]] = {}
         expected_learner_group_model_data: Dict[str, str] = {}
         expected_learner_grp_user_model_data: Dict[str, str] = {}
-        # Here we use type Any because this dictionary contains other
-        # different types of dictionaries whose values can vary from int
-        # to complex Union types. So, to make this Dict generalized for
-        # every other Dict. We used Any here.
-        expected_web_feedback_thread_data: Dict[
-            str, Dict[str, Union[str, bool, int, float, None]]
-        ] = {}
-        expected_web_feedback_message_data: Dict[
-            str, Dict[str, Union[str, int, float, None]]
-        ] = {}
 
         # Here we use type Any because this dictionary contains other
         # different types of dictionaries whose values can vary from int
@@ -1421,8 +1400,6 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
             ),
             'user_auth_details': expected_user_auth_details,
             'user_email_preferences': expected_user_email_preferences,
-            'web_feedback_message': expected_web_feedback_message_data,
-            'web_feedback_thread': expected_web_feedback_thread_data,
         }
 
         # Perform export and compare.
@@ -2342,8 +2319,6 @@ class TakeoutServiceFullUserUnitTests(test_utils.GenericTestBase):
             'blog_post': expected_blog_post_data,
             'blog_post_rights': expected_blog_post_rights,
             'blog_author_details': expected_blog_author_details,
-            'web_feedback_message': expected_web_feedback_message_data,
-            'web_feedback_thread': expected_web_feedback_thread_data,
         }
 
         with open(

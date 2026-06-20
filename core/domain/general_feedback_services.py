@@ -20,7 +20,7 @@ from core import utils
 from core.domain import general_feedback_domain
 from core.platform import models
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union, cast
 
 MYPY = False
 if MYPY:  # pragma: no cover
@@ -31,11 +31,6 @@ if MYPY:  # pragma: no cover
 )
 
 _PLATFORM_WEB: str = general_feedback_models.PLATFORM_WEB
-
-
-# ---------------------------------------------------------------------------
-# Private helpers — model → domain
-# ---------------------------------------------------------------------------
 
 
 def _lesson_feedback_model_to_domain(
@@ -111,7 +106,7 @@ def _platform_feedback_model_to_domain(
         }
 
     return general_feedback_domain.PlatformFeedback(
-        id=model.id,
+        report_id=model.id,
         feedback_text=model.feedback_text,
         source=model.source,
         platform=model.platform,
@@ -150,7 +145,11 @@ def create_lesson_feedback(
     feedback_id = general_feedback_models.LessonFeedbackModel.create(
         author_id=author_id,
         feedback_text=feedback_text,
-        lesson_metadata_json=lesson_metadata_json,
+        # Here we use cast because lesson_metadata_json is a TypedDict, while
+        # the storage model create() method expects a Dict.
+        lesson_metadata_json=cast(
+            Dict[str, Union[str, int, None]], lesson_metadata_json
+        ),
         parent_feedback_id=parent_feedback_id,
     )
 
@@ -163,6 +162,8 @@ def create_platform_report(
     source: str,
     category: Optional[str],
     lesson_metadata_json: Optional[general_feedback_domain.LessonMetadataDict],
+    # Here we use object because session-info diagnostics are heterogeneous
+    # JSON-like payloads (nested dict/list values) from client logs.
     session_info_json: Optional[Dict[str, object]],
     screenshot_filename: Optional[str],
     screenshot_entity_id: Optional[str],
@@ -209,7 +210,11 @@ def create_platform_report(
         source=model_source,
         platform=_PLATFORM_WEB,
         category=category,
-        lesson_metadata_json=lesson_metadata_json,
+        # Here we use cast because lesson_metadata_json is a TypedDict, while
+        # the storage model create() method expects a Dict.
+        lesson_metadata_json=cast(
+            Optional[Dict[str, Union[str, int, None]]], lesson_metadata_json
+        ),
         include_technical_logs=include_technical_logs,
         screenshot_filename=screenshot_filename,
         screenshot_entity_id=screenshot_entity_id,

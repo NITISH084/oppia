@@ -190,7 +190,7 @@ class PlatformFeedback:
 
     def __init__(
         self,
-        id: str,
+        report_id: str,
         feedback_text: str,
         source: str,
         platform: str,
@@ -203,7 +203,7 @@ class PlatformFeedback:
         screenshot_filename: Optional[str] = None,
         screenshot_entity_id: Optional[str] = None,
     ) -> None:
-        self.id = id
+        self.id = report_id
         self.feedback_text = feedback_text
         self.source = source
         self.platform = platform

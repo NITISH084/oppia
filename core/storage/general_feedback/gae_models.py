@@ -18,13 +18,10 @@
 
 from __future__ import annotations
 
-import datetime
-
 from core import feconf, utils
-from core.domain import general_feedback_domain
 from core.platform import models
 
-from typing import Dict, Final, List, Literal, Optional, Sequence, Tuple, Union
+from typing import Dict, Final, List, Literal, Optional, Sequence, Union
 
 MYPY = False
 if MYPY:  # pragma: no cover
@@ -73,7 +70,7 @@ SOURCE_LESSON: Final = 'lesson'
 SOURCE_APP: Final = 'app'
 SOURCE_CHOICES: Final = [SOURCE_LESSON, SOURCE_APP]
 
-# platform choices.
+# Platform choices.
 PLATFORM_WEB: Final = 'web'
 PLATFORM_ANDROID: Final = 'android'
 PLATFORM_CHOICES: Final = [PLATFORM_WEB, PLATFORM_ANDROID]
@@ -144,20 +141,14 @@ class BaseFeedbackModel(base_models.BaseModel):
     @staticmethod
     def get_deletion_policy() -> base_models.DELETION_POLICY:
         """Subclasses must override this."""
-        raise NotImplementedError(
-            'Subclasses of BaseFeedbackModel must implement '
-            'get_deletion_policy().'
-        )
+        return base_models.DELETION_POLICY.NOT_APPLICABLE
 
     @staticmethod
     def get_model_association_to_user() -> (
         base_models.MODEL_ASSOCIATION_TO_USER
     ):
         """Subclasses must override this."""
-        raise NotImplementedError(
-            'Subclasses of BaseFeedbackModel must implement '
-            'get_model_association_to_user().'
-        )
+        return base_models.MODEL_ASSOCIATION_TO_USER.NOT_CORRESPONDING_TO_USER
 
     @classmethod
     def get_export_policy(cls) -> Dict[str, base_models.EXPORT_POLICY]:
@@ -322,9 +313,15 @@ class LessonFeedbackModel(BaseFeedbackModel):
         }
 
     @classmethod
-    def export_data(
-        cls, user_id: str
-    ) -> Dict[str, Dict[str, Union[str, int, float, bool, None, list]]]:
+    def export_data(cls, user_id: str) -> Dict[
+        str,
+        Dict[
+            str,
+            Union[
+                str, int, float, bool, None, List[Dict[str, Union[str, float]]]
+            ],
+        ],
+    ]:
         """Exports lesson feedback data corresponding to a user_id.
 
         Args:
@@ -373,7 +370,7 @@ class LessonFeedbackModel(BaseFeedbackModel):
         cls,
         author_id: str,
         feedback_text: str,
-        lesson_metadata_json: general_feedback_domain.LessonMetadataDict,
+        lesson_metadata_json: Dict[str, Union[str, int, None]],
         parent_feedback_id: Optional[str] = None,
     ) -> str:
         """Creates a new LessonFeedbackModel and returns its ID.
@@ -546,9 +543,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
         source: str,
         platform: str,
         category: Optional[str],
-        lesson_metadata_json: Optional[
-            general_feedback_domain.LessonMetadataDict
-        ],
+        lesson_metadata_json: Optional[Dict[str, Union[str, int, None]]],
         include_technical_logs: bool,
         screenshot_filename: Optional[str],
         screenshot_entity_id: Optional[str],
@@ -556,7 +551,6 @@ class PlatformFeedbackModel(BaseFeedbackModel):
         """Creates a new PlatformFeedbackModel and returns its ID.
 
         Args:
-            author_id: None.
             feedback_text: str. The text body of the report.
             source: str. Origin of the report ("lesson" | "app").
             platform: str. Platform of the report ("web" | "android").
