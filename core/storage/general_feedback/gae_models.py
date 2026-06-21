@@ -580,7 +580,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
                 return DESTINATION_TECHNICAL_CORE_TEAM
 
     @classmethod
-    def has_reference_to_user_id(cls) -> bool:
+    def has_reference_to_user_id(cls, _user_id: str) -> bool:
         """Returns whether t adhis model has a reference to the given user ID."""
         return False
 
