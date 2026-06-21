@@ -33,7 +33,7 @@ import {
 
 interface FeedbackScreenshotSubmissionData {
   screenshotFilename: string | null;
-  screenshotFile: String | null;
+  screenshotFile: string | null;
 }
 
 @Injectable({

@@ -21,7 +21,7 @@ from __future__ import annotations
 from core.domain import general_feedback_domain
 from core.tests import test_utils
 
-from typing import Dict, List
+from typing import List
 
 LESSON_METADATA: general_feedback_domain.LessonMetadataDict = {
     'exploration_id': 'exp_001',

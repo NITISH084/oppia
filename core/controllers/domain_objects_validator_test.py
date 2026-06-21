@@ -37,7 +37,6 @@ from core.tests import test_utils
 
 from typing import Dict, List, Mapping, Optional, Union, cast
 
-
 VALID_LESSON_METADATA: general_feedback_domain.LessonMetadataDict = {
     'exploration_id': 'exp_001',
     'exploration_version': 3,
@@ -1655,6 +1654,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.exploration_id must be a non-empty string',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 
@@ -1665,6 +1666,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             Exception,
             'lesson_metadata_json.exploration_id must be a non-empty string',
         ):
+            # Here we use MyPy ignore because we intentionally pass an
+            # invalid type to verify validator behavior for malformed input.
             domain_objects_validator.validate_lesson_metadata_fields(
                 metadata  # type: ignore[arg-type]
             )
@@ -1677,6 +1680,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.exploration_version must be an integer',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 
@@ -1688,6 +1693,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.exploration_version must be an integer',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 
@@ -1699,6 +1706,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.state_name must be a non-empty string',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 
@@ -1710,6 +1719,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.state_name must be a non-empty string',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 
@@ -1721,6 +1732,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.state_index must be a non-negative integer',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 
@@ -1732,6 +1745,8 @@ class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
             'lesson_metadata_json.state_index must be a non-negative integer',
         ):
             domain_objects_validator.validate_lesson_metadata_fields(
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
                 metadata  # type: ignore[arg-type]
             )
 

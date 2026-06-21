@@ -34,7 +34,7 @@ if MYPY:  # pragma: no cover
 class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
     """Tests for general feedback services."""
 
-    def _get_lesson_metadata(
+    def get_lesson_metadata(
         self,
     ) -> general_feedback_domain.LessonMetadataDict:
         """Returns valid lesson metadata."""
@@ -50,7 +50,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         feedback = general_feedback_services.create_lesson_feedback(
             author_id='user_id',
             feedback_text='This lesson helped.',
-            lesson_metadata_json=self._get_lesson_metadata(),
+            lesson_metadata_json=self.get_lesson_metadata(),
         )
 
         self.assertEqual(feedback.author_id, 'user_id')
@@ -58,7 +58,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         self.assertEqual(
             feedback.status, general_feedback_models.STATUS_CHOICES_OPEN
         )
-        self.assertEqual(feedback.lesson_metadata, self._get_lesson_metadata())
+        self.assertEqual(feedback.lesson_metadata, self.get_lesson_metadata())
         self.assertEqual(feedback.response_list, [])
         self.assertEqual(feedback.response_count, 0)
         self.assertEqual(feedback.seen_response_count, 0)
@@ -69,7 +69,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
         feedback = general_feedback_services.create_lesson_feedback(
             author_id='user_id',
             feedback_text='Follow-up feedback.',
-            lesson_metadata_json=self._get_lesson_metadata(),
+            lesson_metadata_json=self.get_lesson_metadata(),
             parent_feedback_id='parent_id',
         )
 
@@ -82,7 +82,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             feedback_text='There is a typo.',
             source='lesson',
             category=general_feedback_models.CATEGORY_TYPO,
-            lesson_metadata_json=self._get_lesson_metadata(),
+            lesson_metadata_json=self.get_lesson_metadata(),
             session_info_json=None,
             screenshot_filename=None,
             screenshot_entity_id=None,
@@ -98,7 +98,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             general_feedback_models.DESTINATION_CREATOR,
         )
         self.assertEqual(report.category, general_feedback_models.CATEGORY_TYPO)
-        self.assertEqual(report.lesson_metadata, self._get_lesson_metadata())
+        self.assertEqual(report.lesson_metadata, self.get_lesson_metadata())
         self.assertFalse(report.include_technical_logs)
 
     def test_create_platform_report_for_site_maps_source_to_app(self) -> None:
@@ -144,7 +144,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             feedback_text='The card image is broken.',
             source='lesson',
             category=general_feedback_models.CATEGORY_BROKEN_LAYOUT_OR_IMAGE,
-            lesson_metadata_json=self._get_lesson_metadata(),
+            lesson_metadata_json=self.get_lesson_metadata(),
             session_info_json=session_info,
             screenshot_filename='feedback.png',
             screenshot_entity_id='entity_id',
@@ -177,37 +177,38 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             session_info['environment_json'],
         )
 
+    def test_create_platform_report_sanitizes_invalid_session_info(
+        self,
+    ) -> None:
+        # Here we use object because session-info diagnostics are heterogeneous
+        # JSON-like payloads (nested dict/list values) from client logs.
+        session_info: Dict[str, object] = {
+            'console_logs_json': 'invalid',
+            'failed_requests_json': 'invalid',
+            'navigation_history_json': 'invalid',
+            'environment_json': 'invalid',
+        }
 
-def test_create_platform_report_sanitizes_invalid_session_info(self) -> None:
-    # Here we use object because session-info diagnostics are heterogeneous
-    # JSON-like payloads (nested dict/list values) from client logs.
-    session_info: Dict[str, object] = {
-        'console_logs_json': 'invalid',
-        'failed_requests_json': 'invalid',
-        'navigation_history_json': 'invalid',
-        'environment_json': 'invalid',
-    }
+        report = general_feedback_services.create_platform_report(
+            feedback_text='Broken page',
+            source='lesson',
+            category=(general_feedback_models.CATEGORY_BROKEN_LAYOUT_OR_IMAGE),
+            lesson_metadata_json=self.get_lesson_metadata(),
+            session_info_json=session_info,
+            screenshot_filename=None,
+            screenshot_entity_id=None,
+            include_technical_logs=True,
+            page_url='https://oppia.org/learn',
+        )
 
-    report = general_feedback_services.create_platform_report(
-        feedback_text='Broken page',
-        source='lesson',
-        category=(general_feedback_models.CATEGORY_BROKEN_LAYOUT_OR_IMAGE),
-        lesson_metadata_json=self._get_lesson_metadata(),
-        session_info_json=session_info,
-        screenshot_filename=None,
-        screenshot_entity_id=None,
-        include_technical_logs=True,
-        page_url='https://oppia.org/learn',
-    )
+        session_model = (
+            general_feedback_models.FeedbackSessionLogModel.get_by_id(report.id)
+        )
 
-    session_model = general_feedback_models.FeedbackSessionLogModel.get_by_id(
-        report.id
-    )
-
-    self.assertEqual(session_model.console_logs_json, [])
-    self.assertEqual(session_model.failed_requests_json, [])
-    self.assertEqual(session_model.navigation_history_json, [])
-    self.assertEqual(session_model.environment_json, {})
+        self.assertEqual(session_model.console_logs_json, [])
+        self.assertEqual(session_model.failed_requests_json, [])
+        self.assertEqual(session_model.navigation_history_json, [])
+        self.assertEqual(session_model.environment_json, {})
 
     def test_create_platform_report_raises_for_missing_lesson_metadata(
         self,

@@ -280,7 +280,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
         )
 
@@ -294,7 +294,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
             include_technical_logs=False,
             screenshot_filename='step3.png',
             screenshot_entity_id='entity_step3',
-            page_url="https://oppia.org/donate",
+            page_url='https://oppia.org/donate',
         )
 
         # Site (app) report → technical dashboard.
@@ -308,7 +308,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
         )
 
@@ -375,7 +375,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
 
     def test_create_raises_error_for_invalid_source(self) -> None:
@@ -409,7 +409,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
 
     def test_create_raises_error_when_app_report_includes_lesson_metadata(
@@ -427,7 +427,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
 
     def test_create_raises_error_when_only_screenshot_filename_is_provided(
@@ -447,7 +447,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename='only_filename.png',
                 screenshot_entity_id=None,
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
 
     def test_create_raises_error_when_only_screenshot_entity_id_is_provided(
@@ -467,7 +467,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id='only_entity_id',
-                page_url="https://oppia.org/donate",
+                page_url='https://oppia.org/donate',
             )
 
     def test_typo_lesson_report_routes_to_creator_dashboard(self) -> None:
