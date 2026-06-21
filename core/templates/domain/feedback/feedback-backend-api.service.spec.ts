@@ -148,7 +148,7 @@ describe('Feedback backend api service', () => {
     ]);
     expect(onSuccess).toHaveBeenCalledWith({
       screenshotFilename: 'reply.png',
-      screenshotFile: {'reply.png': 'aW1hZ2UtZGF0YQ=='},
+      screenshotFile: 'aW1hZ2UtZGF0YQ==',
     });
   }));
 

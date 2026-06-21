@@ -280,10 +280,11 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
+                page_url="https://oppia.org/donate",
             )
         )
 
-        # Lesson report → category broken_layout_or_image → technical dashboard.
+        # Lesson report → category broken_layout_or_image → technical dashboard(LEAP).
         self.report_id_broken = general_feedback_models.PlatformFeedbackModel.create(
             feedback_text='Image on step 3 fails to load.',
             source=general_feedback_models.SOURCE_LESSON,
@@ -293,6 +294,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
             include_technical_logs=False,
             screenshot_filename='step3.png',
             screenshot_entity_id='entity_step3',
+            page_url="https://oppia.org/donate",
         )
 
         # Site (app) report → technical dashboard.
@@ -306,6 +308,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
+                page_url="https://oppia.org/donate",
             )
         )
 
@@ -335,6 +338,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 'lesson_metadata_json': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 # Fields specific to PlatformFeedbackModel.
                 'source': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'page_url': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'platform': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'destination_dashboard': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'category': base_models.EXPORT_POLICY.NOT_APPLICABLE,
@@ -356,15 +360,6 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
         self.assertNotEqual(self.report_id_typo, self.report_id_broken)
         self.assertNotEqual(self.report_id_typo, self.report_id_app)
 
-    def test_has_reference_to_user_id_returns_false_for_any_user(
-        self,
-    ) -> None:
-        self.assertFalse(
-            general_feedback_models.PlatformFeedbackModel.has_reference_to_user_id(
-                self.USER_ID
-            )
-        )
-
     def test_create_raises_error_when_lesson_report_has_no_metadata(
         self,
     ) -> None:
@@ -376,6 +371,23 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 source=general_feedback_models.SOURCE_LESSON,
                 platform=general_feedback_models.PLATFORM_WEB,
                 category=general_feedback_models.CATEGORY_TYPO,
+                lesson_metadata_json=None,
+                include_technical_logs=False,
+                screenshot_filename=None,
+                screenshot_entity_id=None,
+                page_url="https://oppia.org/donate",
+            )
+
+    def test_create_raises_error_for_invalid_source(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError, 'Invalid source: invalid_source'
+        ):
+            general_feedback_models.PlatformFeedbackModel.create(
+                feedback_text='test',
+                source='invalid_source',
+                platform=general_feedback_models.PLATFORM_WEB,
+                page_url='https://oppia.org/donate',
+                category=None,
                 lesson_metadata_json=None,
                 include_technical_logs=False,
                 screenshot_filename=None,
@@ -397,6 +409,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
+                page_url="https://oppia.org/donate",
             )
 
     def test_create_raises_error_when_app_report_includes_lesson_metadata(
@@ -414,6 +427,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id=None,
+                page_url="https://oppia.org/donate",
             )
 
     def test_create_raises_error_when_only_screenshot_filename_is_provided(
@@ -433,6 +447,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename='only_filename.png',
                 screenshot_entity_id=None,
+                page_url="https://oppia.org/donate",
             )
 
     def test_create_raises_error_when_only_screenshot_entity_id_is_provided(
@@ -452,6 +467,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
                 include_technical_logs=False,
                 screenshot_filename=None,
                 screenshot_entity_id='only_entity_id',
+                page_url="https://oppia.org/donate",
             )
 
     def test_typo_lesson_report_routes_to_creator_dashboard(self) -> None:
@@ -475,6 +491,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
             include_technical_logs=False,
             screenshot_filename=None,
             screenshot_entity_id=None,
+            page_url="https://oppia.org/explore/1",
         )
         report_model = general_feedback_models.PlatformFeedbackModel.get_by_id(
             report_id
@@ -492,10 +509,10 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
         )
         self.assertEqual(
             report_model.destination_dashboard,
-            general_feedback_models.DESTINATION_TECHNICAL,
+            general_feedback_models.DESTINATION_TECHNICAL_LEAP_TEAM,
         )
 
-    def test_other_or_not_sure_routes_to_technical_dashboard(self) -> None:
+    def test_non_leap_page_routes_to_core_dashboard(self) -> None:
         report_id = general_feedback_models.PlatformFeedbackModel.create(
             feedback_text='Not sure what category this falls under.',
             source=general_feedback_models.SOURCE_LESSON,
@@ -505,13 +522,14 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
             include_technical_logs=False,
             screenshot_filename=None,
             screenshot_entity_id=None,
+            page_url="https://oppia.org/contributor-dashboard",
         )
         report_model = general_feedback_models.PlatformFeedbackModel.get_by_id(
             report_id
         )
         self.assertEqual(
             report_model.destination_dashboard,
-            general_feedback_models.DESTINATION_TECHNICAL,
+            general_feedback_models.DESTINATION_TECHNICAL_CORE_TEAM,
         )
 
     def test_app_report_always_routes_to_technical_dashboard(self) -> None:
@@ -520,7 +538,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
         )
         self.assertEqual(
             report_model.destination_dashboard,
-            general_feedback_models.DESTINATION_TECHNICAL,
+            general_feedback_models.DESTINATION_TECHNICAL_LEAP_TEAM,
         )
 
     def test_generate_new_id_raises_error_after_many_collisions(

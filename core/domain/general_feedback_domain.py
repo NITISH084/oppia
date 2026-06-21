@@ -93,7 +93,7 @@ class PlatformFeedbackSubmitPayloadDict(TypedDict):
     # JSON-like payloads (nested dict/list values) from client logs.
     session_info: Optional[Dict[str, object]]
     screenshot_filename: Optional[str]
-    screenshot_file: Optional[Dict[str, str]]
+    screenshot_file: Optional[str]
 
 
 class LessonFeedback:

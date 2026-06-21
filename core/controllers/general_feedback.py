@@ -43,21 +43,19 @@ _ALLOWED_REPORT_CATEGORIES = (
 
 def _resolve_feedback_screenshot_entity_id(
     screenshot_filename: str,
-    screenshot_file: Dict[str, str],
+    screenshot_file: str,
 ) -> str:
     """Decodes a base64 screenshot, validates and saves it, returns entity ID.
 
     Args:
         screenshot_filename: str. Filename of the screenshot.
-        screenshot_file: Dict[str, str]. Mapping of filename to base64-encoded
+        screenshot_file: str. The base64-encoded
             image data.
 
     Returns:
         str. The GCS entity ID under which the image was saved.
     """
-    decoded_image = base64.decodebytes(
-        screenshot_file[screenshot_filename].encode('utf-8')
-    )
+    decoded_image = base64.decodebytes(screenshot_file.encode('utf-8'))
     entity_id = utils.convert_to_hash(uuid.uuid4().hex, 22)
     fs_services.validate_and_save_image(
         decoded_image,
@@ -75,12 +73,7 @@ class LessonFeedbackSubmitHandler(
         Dict[str, str],
     ]
 ):
-    """Handler for learner lesson feedback submissions.
-
-    POST /feedback
-    Requires a logged-in user (enforced by can_play_exploration_as_logged_in_user).
-    Creates one LessonFeedbackModel per submission.
-    """
+    """Handler for learner lesson feedback submissions."""
 
     POST_HANDLER_ERROR_RETURN_TYPE = feconf.HANDLER_TYPE_JSON
     URL_PATH_ARGS_SCHEMAS = {}
@@ -119,7 +112,6 @@ class LessonFeedbackSubmitHandler(
                 'You must be logged in to submit feedback.'
             )
         assert self.normalized_payload is not None
-        assert self.user_id is not None
         payload = self.normalized_payload
         feedback_text = payload['feedback_text']
         lesson_metadata_json = payload['lesson_metadata_json']
@@ -218,10 +210,7 @@ class PlatformFeedbackSubmitHandler(
             },
             'screenshot_file': {
                 'schema': {
-                    'type': 'object_dict',
-                    'validation_method': (
-                        domain_objects_validator.validate_feedback_screenshot_file
-                    ),
+                    'type': 'basestring',
                 },
                 'default_value': None,
             },

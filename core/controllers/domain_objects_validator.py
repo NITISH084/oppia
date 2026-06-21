@@ -703,35 +703,6 @@ def validate_feedback_session_info_log_entries(
     }
 
 
-def validate_feedback_screenshot_file(
-    screenshot_file: Optional[Dict[str, str]],
-) -> Optional[Dict[str, str]]:
-    """Validates the screenshot file.
-
-    Args:
-        screenshot_file: dict. The screenshot file to be validated.
-
-    Returns:
-        dict. The validated screenshot file.
-    """
-    if screenshot_file is None:
-        return None
-
-    files = screenshot_file
-
-    if len(files) > 1:
-        raise utils.ValidationError('Only one screenshot file is allowed.')
-
-    for filename, encoded_data in files.items():
-        if not isinstance(filename, str):
-            raise utils.ValidationError('Filename should be a string.')
-
-        if not isinstance(encoded_data, str):
-            raise utils.ValidationError('Screenshot data should be a string.')
-
-    return files
-
-
 def validate_lesson_feedback_submit_payload_coupling(
     payload: general_feedback_domain.FeedbackSubmitPayloadDict,
 ) -> None:
@@ -828,7 +799,7 @@ def validate_lesson_metadata_fields(
         )
 
     exploration_version = lesson_metadata_json.get('exploration_version')
-    if not isinstance(exploration_version, int):
+    if not isinstance(exploration_version, int) or exploration_version < 0:
         raise base.BaseHandler.InvalidInputException(
             'lesson_metadata_json.exploration_version must be an integer.'
         )

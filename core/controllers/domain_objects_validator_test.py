@@ -26,6 +26,7 @@ from core.controllers import domain_objects_validator
 from core.domain import (
     blog_services,
     change_domain,
+    general_feedback_domain,
     improvements_domain,
     question_domain,
     state_domain,
@@ -35,6 +36,64 @@ from core.domain import (
 from core.tests import test_utils
 
 from typing import Dict, List, Mapping, Optional, Union, cast
+
+
+VALID_LESSON_METADATA: general_feedback_domain.LessonMetadataDict = {
+    'exploration_id': 'exp_001',
+    'exploration_version': 3,
+    'state_name': 'Introduction',
+    'state_index': 0,
+    'learner_current_answer': 'Paris',
+}
+
+# Here we use object because session-info diagnostics are heterogeneous
+# JSON-like payloads (nested dict/list values) from client logs.
+VALID_SESSION_INFO: Dict[str, object] = {
+    'console_logs_json': [],
+    'failed_requests_json': [],
+    'navigation_history_json': [],
+    'environment_json': {
+        'client_time_msecs': 1767225602000,
+        'timezone_offset_mins': -330,
+        'user_agent': 'Mozilla/5.0',
+        'viewport': {'width': 1920, 'height': 1080},
+        'page': {
+            'url': 'http://oppia.org/explore/exp_001',
+            'title': 'Fractions',
+        },
+        'locale': {'language_code': 'en', 'direction': 'ltr'},
+    },
+}
+
+VALID_SCREENSHOT_FILE: str = 'aGVsbG8='
+
+VALID_LESSON_REPORT_PAYLOAD: (
+    general_feedback_domain.PlatformFeedbackSubmitPayloadDict
+) = {
+    'source': 'lesson',
+    'report_message': 'The image in step 3 is broken.',
+    'category': 'broken_layout_or_image',
+    'lesson_metadata_json': VALID_LESSON_METADATA,
+    'include_technical_logs': False,
+    'session_info': None,
+    'screenshot_filename': None,
+    'screenshot_file': None,
+    'page_url': 'https://oppia.org/explore/exp0',
+}
+
+VALID_SITE_REPORT_PAYLOAD: (
+    general_feedback_domain.PlatformFeedbackSubmitPayloadDict
+) = {
+    'source': 'site',
+    'report_message': 'The site crashes on the home page.',
+    'category': None,
+    'lesson_metadata_json': None,
+    'include_technical_logs': False,
+    'session_info': None,
+    'screenshot_filename': None,
+    'screenshot_file': None,
+    'page_url': 'https://oppia.org/donate',
+}
 
 
 class ValidateSuggestionChangeTests(test_utils.GenericTestBase):
@@ -990,41 +1049,6 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
         # screenshot file dicts to exercise runtime validation.
         return cast(Dict[str, str], files)
 
-    def test_validate_feedback_screenshot_file(self) -> None:
-        self.assertIsNone(
-            domain_objects_validator.validate_feedback_screenshot_file(None)
-        )
-        valid_file = {'screenshot.png': 'data'}
-        self.assertEqual(
-            domain_objects_validator.validate_feedback_screenshot_file(
-                valid_file
-            ),
-            valid_file,
-        )
-
-        with self.assertRaisesRegex(
-            Exception, 'Only one screenshot file is allowed.'
-        ):
-            domain_objects_validator.validate_feedback_screenshot_file(
-                {
-                    'first.png': 'data',
-                    'second.png': 'data',
-                }
-            )
-        invalid_files = self._cast_to_screenshot_files({1: 'data'})
-        with self.assertRaisesRegex(Exception, 'Filename should be a string.'):
-            domain_objects_validator.validate_feedback_screenshot_file(
-                invalid_files
-            )
-
-        invalid_files = self._cast_to_screenshot_files({'screenshot.png': 1})
-        with self.assertRaisesRegex(
-            Exception, 'Screenshot data should be a string.'
-        ):
-            domain_objects_validator.validate_feedback_screenshot_file(
-                invalid_files
-            )
-
     def test_validate_feedback_session_info_log_entries_happy_path(
         self,
     ) -> None:
@@ -1596,3 +1620,334 @@ class ValidateGeneralFeedbackSessionInfoTests(test_utils.GenericTestBase):
             domain_objects_validator.validate_feedback_session_info_log_entries(
                 invalid_session_info
             )
+
+
+class ValidateLessonMetadataFieldsTests(test_utils.GenericTestBase):
+    """Tests for domain_objects_validator.validate_lesson_metadata_fields."""
+
+    def test_valid_metadata_with_answer_passes_and_returns_unchanged(
+        self,
+    ) -> None:
+        result = domain_objects_validator.validate_lesson_metadata_fields(
+            VALID_LESSON_METADATA
+        )
+        self.assertEqual(result, VALID_LESSON_METADATA)
+
+    def test_valid_metadata_with_null_answer_passes(self) -> None:
+        VALID_LESSON_METADATA['learner_current_answer'] = None
+        result = domain_objects_validator.validate_lesson_metadata_fields(
+            VALID_LESSON_METADATA
+        )
+        self.assertIsNone(result['learner_current_answer'])
+
+    def test_valid_metadata_with_state_index_zero_passes(self) -> None:
+        VALID_LESSON_METADATA['state_index'] = 0
+        result = domain_objects_validator.validate_lesson_metadata_fields(
+            VALID_LESSON_METADATA
+        )
+        self.assertEqual(result['state_index'], 0)
+
+    def test_raises_when_exploration_id_is_empty_string(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['exploration_id'] = ''
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.exploration_id must be a non-empty string',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_exploration_id_is_not_a_string(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['exploration_id'] = 123
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.exploration_id must be a non-empty string',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_exploration_version_is_negative(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['exploration_version'] = -1
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.exploration_version must be an integer',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_exploration_version_is_a_string(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['exploration_version'] = '3'
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.exploration_version must be an integer',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_state_name_is_empty_string(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['state_name'] = ''
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.state_name must be a non-empty string',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_state_name_is_not_a_string(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['state_name'] = 42
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.state_name must be a non-empty string',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_state_index_is_negative(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['state_index'] = -1
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.state_index must be a non-negative integer',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+    def test_raises_when_state_index_is_a_string(self) -> None:
+        metadata = dict(VALID_LESSON_METADATA)
+        metadata['state_index'] = '0'
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json.state_index must be a non-negative integer',
+        ):
+            domain_objects_validator.validate_lesson_metadata_fields(
+                metadata  # type: ignore[arg-type]
+            )
+
+
+class ValidateLessonFeedbackSubmitPayloadCouplingTests(
+    test_utils.GenericTestBase
+):
+    """Tests for validate_lesson_feedback_submit_payload_coupling."""
+
+    def test_valid_payload_passes_without_raising(self) -> None:
+        payload = general_feedback_domain.FeedbackSubmitPayloadDict(
+            feedback_text='valid text',
+            lesson_metadata_json=VALID_LESSON_METADATA,
+        )
+        domain_objects_validator.validate_lesson_feedback_submit_payload_coupling(
+            payload
+        )
+
+    def test_raises_when_feedback_text_is_empty_string(self) -> None:
+        payload = general_feedback_domain.FeedbackSubmitPayloadDict(
+            feedback_text='', lesson_metadata_json=VALID_LESSON_METADATA
+        )
+        with self.assertRaisesRegex(
+            Exception,
+            'feedback_text must not be empty',
+        ):
+            domain_objects_validator.validate_lesson_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_feedback_text_is_only_whitespace(self) -> None:
+        payload = general_feedback_domain.FeedbackSubmitPayloadDict(
+            feedback_text='   ', lesson_metadata_json=VALID_LESSON_METADATA
+        )
+        with self.assertRaisesRegex(
+            Exception,
+            'feedback_text must not be empty',
+        ):
+            domain_objects_validator.validate_lesson_feedback_submit_payload_coupling(
+                payload
+            )
+
+
+class ValidatePlatformFeedbackSubmitPayloadCouplingTests(
+    test_utils.GenericTestBase
+):
+    """Tests for validate_platform_feedback_submit_payload_coupling."""
+
+    def test_valid_lesson_report_without_screenshot_passes(self) -> None:
+        payload = copy.deepcopy(VALID_LESSON_REPORT_PAYLOAD)
+        domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+            payload
+        )
+
+    def test_valid_lesson_report_with_screenshot_passes(self) -> None:
+        payload = copy.deepcopy(VALID_LESSON_REPORT_PAYLOAD)
+        payload['screenshot_filename'] = 'step3.png'
+        payload['screenshot_file'] = VALID_SCREENSHOT_FILE
+        domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+            payload
+        )
+
+    def test_valid_lesson_report_with_session_info_passes(self) -> None:
+        payload = copy.deepcopy(VALID_LESSON_REPORT_PAYLOAD)
+        payload['include_technical_logs'] = True
+        payload['session_info'] = VALID_SESSION_INFO
+        domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+            payload
+        )
+
+    def test_valid_site_report_passes(self) -> None:
+        payload = VALID_SITE_REPORT_PAYLOAD
+        domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+            payload
+        )
+
+    def test_valid_site_report_with_screenshot_passes(self) -> None:
+        payload = VALID_SITE_REPORT_PAYLOAD
+        payload['screenshot_filename'] = 'error.png'
+        payload['screenshot_file'] = VALID_SCREENSHOT_FILE
+        domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+            payload
+        )
+
+    def test_raises_when_report_message_is_empty_string(self) -> None:
+        payload = copy.deepcopy(VALID_LESSON_REPORT_PAYLOAD)
+        payload['report_message'] = ''
+        with self.assertRaisesRegex(
+            Exception,
+            'report_message must not be empty',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_report_message_is_only_whitespace(self) -> None:
+        payload = copy.deepcopy(VALID_LESSON_REPORT_PAYLOAD)
+        payload['report_message'] = '   '
+        with self.assertRaisesRegex(
+            Exception,
+            'report_message must not be empty',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_lesson_report_has_no_lesson_metadata_json(
+        self,
+    ) -> None:
+        payload = copy.deepcopy(VALID_LESSON_REPORT_PAYLOAD)
+        payload['lesson_metadata_json'] = None
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json is required for lesson reports',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_site_report_includes_category(self) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['category'] = 'category'
+        with self.assertRaisesRegex(
+            Exception,
+            'category must be omitted for site reports',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_site_report_includes_lesson_metadata_json(
+        self,
+    ) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['lesson_metadata_json'] = VALID_LESSON_METADATA
+        with self.assertRaisesRegex(
+            Exception,
+            'lesson_metadata_json must be omitted for site reports',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_include_technical_logs_true_but_session_info_missing(
+        self,
+    ) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['include_technical_logs'] = True
+        payload['session_info'] = None
+        with self.assertRaisesRegex(
+            Exception,
+            'session_info must be provided when include_technical_logs is True',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_include_technical_logs_false_but_session_info_present(
+        self,
+    ) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['include_technical_logs'] = False
+        payload['session_info'] = VALID_SESSION_INFO
+        with self.assertRaisesRegex(
+            Exception,
+            'session_info must be omitted when include_technical_logs is False',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_screenshot_filename_provided_without_screenshot_file(
+        self,
+    ) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['screenshot_filename'] = 'error.png'
+        payload['screenshot_file'] = None
+        with self.assertRaisesRegex(
+            Exception,
+            'screenshot_file is required when screenshot_filename is provided',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_screenshot_file_provided_without_screenshot_filename(
+        self,
+    ) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['screenshot_filename'] = None
+        payload['screenshot_file'] = VALID_SCREENSHOT_FILE
+        with self.assertRaisesRegex(
+            Exception,
+            'screenshot_filename is required when screenshot_file is provided',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_raises_when_screenshot_filename_has_invalid_format(self) -> None:
+        # Names with path traversal, spaces, or forbidden characters are invalid.
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['screenshot_filename'] = '../error.png'
+        payload['screenshot_file'] = VALID_SCREENSHOT_FILE
+        with self.assertRaisesRegex(
+            Exception,
+            'screenshot_filename is invalid',
+        ):
+            domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+                payload
+            )
+
+    def test_valid_png_screenshot_filename_passes(self) -> None:
+        payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
+        payload['screenshot_filename'] = 'game.png'
+        payload['screenshot_file'] = VALID_SCREENSHOT_FILE
+        domain_objects_validator.validate_platform_feedback_submit_payload_coupling(
+            payload
+        )

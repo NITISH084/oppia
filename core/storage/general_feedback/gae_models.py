@@ -80,24 +80,30 @@ PLATFORM_CHOICES: Final = [PLATFORM_WEB, PLATFORM_ANDROID]
 DESTINATION_CREATOR: Final = 'creator'
 DESTINATION_TECHNICAL_LEAP_TEAM: Final = 'LEAP'
 DESTINATION_TECHNICAL_CORE_TEAM: Final = 'CORE'
-DESTINATION_CHOICES: Final = [DESTINATION_CREATOR, DESTINATION_TECHNICAL_LEAP_TEAM, DESTINATION_TECHNICAL_CORE_TEAM]
+DESTINATION_CHOICES: Final = [
+    DESTINATION_CREATOR,
+    DESTINATION_TECHNICAL_LEAP_TEAM,
+    DESTINATION_TECHNICAL_CORE_TEAM,
+]
 
-_LEAP_DASHBOARD_PATHS = frozenset([
-    'about',
-    'community-library',
-    'contact',
-    'explore',
-    'learn',
-    'learner-dashboard',
-    'lesson',
-    'profile',
-    'partnerships',
-    'preferences',
-    'volunteer',
-    'teach',
-    'blog'
-    'donate',
-])
+_LEAP_DASHBOARD_PATHS = frozenset(
+    [
+        'about',
+        'community-library',
+        'contact',
+        'explore',
+        'learn',
+        'learner-dashboard',
+        'lesson',
+        'profile',
+        'partnerships',
+        'preferences',
+        'volunteer',
+        'teach',
+        'blog',
+        'donate',
+    ]
+)
 
 # Constants used for generating new ids.
 _MAX_RETRIES: Final = 10
@@ -442,7 +448,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
 
         typo                        → creator
         confusing_or_incorrect_answer → creator
-        broken_layout_or_image      → technical 
+        broken_layout_or_image      → technical
         other_or_not_sure           → technical
         all site (app) reports      → technical
 
@@ -561,13 +567,13 @@ class PlatformFeedbackModel(BaseFeedbackModel):
         Returns:
             str. The destination dashboard ("creator" | "LEAP" | "CORE).
         """
-        if category in _CREATOR_DASHBOARD_CATEGORIES: 
+        if category in _CREATOR_DASHBOARD_CATEGORIES:
             return DESTINATION_CREATOR
-        else: 
+        else:
             parsed_url = urllib.parse.urlparse(page_url)
             path = parsed_url.path.strip('/')
             first_path_segement = path.split('/', 1)[0]
-            
+
             if first_path_segement in _LEAP_DASHBOARD_PATHS:
                 return DESTINATION_TECHNICAL_LEAP_TEAM
             else:
@@ -665,7 +671,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
             include_technical_logs=include_technical_logs,
             screenshot_filename=screenshot_filename,
             screenshot_entity_id=screenshot_entity_id,
-            page_url=page_url
+            page_url=page_url,
         )
         platform_feedback_model.update_timestamps()
         platform_feedback_model.put()

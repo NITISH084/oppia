@@ -20,6 +20,8 @@ from core.domain import general_feedback_domain, general_feedback_services
 from core.platform import models
 from core.tests import test_utils
 
+from typing import Dict
+
 MYPY = False
 if MYPY:  # pragma: no cover
     from mypy_imports import general_feedback_models
@@ -85,6 +87,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             screenshot_filename=None,
             screenshot_entity_id=None,
             include_technical_logs=False,
+            page_url='https://example.com',
         )
 
         self.assertEqual(report.feedback_text, 'There is a typo.')
@@ -108,12 +111,13 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             screenshot_filename=None,
             screenshot_entity_id=None,
             include_technical_logs=False,
+            page_url='https://oppia.com/donate',
         )
 
         self.assertEqual(report.source, general_feedback_models.SOURCE_APP)
         self.assertEqual(
             report.destination_dashboard,
-            general_feedback_models.DESTINATION_TECHNICAL,
+            general_feedback_models.DESTINATION_TECHNICAL_LEAP_TEAM,
         )
         self.assertIsNone(report.category)
         self.assertIsNone(report.lesson_metadata)
@@ -145,6 +149,7 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             screenshot_filename='feedback.png',
             screenshot_entity_id='entity_id',
             include_technical_logs=True,
+            page_url='https://oppia.org/learn',
         )
         session_model = (
             general_feedback_models.FeedbackSessionLogModel.get_by_id(report.id)
@@ -163,6 +168,46 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
             session_model.navigation_history_json,
             session_info['navigation_history_json'],
         )
+        self.assertEqual(
+            session_model.failed_requests_json,
+            session_info['failed_requests_json'],
+        )
+        self.assertEqual(
+            session_model.environment_json,
+            session_info['environment_json'],
+        )
+
+
+def test_create_platform_report_sanitizes_invalid_session_info(self) -> None:
+    # Here we use object because session-info diagnostics are heterogeneous
+    # JSON-like payloads (nested dict/list values) from client logs.
+    session_info: Dict[str, object] = {
+        'console_logs_json': 'invalid',
+        'failed_requests_json': 'invalid',
+        'navigation_history_json': 'invalid',
+        'environment_json': 'invalid',
+    }
+
+    report = general_feedback_services.create_platform_report(
+        feedback_text='Broken page',
+        source='lesson',
+        category=(general_feedback_models.CATEGORY_BROKEN_LAYOUT_OR_IMAGE),
+        lesson_metadata_json=self._get_lesson_metadata(),
+        session_info_json=session_info,
+        screenshot_filename=None,
+        screenshot_entity_id=None,
+        include_technical_logs=True,
+        page_url='https://oppia.org/learn',
+    )
+
+    session_model = general_feedback_models.FeedbackSessionLogModel.get_by_id(
+        report.id
+    )
+
+    self.assertEqual(session_model.console_logs_json, [])
+    self.assertEqual(session_model.failed_requests_json, [])
+    self.assertEqual(session_model.navigation_history_json, [])
+    self.assertEqual(session_model.environment_json, {})
 
     def test_create_platform_report_raises_for_missing_lesson_metadata(
         self,
@@ -179,4 +224,5 @@ class GeneralFeedbackServicesTests(test_utils.GenericTestBase):
                 screenshot_filename=None,
                 screenshot_entity_id=None,
                 include_technical_logs=False,
+                page_url='https://oppia.org/learn',
             )

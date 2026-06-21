@@ -14,72 +14,110 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for web user feedback thread and message domain objects."""
+"""Tests for learner lesson feedback and platform report domain objects."""
 
 from __future__ import annotations
 
+from core.domain import general_feedback_domain
 from core.tests import test_utils
 
-from typing import Dict
+from typing import Dict, List
+
+LESSON_METADATA: general_feedback_domain.LessonMetadataDict = {
+    'exploration_id': 'exp_001',
+    'exploration_version': 3,
+    'state_name': 'Introduction',
+    'state_index': 0,
+    'learner_current_answer': 'Paris',
+}
+
+LESSON_METADATA_NO_ANSWER: general_feedback_domain.LessonMetadataDict = {
+    'exploration_id': 'exp_002',
+    'exploration_version': 1,
+    'state_name': 'Question 1',
+    'state_index': 2,
+    'learner_current_answer': None,
+}
+
+RESPONSE_LIST: List[general_feedback_domain.LessonFeedbackResponseDict] = [
+    {
+        'response_text': 'Thanks for the feedback, fixing now.',
+        'responded_on': 1700000001000.0,
+    },
+    {
+        'response_text': 'Pushed a fix in v4.',
+        'responded_on': 1700000002000.0,
+    },
+]
 
 
-class WebFeedbackThreadDomainUnitTests(test_utils.GenericTestBase):
-    EXP_ID = 'exp0'
-    ENTITY_ID = 'entity_id_123'
-    THREAD_ID1 = 'exploration.exp0.thread0'
-    THREAD_ID2 = 'general.entity_id_123.thread1'
-    # Here we use object because session-info payloads contain heterogeneous
-    # nested JSON-like values (dicts, lists, strings, ints).
-    SESSION_INFO: Dict[str, object] = {
-        'console_logs_json': [
-            {
-                'error_message': 'TypeError: Cannot read properties of undefined',
-                'log_level': 'error',
-                'timestamp_msecs': 1767225600000,
-                'stack_trace': (
-                    'TypeError: Cannot read properties of undefined\n'
-                    ' at FeedbackComponent.submit (feedback.component.ts:45)'
-                ),
-            }
-        ],
-        'failed_requests_json': [
-            {
-                'url': '/createhandler/web_feedback',
-                'method': 'POST',
-                'status_code': 500,
-                'timestamp_msecs': 1767225601000,
-                'status_text': 'Internal Server Error',
-                'error_message': 'Request failed with status code 500',
-            }
-        ],
-        'navigation_history_json': [
-            {
-                'path': '/learn/math',
-                'timestamp_msecs': 1767225590000,
-            },
-            {
-                'path': '/explore/exp0',
-                'timestamp_msecs': 1767225600000,
-            },
-        ],
-        'environment_json': {
-            'client_time_msecs': 1767225602000,
-            'timezone_offset_mins': -330,
-            'user_agent': (
-                'Mozilla/5.0 (X11; Linux x86_64) '
-                'AppleWebKit/537.36 Chrome/136.0 Safari/537.36'
-            ),
-            'viewport': {
-                'width': 1920,
-                'height': 1080,
-            },
-            'page': {
-                'url': 'http://oppia.org/explore/exp0',
-                'title': 'Fractions Exploration',
-            },
-            'locale': {
-                'language_code': 'en',
-                'direction': 'ltr',
-            },
-        },
-    }
+class LessonFeedbackDomainTests(test_utils.GenericTestBase):
+    """Tests for LessonFeedback domain object."""
+
+    def test_to_dict(self) -> None:
+        expected_dict: general_feedback_domain.LessonFeedbackDict = {
+            'id': 'feedback_id',
+            'author_id': 'author_id',
+            'feedback_text': 'Feedback text',
+            'status': 'open',
+            'lesson_metadata': LESSON_METADATA,
+            'parent_feedback_id': 'parent_feedback_id',
+            'response_list': RESPONSE_LIST,
+            'response_count': 2,
+            'seen_response_count': 1,
+            'created_on_msecs': 1700000000000.0,
+        }
+
+        feedback = general_feedback_domain.LessonFeedback(
+            feedback_id='feedback_id',
+            author_id='author_id',
+            feedback_text='Feedback text',
+            status='open',
+            lesson_metadata=LESSON_METADATA,
+            parent_feedback_id='parent_feedback_id',
+            response_list=RESPONSE_LIST,
+            response_count=2,
+            seen_response_count=1,
+            created_on_msecs=1700000000000.0,
+        )
+
+        self.assertEqual(feedback.to_dict(), expected_dict)
+
+
+class PlatformFeedbackDomainTests(test_utils.GenericTestBase):
+    """Tests for PlatformFeedback domain object."""
+
+    def test_to_dict(self) -> None:
+        expected_dict: general_feedback_domain.PlatformFeedbackDict = {
+            'id': 'feedback_id',
+            'feedback_text': 'Feedback text',
+            'source': 'lesson',
+            'platform': 'platform',
+            'destination_dashboard': 'creator_dashboard',
+            'status': 'open',
+            'page_url': 'page_url',
+            'category': 'category',
+            'lesson_metadata': LESSON_METADATA,
+            'include_technical_logs': True,
+            'screenshot_filename': 'screenshot_filename',
+            'screenshot_entity_id': 'screenshot_entity_id',
+            'created_on_msecs': 1700000000000.0,
+        }
+
+        feedback = general_feedback_domain.PlatformFeedback(
+            report_id='feedback_id',
+            feedback_text='Feedback text',
+            source='lesson',
+            platform='platform',
+            destination_dashboard='creator_dashboard',
+            status='open',
+            page_url='page_url',
+            category='category',
+            lesson_metadata=LESSON_METADATA,
+            include_technical_logs=True,
+            screenshot_filename='screenshot_filename',
+            screenshot_entity_id='screenshot_entity_id',
+            created_on_msecs=1700000000000.0,
+        )
+
+        self.assertEqual(feedback.to_dict(), expected_dict)

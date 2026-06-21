@@ -33,7 +33,7 @@ import {
 
 interface FeedbackScreenshotSubmissionData {
   screenshotFilename: string | null;
-  screenshotFile: Record<string, string> | null;
+  screenshotFile: String | null;
 }
 
 @Injectable({
@@ -82,13 +82,13 @@ export class FeedbackBackendApiService {
     if (imageData === null) {
       throw new Error('No staged feedback screenshot found.');
     }
-
+    const screenshotFile =
+      await this.imageLocalStorageService.getFilenameToBase64MappingAsync([
+        imageData,
+      ]);
     return {
       screenshotFilename,
-      screenshotFile:
-        await this.imageLocalStorageService.getFilenameToBase64MappingAsync([
-          imageData,
-        ]),
+      screenshotFile: screenshotFile[screenshotFilename],
     };
   }
 

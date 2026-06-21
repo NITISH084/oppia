@@ -160,12 +160,14 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             lesson_metadata=lesson_metadata,
             include_technical_logs=False,
             created_on_msecs=0,
+            page_url=page_url,
         )
 
     def test_submit_lesson_issue_report_with_payload_wrapper(self) -> None:
         report = self._get_report(
             'report_id',
             'lesson',
+            'https://example.com',
             'broken_layout_or_image',
             self._get_lesson_metadata(),
         )
@@ -182,6 +184,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 {
                     'source': 'lesson',
                     'report_message': 'The card image is broken.',
+                    'page_url': 'https://example.com',
                     'category': 'broken_layout_or_image',
                     'lesson_metadata_json': self._get_lesson_metadata(),
                     'include_technical_logs': False,
@@ -197,6 +200,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         create_platform_report_mock.assert_called_once_with(
             feedback_text='The card image is broken.',
             source='lesson',
+            page_url='https://example.com',
             category='broken_layout_or_image',
             lesson_metadata_json=self._get_lesson_metadata(),
             session_info_json=None,
@@ -209,6 +213,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         report = self._get_report(
             'report_id',
             'lesson',
+            'https://example.com',
             None,
             self._get_lesson_metadata(),
         )
@@ -224,6 +229,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                 {
                     'source': 'lesson',
                     'report_message': 'Something is wrong.',
+                    'page_url': 'https://example.com',
                     'category': None,
                     'lesson_metadata_json': self._get_lesson_metadata(),
                     'include_technical_logs': False,
@@ -245,6 +251,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             {
                 'source': 'lesson',
                 'report_message': 'Something is wrong.',
+                'page_url': 'https://example.com',
                 'category': 'other_or_not_sure',
                 'lesson_metadata_json': None,
                 'include_technical_logs': False,
@@ -269,6 +276,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
             {
                 'source': 'site',
                 'report_message': 'The page is broken.',
+                'page_url': 'https://example.com',
                 'category': None,
                 'lesson_metadata_json': self._get_lesson_metadata(),
                 'include_technical_logs': False,
@@ -289,6 +297,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         report = self._get_report(
             'report_id',
             'lesson',
+            'https://example.com',
             'broken_layout_or_image',
             self._get_lesson_metadata(),
         )
@@ -309,12 +318,13 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
                     {
                         'source': 'lesson',
                         'report_message': 'The card image is broken.',
+                        'page_url': 'https://example.com',
                         'category': 'broken_layout_or_image',
                         'lesson_metadata_json': self._get_lesson_metadata(),
                         'include_technical_logs': False,
                         'session_info': None,
                         'screenshot_filename': 'feedback.png',
-                        'screenshot_file': {'feedback.png': 'aGVsbG8='},
+                        'screenshot_file': 'aGVsbG8=',
                     },
                     csrf_token=csrf_token,
                     expected_status_int=200,
