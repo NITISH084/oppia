@@ -119,7 +119,7 @@ describe('ReportAnIssueModel', () => {
     const feedback = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: 'text',
-      'pageUrl': 'http://localhost:8181/explore/test',
+      pageUrl: 'http://localhost:8181/explore/test',
       explorationContext: {
         explorationId: 'test',
         explorationVersion: 1,
@@ -153,7 +153,7 @@ describe('ReportAnIssueModel', () => {
     const feedback = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: 'text',
-      'pageUrl': 'http://localhost:8181/explore/test',
+      pageUrl: 'http://localhost:8181/explore/test',
       explorationContext: {
         explorationId: 'test',
         explorationVersion: 1,

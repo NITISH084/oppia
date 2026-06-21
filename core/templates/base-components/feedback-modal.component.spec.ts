@@ -52,6 +52,8 @@ import {
   FeedbackSessionInfo,
   FeedbackModalType,
 } from 'domain/feedback/feedback.model';
+import {AlertsService} from 'services/alerts.service';
+import {TranslateService} from '@ngx-translate/core';
 import {MockTranslatePipe} from 'tests/unit-test-utils';
 import {UserInfo} from 'domain/user/user-info.model';
 
@@ -200,6 +202,8 @@ describe('FeedbackModalComponent', () => {
   let feedbackBackendApiService: FeedbackBackendApiService;
   let feedbackSessionInfoService: jasmine.SpyObj<FeedbackSessionInfoService>;
   let insertScriptService: jasmine.SpyObj<InsertScriptService>;
+  let translateService: jasmine.SpyObj<TranslateService>;
+  let alertService: jasmine.SpyObj<AlertsService>;
 
   const createComponent = (
     modalType: FeedbackModalType = FeedbackModalType.LESSON_FEEDBACK
@@ -227,6 +231,11 @@ describe('FeedbackModalComponent', () => {
       'FeedbackSessionInfoService',
       ['getSessionInfo']
     );
+    translateService = jasmine.createSpyObj('TranslateService', ['instant']);
+    alertService = jasmine.createSpyObj('AlertsService', [
+      'addSuccessMessage',
+      'addWarning',
+    ]);
 
     feedbackSessionInfoService.getSessionInfo.and.returnValue(
       feedbackSessionInfo
@@ -259,6 +268,14 @@ describe('FeedbackModalComponent', () => {
         PlayerPositionService,
         LearnerAnswerInfoService,
         FeedbackBackendApiService,
+        {
+          provide: TranslateService,
+          useValue: translateService,
+        },
+        {
+          provide: AlertsService,
+          useValue: alertService,
+        },
         {
           provide: FeedbackSessionInfoService,
           useValue: feedbackSessionInfoService,
@@ -804,6 +821,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_FEEDBACK_SUBMITTED_SUCCESS'
+    );
+    expect(alertService.addSuccessMessage).toHaveBeenCalled();
 
     expect(submitSpy).toHaveBeenCalled();
   }));
@@ -831,7 +852,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
-
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_FEEDBACK_SUBMITTED_SUCCESS'
+    );
+    expect(alertService.addSuccessMessage).toHaveBeenCalled();
     expect(closeSpy).toHaveBeenCalled();
   }));
 
@@ -859,7 +883,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
-
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_FEEDBACK_SUBMITTED_ERROR'
+    );
+    expect(alertService.addWarning).toHaveBeenCalled();
     expect(consoleSpy).toHaveBeenCalled();
     expect(closeSpy).not.toHaveBeenCalled();
   }));
@@ -888,6 +915,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
+    );
+    expect(alertService.addSuccessMessage).toHaveBeenCalled();
 
     expect(feedbackSessionInfoService.getSessionInfo).toHaveBeenCalled();
     expect(submitSpy).toHaveBeenCalled();
@@ -945,7 +976,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
-
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
+    );
+    expect(alertService.addSuccessMessage).toHaveBeenCalled();
     expect(closeSpy).toHaveBeenCalled();
   }));
 
@@ -974,7 +1008,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
-
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_FEEDBACK_SUBMITTED_ERROR'
+    );
+    expect(alertService.addWarning).toHaveBeenCalled();
     expect(consoleSpy).toHaveBeenCalled();
     expect(closeSpy).not.toHaveBeenCalled();
   }));
@@ -1017,6 +1054,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_REPORT_WEBSITE_ISSUE_SUBMITTED_SUCCESS'
+    );
+    expect(alertService.addSuccessMessage).toHaveBeenCalled();
 
     expect(submitSpy).toHaveBeenCalled();
   }));
@@ -1070,7 +1111,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
-
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_REPORT_WEBSITE_ISSUE_SUBMITTED_SUCCESS'
+    );
+    expect(alertService.addSuccessMessage).toHaveBeenCalled();
     expect(closeSpy).toHaveBeenCalled();
   }));
 
@@ -1090,7 +1134,10 @@ describe('FeedbackModalComponent', () => {
 
     component.submit();
     tick();
-
+    expect(translateService.instant).toHaveBeenCalledWith(
+      'I18N_FEEDBACK_SUBMITTED_ERROR'
+    );
+    expect(alertService.addWarning).toHaveBeenCalled();
     expect(consoleSpy).toHaveBeenCalled();
     expect(closeSpy).not.toHaveBeenCalled();
   }));

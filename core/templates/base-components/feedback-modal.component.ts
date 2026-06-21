@@ -40,6 +40,8 @@ import {
   InsertScriptService,
   KNOWN_SCRIPTS,
 } from 'services/insert-script.service';
+import {AlertsService} from 'services/alerts.service';
+import {TranslateService} from '@ngx-translate/core';
 import './feedback-modal.component.css';
 
 interface TurnstileApi {
@@ -88,6 +90,8 @@ export class FeedbackModalComponent implements OnInit {
   constructor(
     private userService: UserService,
     private windowRef: WindowRef,
+    private alertsService: AlertsService,
+    private translateService: TranslateService,
     private insertScriptService: InsertScriptService,
     private feedbackScreenshotStagingService: FeedbackScreenshotStagingService,
     private playerPositionService: PlayerPositionService,
@@ -313,9 +317,16 @@ export class FeedbackModalComponent implements OnInit {
         feedbackPayload,
         this.captchaToken
       );
-      // Show success toast.
+      const successMessage = this.translateService.instant(
+        'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
+      );
+      this.alertsService.addSuccessMessage(successMessage, 7000);
     } catch (error) {
-      // Show error toast.
+      const errorMessage = this.translateService.instant(
+        'I18N_FEEDBACK_SUBMITTED_ERROR'
+      );
+
+      this.alertsService.addWarning(errorMessage);
       console.error('Failed to submit Lesson issue report', error);
       return;
     }
@@ -344,9 +355,16 @@ export class FeedbackModalComponent implements OnInit {
         feedbackPayload,
         this.captchaToken
       );
-      // Show success toast.
+      const successMessage = this.translateService.instant(
+        'I18N_FEEDBACK_SUBMITTED_SUCCESS'
+      );
+      this.alertsService.addSuccessMessage(successMessage, 7000);
     } catch (error) {
-      // Show error toast.
+      const errorMessage = this.translateService.instant(
+        'I18N_FEEDBACK_SUBMITTED_ERROR'
+      );
+
+      this.alertsService.addWarning(errorMessage);
       console.error('Failed to submit Lesson Feedback', error);
       return;
     }
@@ -377,9 +395,16 @@ export class FeedbackModalComponent implements OnInit {
         feedbackPayload,
         this.captchaToken
       );
-      // Show success toast.
+      const successMessage = this.translateService.instant(
+        'I18N_REPORT_WEBSITE_ISSUE_SUBMITTED_SUCCESS'
+      );
+      this.alertsService.addSuccessMessage(successMessage, 7000);
     } catch (error) {
-      // Show error toast.
+      const errorMessage = this.translateService.instant(
+        'I18N_FEEDBACK_SUBMITTED_ERROR'
+      );
+
+      this.alertsService.addWarning(errorMessage);
       console.error('Failed to submit site issue report', error);
       return;
     }
