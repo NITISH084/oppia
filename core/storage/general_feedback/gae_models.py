@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+import urllib.parse
+
 from core import feconf, utils
 from core.platform import models
 
@@ -76,9 +78,26 @@ PLATFORM_ANDROID: Final = 'android'
 PLATFORM_CHOICES: Final = [PLATFORM_WEB, PLATFORM_ANDROID]
 
 DESTINATION_CREATOR: Final = 'creator'
-DESTINATION_TECHNICAL: Final = 'technical'
-DESTINATION_CHOICES: Final = [DESTINATION_CREATOR, DESTINATION_TECHNICAL]
+DESTINATION_TECHNICAL_LEAP_TEAM: Final = 'LEAP'
+DESTINATION_TECHNICAL_CORE_TEAM: Final = 'CORE'
+DESTINATION_CHOICES: Final = [DESTINATION_CREATOR, DESTINATION_TECHNICAL_LEAP_TEAM, DESTINATION_TECHNICAL_CORE_TEAM]
 
+_LEAP_DASHBOARD_PATHS = frozenset([
+    'about',
+    'community-library',
+    'contact',
+    'explore',
+    'learn',
+    'learner-dashboard',
+    'lesson',
+    'profile',
+    'partnerships',
+    'preferences',
+    'volunteer',
+    'teach',
+    'blog'
+    'donate',
+])
 
 # Constants used for generating new ids.
 _MAX_RETRIES: Final = 10
@@ -117,7 +136,7 @@ class BaseFeedbackModel(base_models.BaseModel):
     """
 
     # Subclasses must set this if the model id doubles as a takeout key.
-    ID_IS_USED_AS_TAKEOUT_KEY: bool = True
+    ID_IS_USED_AS_TAKEOUT_KEY: Literal[True] = True
 
     author_id = datastore_services.StringProperty(
         required=False,
@@ -419,11 +438,11 @@ class PlatformFeedbackModel(BaseFeedbackModel):
 
     Each report submission creates exactly one PlatformFeedbackModel. The
     destination_dashboard field is set automatically at creation time
-    based on the source and category:
+    based on the page_url and category:
 
         typo                        → creator
         confusing_or_incorrect_answer → creator
-        broken_layout_or_image      → technical
+        broken_layout_or_image      → technical 
         other_or_not_sure           → technical
         all site (app) reports      → technical
 
@@ -442,6 +461,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
         screenshot_entity_id: Optional[str]. Entity ID used for screenshot
             storage in GCS. Must be present if and only if screenshot_filename
             is present.
+        page_url: str. Page URL where the report was submitted.
     """
 
     ID_IS_USED_AS_TAKEOUT_KEY: Literal[True] = True
@@ -476,6 +496,9 @@ class PlatformFeedbackModel(BaseFeedbackModel):
     )
     screenshot_entity_id = datastore_services.TextProperty(
         required=False,
+    )
+    page_url = datastore_services.TextProperty(
+        required=True,
     )
 
     @staticmethod
@@ -512,54 +535,43 @@ class PlatformFeedbackModel(BaseFeedbackModel):
                 'include_technical_logs': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'screenshot_filename': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'screenshot_entity_id': base_models.EXPORT_POLICY.NOT_APPLICABLE,
+                'page_url': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'created_on': base_models.EXPORT_POLICY.NOT_APPLICABLE,
                 'last_updated': base_models.EXPORT_POLICY.NOT_APPLICABLE,
             },
         )
 
     @classmethod
-    def has_reference_to_user_id(cls, user_id: str) -> bool:
-        """Checks whether any non-deleted entry references the given user ID.
-
-        Args:
-            user_id: str. The ID of the user to check.
-
-        Returns:
-            bool. True if the user ID appears in any non-deleted entry.
-        """
-        return (
-            cls.query(cls.author_id == user_id)
-            .filter(cls.deleted.IN([False]))
-            .get(keys_only=True)
-            is not None
-        )
-
-    @classmethod
     def _determine_destination_dashboard(
-        cls, source: str, category: Optional[str]
+        cls, page_url: str, category: Optional[str]
     ) -> str:
-        """Determines the destination dashboard based on source and category.
+        """Determines the destination dashboard based on page_url, source and category.
 
         Routing rules:
-            - All site (app) reports → technical
+            - All site (app) reports → technical (depends on the team that owns the page URL.)
             - typo → creator
             - confusing_or_incorrect_answer → creator
-            - broken_layout_or_image → technical
-            - other_or_not_sure → technical
+            - broken_layout_or_image → technical (depends on the team that owns the page URL.)
+            - other_or_not_sure → technical (depends on the team that owns the page URL.)
 
         Args:
-            source: str. The report source ("lesson" | "app").
+            page_url: str. The page URL where the report was submitted.
             category: Optional[str]. The report category; None for site reports.
 
         Returns:
-            str. The destination dashboard ("creator" | "technical").
+            str. The destination dashboard ("creator" | "LEAP" | "CORE).
         """
-        if source == SOURCE_APP:
-            return DESTINATION_TECHNICAL
-        elif category in _CREATOR_DASHBOARD_CATEGORIES:
+        if category in _CREATOR_DASHBOARD_CATEGORIES: 
             return DESTINATION_CREATOR
-        else:
-            return DESTINATION_TECHNICAL
+        else: 
+            parsed_url = urllib.parse.urlparse(page_url)
+            path = parsed_url.path.strip('/')
+            first_path_segement = path.split('/', 1)[0]
+            
+            if first_path_segement in _LEAP_DASHBOARD_PATHS:
+                return DESTINATION_TECHNICAL_LEAP_TEAM
+            else:
+                return DESTINATION_TECHNICAL_CORE_TEAM
 
     @classmethod
     def create(
@@ -567,6 +579,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
         feedback_text: str,
         source: str,
         platform: str,
+        page_url: str,
         category: Optional[str],
         lesson_metadata_json: Optional[Dict[str, Union[str, int, None]]],
         include_technical_logs: bool,
@@ -590,6 +603,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
             screenshot_entity_id: Optional[str]. GCS entity ID for the
                 screenshot. Must be provided if and only if screenshot_filename
                 is provided.
+            page_url: str. Page URL where the report was submitted.
 
         Returns:
             str. The ID of the newly created model.
@@ -629,7 +643,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
             )
 
         destination_dashboard = cls._determine_destination_dashboard(
-            source, category
+            page_url, category
         )
         report_id = cls._generate_new_id()
 
@@ -651,6 +665,7 @@ class PlatformFeedbackModel(BaseFeedbackModel):
             include_technical_logs=include_technical_logs,
             screenshot_filename=screenshot_filename,
             screenshot_entity_id=screenshot_entity_id,
+            page_url=page_url
         )
         platform_feedback_model.update_timestamps()
         platform_feedback_model.put()

@@ -225,6 +225,16 @@ class PlatformFeedbackSubmitHandler(
                 },
                 'default_value': None,
             },
+            'page_url': {
+                'schema': {
+                    'type': 'basestring',
+                    'post_normalizers': [
+                        {
+                            'id': 'sanitize_url',
+                        }
+                    ],
+                }
+            },
         }
     }
 
@@ -242,6 +252,8 @@ class PlatformFeedbackSubmitHandler(
 
         source = payload['source']
         report_message = payload['report_message']
+        page_url = payload['page_url']
+        assert page_url is not None
         category = payload.get('category')
         lesson_metadata_json = payload.get('lesson_metadata_json')
         include_technical_logs = payload.get('include_technical_logs', False)
@@ -258,6 +270,7 @@ class PlatformFeedbackSubmitHandler(
         report = general_feedback_services.create_platform_report(
             feedback_text=report_message,
             source=source,
+            page_url=page_url,
             category=category,
             lesson_metadata_json=lesson_metadata_json,
             session_info_json=session_info,

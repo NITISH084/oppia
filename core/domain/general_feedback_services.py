@@ -112,6 +112,7 @@ def _platform_feedback_model_to_domain(
         platform=model.platform,
         destination_dashboard=model.destination_dashboard,
         status=model.status,
+        page_url=model.page_url,
         category=model.category,
         lesson_metadata=lesson_metadata,
         include_technical_logs=model.include_technical_logs,
@@ -160,6 +161,7 @@ def create_lesson_feedback(
 def create_platform_report(
     feedback_text: str,
     source: str,
+    page_url: str,
     category: Optional[str],
     lesson_metadata_json: Optional[general_feedback_domain.LessonMetadataDict],
     # Here we use object because session-info diagnostics are heterogeneous
@@ -194,6 +196,7 @@ def create_platform_report(
             Must be provided if and only if screenshot_filename is provided.
         include_technical_logs: bool. Whether session diagnostics are attached
             to this report.
+        page_url: str. Page URL where the report was submitted.
 
     Returns:
         PlatformFeedback. The created report as a domain object.
@@ -218,6 +221,7 @@ def create_platform_report(
         include_technical_logs=include_technical_logs,
         screenshot_filename=screenshot_filename,
         screenshot_entity_id=screenshot_entity_id,
+        page_url=page_url,
     )
 
     # Persist session diagnostics in a linked FeedbackSessionLogModel when

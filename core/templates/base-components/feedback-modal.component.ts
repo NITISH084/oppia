@@ -305,6 +305,7 @@ export class FeedbackModalComponent implements OnInit {
       includeTechnicalLogs: this.includeTechnicalLogs,
       sessionInfo: sessionInfo,
       screenshotFilename: this.screenshotFilename,
+      pageUrl: this.windowRef.nativeWindow.location.href,
     });
 
     try {
@@ -368,6 +369,7 @@ export class FeedbackModalComponent implements OnInit {
       includeTechnicalLogs: this.includeTechnicalLogs,
       sessionInfo: sessionInfo,
       screenshotFilename: this.screenshotFilename,
+      pageUrl: this.windowRef.nativeWindow.location.href,
     });
 
     try {

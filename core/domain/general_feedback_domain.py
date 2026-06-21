@@ -64,6 +64,7 @@ class PlatformFeedbackDict(TypedDict):
     platform: str
     destination_dashboard: str
     status: str
+    page_url: str
     category: Optional[str]
     lesson_metadata: Optional[LessonMetadataDict]
     include_technical_logs: bool
@@ -84,6 +85,7 @@ class PlatformFeedbackSubmitPayloadDict(TypedDict):
 
     source: str
     report_message: str
+    page_url: str
     category: Optional[str]
     lesson_metadata_json: Optional[LessonMetadataDict]
     include_technical_logs: bool
@@ -186,6 +188,7 @@ class PlatformFeedback:
         screenshot_filename: Optional[str]. GCS filename of the screenshot.
         screenshot_entity_id: Optional[str]. GCS entity ID for the screenshot.
         created_on_msecs: float. Creation timestamp in milliseconds.
+        page_url: str. Page URL where the report was submitted.
     """
 
     def __init__(
@@ -198,6 +201,7 @@ class PlatformFeedback:
         status: str,
         include_technical_logs: bool,
         created_on_msecs: float,
+        page_url: str,
         category: Optional[str] = None,
         lesson_metadata: Optional[LessonMetadataDict] = None,
         screenshot_filename: Optional[str] = None,
@@ -209,6 +213,7 @@ class PlatformFeedback:
         self.platform = platform
         self.destination_dashboard = destination_dashboard
         self.status = status
+        self.page_url = page_url
         self.category = category
         self.lesson_metadata = lesson_metadata
         self.include_technical_logs = include_technical_logs
@@ -229,6 +234,7 @@ class PlatformFeedback:
             'platform': self.platform,
             'destination_dashboard': self.destination_dashboard,
             'status': self.status,
+            'page_url': self.page_url,
             'category': self.category,
             'lesson_metadata': self.lesson_metadata,
             'include_technical_logs': self.include_technical_logs,

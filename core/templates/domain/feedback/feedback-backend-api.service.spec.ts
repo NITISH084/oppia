@@ -52,6 +52,7 @@ describe('Feedback backend api service', () => {
   const issueReportPayload = PlatformFeedbackModel.createForSubmission({
     source: 'lesson',
     reportMessage: 'text',
+    pageUrl: 'http://localhost:8181/explore/test',
     explorationContext: {
       explorationId: 'test',
       explorationVersion: 1,

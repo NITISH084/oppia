@@ -119,6 +119,7 @@ describe('ReportAnIssueModel', () => {
     const feedback = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: 'text',
+      'pageUrl': 'http://localhost:8181/explore/test',
       explorationContext: {
         explorationId: 'test',
         explorationVersion: 1,
@@ -134,6 +135,7 @@ describe('ReportAnIssueModel', () => {
 
     expect(feedback.source).toEqual('lesson');
     expect(feedback.reportMessage).toEqual('text');
+    expect(feedback.pageUrl).toEqual('http://localhost:8181/explore/test');
     expect(feedback.explorationContext).toEqual({
       explorationId: 'test',
       explorationVersion: 1,
@@ -151,6 +153,7 @@ describe('ReportAnIssueModel', () => {
     const feedback = PlatformFeedbackModel.createForSubmission({
       source: 'lesson',
       reportMessage: 'text',
+      'pageUrl': 'http://localhost:8181/explore/test',
       explorationContext: {
         explorationId: 'test',
         explorationVersion: 1,
@@ -167,6 +170,7 @@ describe('ReportAnIssueModel', () => {
     expect(feedback.toBackendDict()).toEqual({
       source: 'lesson',
       report_message: 'text',
+      page_url: 'http://localhost:8181/explore/test',
       lesson_metadata_json: {
         exploration_id: 'test',
         exploration_version: 1,

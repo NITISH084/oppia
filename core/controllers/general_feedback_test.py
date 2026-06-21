@@ -144,6 +144,7 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         self,
         report_id: str,
         source: str,
+        page_url: str,
         category: Optional[str],
         lesson_metadata: Optional[general_feedback_domain.LessonMetadataDict],
     ) -> general_feedback_domain.PlatformFeedback:

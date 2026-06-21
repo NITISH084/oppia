@@ -84,6 +84,7 @@ export type ReportType = 'lesson' | 'site';
 export interface PlatformFeedbackBackendDict {
   source: ReportType;
   report_message: string;
+  page_url: string;
   lesson_metadata_json: LessonFeedbackMetadataBackendDict | null;
   category: ReportAnIssueCategory | null;
   include_technical_logs: boolean;
@@ -95,6 +96,7 @@ export class PlatformFeedbackModel {
   constructor(
     public readonly source: ReportType,
     public readonly reportMessage: string,
+    public readonly pageUrl: string,
     public readonly explorationContext: LessonFeedbackMetadata | null,
     public readonly category: ReportAnIssueCategory | null,
     public readonly includeTechnicalLogs: boolean,
@@ -105,6 +107,7 @@ export class PlatformFeedbackModel {
   static createForSubmission(params: {
     source: ReportType;
     reportMessage: string;
+    pageUrl: string;
     explorationContext: LessonFeedbackMetadata | null;
     category: ReportAnIssueCategory | null;
     includeTechnicalLogs: boolean;
@@ -114,6 +117,7 @@ export class PlatformFeedbackModel {
     return new PlatformFeedbackModel(
       params.source,
       params.reportMessage,
+      params.pageUrl,
       params.explorationContext,
       params.category,
       params.includeTechnicalLogs,
@@ -142,6 +146,7 @@ export class PlatformFeedbackModel {
       session_info:
         this.includeTechnicalLogs && this.sessionInfo ? this.sessionInfo : null,
       screenshot_filename: this.screenshotFilename,
+      page_url: this.pageUrl,
     };
   }
 }
