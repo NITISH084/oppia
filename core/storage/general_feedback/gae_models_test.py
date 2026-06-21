@@ -491,7 +491,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
             include_technical_logs=False,
             screenshot_filename=None,
             screenshot_entity_id=None,
-            page_url="https://oppia.org/explore/1",
+            page_url='https://oppia.org/explore/1',
         )
         report_model = general_feedback_models.PlatformFeedbackModel.get_by_id(
             report_id
@@ -522,7 +522,7 @@ class PlatformFeedbackModelTests(test_utils.GenericTestBase):
             include_technical_logs=False,
             screenshot_filename=None,
             screenshot_entity_id=None,
-            page_url="https://oppia.org/contributor-dashboard",
+            page_url='https://oppia.org/contributor-dashboard',
         )
         report_model = general_feedback_models.PlatformFeedbackModel.get_by_id(
             report_id
