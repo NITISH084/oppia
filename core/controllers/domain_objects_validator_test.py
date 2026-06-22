@@ -1789,6 +1789,25 @@ class ValidateLessonFeedbackSubmitPayloadCouplingTests(
                 payload
             )
 
+    def test_raises_when_lesson_metadata_is_missing(self) -> None:
+        payload = general_feedback_domain.FeedbackSubmitPayloadDict(
+            feedback_text='valid text',
+            lesson_metadata_json=VALID_LESSON_METADATA,
+        )
+        invalid_payload = copy.deepcopy(payload)
+
+        # Here we use MyPy ignore because we intentionally pass an
+        # invalid type to verify validator behavior for malformed input.
+        invalid_payload['lesson_metadata_json'] = None  # type: ignore
+
+        with self.assertRaisesRegex(
+            utils.InvalidInputException,
+            'lesson_metadata_json is required for lesson feedback',
+        ):
+            domain_objects_validator.validate_lesson_feedback_submit_payload_coupling(
+                invalid_payload
+            )
+
 
 class ValidatePlatformFeedbackSubmitPayloadCouplingTests(
     test_utils.GenericTestBase
@@ -1947,7 +1966,6 @@ class ValidatePlatformFeedbackSubmitPayloadCouplingTests(
             )
 
     def test_raises_when_screenshot_filename_has_invalid_format(self) -> None:
-        # Names with path traversal, spaces, or forbidden characters are invalid.
         payload = copy.deepcopy(VALID_SITE_REPORT_PAYLOAD)
         payload['screenshot_filename'] = '../error.png'
         payload['screenshot_file'] = VALID_SCREENSHOT_FILE
