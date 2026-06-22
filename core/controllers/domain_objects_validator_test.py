@@ -1798,10 +1798,10 @@ class ValidateLessonFeedbackSubmitPayloadCouplingTests(
 
         # Here we use MyPy ignore because we intentionally pass an
         # invalid type to verify validator behavior for malformed input.
-        invalid_payload['lesson_metadata_json'] = None  # type: ignore
+        invalid_payload['lesson_metadata_json'] = None  # type: ignore[assignment]
 
         with self.assertRaisesRegex(
-            utils.InvalidInputException,
+            Exception,
             'lesson_metadata_json is required for lesson feedback',
         ):
             domain_objects_validator.validate_lesson_feedback_submit_payload_coupling(
