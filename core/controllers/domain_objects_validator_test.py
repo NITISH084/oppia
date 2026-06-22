@@ -1790,22 +1790,19 @@ class ValidateLessonFeedbackSubmitPayloadCouplingTests(
             )
 
     def test_raises_when_lesson_metadata_is_missing(self) -> None:
-        payload = general_feedback_domain.FeedbackSubmitPayloadDict(
-            feedback_text='valid text',
-            lesson_metadata_json=VALID_LESSON_METADATA,
-        )
-        invalid_payload = copy.deepcopy(payload)
-
-        # Here we use MyPy ignore because we intentionally pass an
-        # invalid type to verify validator behavior for malformed input.
-        invalid_payload['lesson_metadata_json'] = None  # type: ignore[assignment]
+        payload = {
+            'feedback_text': 'valid text',
+            'lesson_metadata_json': None,
+        }
 
         with self.assertRaisesRegex(
             Exception,
             'lesson_metadata_json is required for lesson feedback',
         ):
             domain_objects_validator.validate_lesson_feedback_submit_payload_coupling(
-                invalid_payload
+                # Here we use MyPy ignore because we intentionally pass an
+                # invalid type to verify validator behavior for malformed input.
+                payload  # type: ignore[arg-type]
             )
 
 
