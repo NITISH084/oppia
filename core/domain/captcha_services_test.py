@@ -37,21 +37,31 @@ class CaptchaServicesTests(test_utils.GenericTestBase):
 
     def test_get_turnstile_site_key_in_dev_mode(self) -> None:
         with self.swap(constants, 'DEV_MODE', True):
-            self.assertEqual(
-                '1x00000000000000000000AA',
-                captcha_services.get_turnstile_site_key(),
-            )
+            with self.swap(constants, 'EMULATOR_MODE', False):
+                self.assertEqual(
+                    '1x00000000000000000000AA',
+                    captcha_services.get_turnstile_site_key(),
+                )
+
+    def test_get_turnstile_site_key_in_emulator_mode(self) -> None:
+        with self.swap(constants, 'DEV_MODE', False):
+            with self.swap(constants, 'EMULATOR_MODE', True):
+                self.assertEqual(
+                    '1x00000000000000000000AA',
+                    captcha_services.get_turnstile_site_key(),
+                )
 
     def test_get_turnstile_site_key_in_prod_mode(self) -> None:
         with self.swap(constants, 'DEV_MODE', False):
-            with self.swap(
-                secrets_services,
-                'get_secret',
-                mock.Mock(return_value='site-key'),
-            ):
-                self.assertEqual(
-                    'site-key', captcha_services.get_turnstile_site_key()
-                )
+            with self.swap(constants, 'EMULATOR_MODE', False):
+                with self.swap(
+                    secrets_services,
+                    'get_secret',
+                    mock.Mock(return_value='site-key'),
+                ):
+                    self.assertEqual(
+                        'site-key', captcha_services.get_turnstile_site_key()
+                    )
 
     def test_verify_turnstile_token_returns_false_when_secret_is_missing(
         self,

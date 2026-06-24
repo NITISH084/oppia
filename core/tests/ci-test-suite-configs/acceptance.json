@@ -6,6 +6,21 @@
       "framework": "puppeteer"
     },
     {
+      "name": "logged-in-learner/give-lesson-feedback-and-engage-with-lesson-creators.spec.ts",
+      "module": "core/tests/puppeteer-acceptance-tests/specs/logged-in-learner/give-lesson-feedback-and-engage-with-lesson-creators.spec.ts",
+      "framework": "puppeteer"
+    },
+    {
+      "name": "logged-out-learner/submit-a-platform-defect-report-from-a-non-lesson-page.spec.ts",
+      "module": "core/tests/puppeteer-acceptance-tests/specs/logged-out-learner/submit-a-platform-defect-report-from-a-non-lesson-page.spec.ts",
+      "framework": "puppeteer"
+    },
+    {
+      "name": "logged-out-learner/submit-anonymous-feedback-or-a report-a-lesson-issue.spec.ts",
+      "module": "core/tests/puppeteer-acceptance-tests/specs/logged-out-learner/submit-anonymous-feedback-or-a report-a-lesson-issue.spec.ts",
+      "framework": "puppeteer"
+    },
+    {
       "name": "topic-manager/track-upcoming-delayed-publish-chapter",
       "module": "core/tests/puppeteer-acceptance-tests/specs/topic-manager/track-upcoming-delayed-publish-chapter.spec.ts",
       "framework": "puppeteer"

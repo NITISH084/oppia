@@ -248,10 +248,7 @@ export class FeedbackModalComponent implements OnInit {
     }
 
     if (this.feedbackText.length > this.MAX_REPORT_MESSAGE_LENGTH) {
-      this.formError =
-        'Please keep your feedback under ' +
-        this.MAX_REPORT_MESSAGE_LENGTH +
-        ' characters.';
+      this.formError ='Your description is a bit too long ('+ this.feedbackText.length + '/' + this.MAX_REPORT_MESSAGE_LENGTH +' characters). Please shorten it slightly so our team can review it quickly!'
       return false;
     }
 
@@ -318,7 +315,7 @@ export class FeedbackModalComponent implements OnInit {
         this.captchaToken
       );
       const successMessage = this.translateService.instant(
-        'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
+        this.category === 'broken_layout_or_image' || this.category === 'other_or_not_sure'? 'I18N_REPORT_WEBSITE_ISSUE_SUBMITTED_SUCCESS' : 'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
       );
       this.alertsService.addSuccessMessage(successMessage, 7000);
     } catch (error) {

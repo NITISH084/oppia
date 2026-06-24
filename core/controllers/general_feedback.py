@@ -224,6 +224,12 @@ class PlatformFeedbackSubmitHandler(
                     ],
                 }
             },
+            'captcha_token': {
+                'schema': {
+                    'type': 'unicode_or_none',
+                },
+                'default_value': None,
+            },
         }
     }
 
@@ -249,6 +255,17 @@ class PlatformFeedbackSubmitHandler(
         session_info = payload.get('session_info')
         screenshot_filename = payload.get('screenshot_filename')
         screenshot_file = payload.get('screenshot_file')
+        captcha_token = payload.get('captcha_token')
+
+        # Verify captcha token, only for logged-out users.
+        if self.user_id is None:
+            if not captcha_token:
+                raise self.InvalidInputException(
+                    'Captcha token is required for logged-out users.'
+                )
+
+            if not captcha_services.verify_turnstile_token(captcha_token):
+                raise self.InvalidInputException('Invalid captcha token.')
 
         screenshot_entity_id = None
         if screenshot_filename is not None and screenshot_file is not None:

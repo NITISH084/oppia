@@ -1,0 +1,255 @@
+// Copyright 2026 The Oppia Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS-IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Acceptance test from CUJv3 Doc
+ * https://docs.google.com/document/d/1D7kkFTzg3rxUe3QJ_iPlnxUzBFNElmRkmAWss00nFno/
+ *
+ * L0.15. Submit anonymous feedback or a report a lesson issue
+ */
+
+import {UserFactory} from '../../utilities/common/user-factory';
+import testConstants, {FILEPATHS} from '../../utilities/common/test-constants';
+import {LoggedOutUser} from '../../utilities/user/logged-out-user';
+import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
+import {ExplorationEditor} from '../../utilities/user/exploration-editor';
+import {TopicManager} from '../../utilities/user/topic-manager';
+import {showMessage} from '../../utilities/common/show-message';
+
+const ROLES = testConstants.Roles;
+
+describe('Logged-Out User', function () {
+  let loggedOutLearner: LoggedOutUser;
+  let releaseCoordinator: ReleaseCoordinator;
+  let curriculumAdmin: CurriculumAdmin & TopicManager & ExplorationEditor;
+  let expId: string;
+
+  beforeAll(async function () {
+    curriculumAdmin = await UserFactory.createNewUser(
+      'curriculumAdm',
+      'curriculumAdmin@example.com',
+      [ROLES.CURRICULUM_ADMIN]
+    );
+    releaseCoordinator = await UserFactory.createNewUser(
+      'releaseCoordinator',
+      'releaseCoordinator@example.com',
+      [ROLES.RELEASE_COORDINATOR]
+    );
+    await releaseCoordinator.enableFeatureFlag(
+      'show_redesigned_learner_dashboard'
+    );
+    await releaseCoordinator.enableFeatureFlag('web_feedback_modal_enabled');
+    await releaseCoordinator.enableFeatureFlag('new_lesson_player');
+    await UserFactory.closeBrowserForUser(releaseCoordinator);
+
+    await curriculumAdmin.createNewClassroom('Math', 'math');
+    await curriculumAdmin.updateClassroom(
+      'Math',
+      'Welcome to Math classroom!',
+      'This course covers basic operations.',
+      'In this course, you will learn the following topics: Place Values.'
+    );
+
+    await curriculumAdmin.createAndPublishTopic(
+      'Place Values',
+      'Place Values subtopics',
+      'Place Values skills'
+    );
+    await curriculumAdmin.addTopicToClassroom('Math', 'Place Values');
+    await curriculumAdmin.publishClassroom('Math');
+
+    expId = await curriculumAdmin.createAndPublishExplorationWithCards(
+      'What are the Place Values',
+      'Algebra',
+      2
+    );
+
+    await curriculumAdmin.addStoryToTopic(
+      "Jamie's Adventures in the Arcade",
+      'story',
+      'Place Values'
+    );
+
+    await curriculumAdmin.addChapter('What are the Place Values', expId);
+
+    await curriculumAdmin.saveStoryDraft();
+    await curriculumAdmin.publishStoryDraft();
+    await UserFactory.closeBrowserForUser(curriculumAdmin);
+
+    loggedOutLearner = await UserFactory.createLoggedOutUser();
+    await UserFactory.closeSuperAdminBrowser();
+  }, 60000000);
+
+  afterAll(async function () {
+    await UserFactory.closeBrowserForUser(loggedOutLearner);
+  });
+
+  it('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {
+    await loggedOutLearner.playLesson(expId);
+    showMessage('On lesson page.');
+
+    await loggedOutLearner.clickLessonFeedbackButton(false);
+    showMessage('Clicked on "Send Lesson Feedback" button.');
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModal',
+      __dirname
+    );
+  });
+
+  it('should be able to continue as guest by clicking on "Continue as Guest" button on the feedback modal.', async () => {
+    await loggedOutLearner.clickButtonInModal('Continue as Guest', 'cancel');
+
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingContinueAsGuest',
+      __dirname
+    );
+  });
+
+  it('should be able to click on the "Send Lesson Feedback" button, then click "Sign Up or Login" and proceed through the user flow.', async () => {
+    await loggedOutLearner.clickLessonFeedbackButton(false);
+    showMessage('Clicked on "Send Lesson Feedback" button.');
+    await loggedOutLearner.clickButtonInModal('Sign up or Login', 'confirm');
+
+    await loggedOutLearner.expectToBeOnLoginPage();
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
+      __dirname
+    );
+
+    await loggedOutLearner.goThoroughSignUpProcess(
+      'learner@example.com',
+      'learner'
+    );
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.clickLessonFeedbackButton(true);
+
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
+      __dirname
+    );
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'This fraction model is awesome, but can we get more marble examples?'
+    );
+    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    showMessage('Clicked on "Submit" button.');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you! Your feedback has been sent to the lesson team.'
+    );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterSubmittingFeedback',
+      __dirname
+    );
+  });
+
+  it('While playing a lesson, open the options sidebar drawer and click the "Report an Issue" flag icon.', async function () {
+    await loggedOutLearner.clickReportLessonButton();
+    showMessage('Clicked on "Report an Issue" button.');
+
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportALessonModal',
+      __dirname
+    );
+
+    await loggedOutLearner.clickButtonInModal('Cancel', 'cancel');
+    showMessage('Closed Report an issue feedback modal.');
+  });
+
+  it('should not be able to submit "Report an Issue" feedback while the text area description is completely blank.', async () => {
+    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
+      '.e2e-test-form-error',
+      'Please add a description before submitting.'
+    );
+    await loggedOutLearner.clickButtonInModal('Cancel', 'cancel');
+  });
+
+  it('should not be able to submit "Report an Issue" feedback while the text area description is longer than 2500 characters.', async () => {
+    await loggedOutLearner.clickReportLessonButton();
+    const longDescription = 'a'.repeat(2501);
+    await loggedOutLearner.submitFeedbackInTextArea(longDescription);
+    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
+      '.e2e-test-form-error',
+      'Your description is a bit too long (2501/2500 characters). Please shorten it slightly so our team can review it quickly!'
+    );
+    await loggedOutLearner.clickButtonInModal('Cancel', 'cancel');
+  });
+
+  it('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
+    await loggedOutLearner.clickReportLessonButton();
+    // Add a screenshot of size greater than 1MB.
+    await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_HIGH_RES);
+    await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
+      'The maximum allowed file size is 1024 KB'
+    );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterEnteringFeedbackWithLargeFile',
+      __dirname
+    );
+
+    // Add an invalid file type.
+    await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_BMP);
+    await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
+      'This image format is not supported'
+    );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterEnteringFeedbackWithInvalidFileType',
+      __dirname
+    );
+  });
+
+  it('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
+    await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
+    // In the screenshot, it is seen that all error messages are cleared.
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterDroppingValidScreenshot',
+      __dirname
+    );
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'The partner image grid overlaps text headers when scaling down to smaller mobile screen viewports.'
+    );
+    await loggedOutLearner.expectIncludeTechnicalLogToBePresent(true);
+
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterEnteringFeedback',
+      __dirname
+    );
+    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you! Your report has been sent to the technical team.'
+    );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterSubmittingFeedback',
+      __dirname
+    );
+  });
+
+  it('should type a customized issue or positive message directly into the text box without clicking any of the category chips', async () => {
+    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'This fraction explanation makes so much sense, thank you!'
+    );
+
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportALessonModalAfterEnteringFeedback',
+      __dirname
+    );
+    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you for your feedback! The team has received your report.'
+    );
+  });
+});

@@ -16,7 +16,7 @@
  * @fileoverview Logged-out users utility file.
  */
 
-import puppeteer from 'puppeteer';
+import puppeteer, {Page} from 'puppeteer';
 import {BaseUser} from '../common/puppeteer-utils';
 import testConstants from '../common/test-constants';
 import {showMessage} from '../common/show-message';
@@ -605,6 +605,23 @@ const voiceoverSelectSelector = '.e2e-test-audio-lang-select';
 const conceptCardCloseButtonSelector = '.e2e-test-close-concept-card';
 const promoBarTextSelector = '.e2e-test-promo-bar-text';
 const practiceQuestionHeaderSelector = '.e2e-test-practice-question-header';
+
+// New lesson player page.
+const lessonPlayerSideBarToggleButton = '.e2e-test-player-sidebar-toggle';
+const mobileOpenOptionsButton = '.e2e-test-mobile-open-options-button';
+const lessonFeedbackButtonSelector = '.e2e-test-lesson-feedback-button';
+const lessonReportButtonSelector = '.e2e-test-lesson-report-button';
+const feedbackModaltextarea = '.e2e-test-feedback-modal-textarea';
+const reportIssueTypoChipSelector = '.e2e-test-report-issue-typo-chip';
+const photoUploadErrorMessage = '.e2e-test-upload-error';
+const reportIssueConfusingOrIncorrectChipSelector =
+  '.e2e-test-report-issue-confusing-or-incorrect-chip';
+const reportIssueBrokenLayoutChipSelector =
+  '.e2e-test-report-issue-broken-layout-chip';
+const reportIssueOtherChipSelector = '.e2e-test-report-issue-other-chip';
+const technicalLogsSelector = '.e2e-test-technical-logs';
+const imageRecieverFeedbackComponentSelector = '.e2e-test-photo-upload-input';
+const reportWebsiteIssueLink = '.e2e-test-report-website-issue-link';
 
 /**
  * The KeyInput type is based on the key names from the UI Events KeyboardEvent key Values specification.
@@ -4209,10 +4226,12 @@ export class LoggedOutUser extends BaseUser {
    * Selects and opens a chapter within a story to learn.
    * @param {string} storyName - The name of the story containing the chapter.
    * @param {string} chapterName - The name of the chapter to select and open.
+   * @param {boolean} isNewLessonPlayer - Whether it will be used for new lesson player.
    */
   async selectChapterWithinStoryToLearn(
     storyName: string,
-    chapterName: string
+    chapterName: string,
+    isNewLessonPlayer: boolean = false
   ): Promise<void> {
     const isMobileViewport = this.isViewportAtMobileWidth();
     const storyTitleSelector = isMobileViewport
@@ -4245,9 +4264,10 @@ export class LoggedOutUser extends BaseUser {
               await this.waitForElementToBeClickable(chapter);
               await chapter.click();
 
-              await this.expectPageURLToContain(
-                testConstants.URLs.ExplorationPlayer
-              );
+              const urlPrefix = isNewLessonPlayer
+                ? testConstants.URLs.LessonPlayer
+                : testConstants.URLs.ExplorationPlayer;
+              await this.expectPageURLToContain(urlPrefix);
               showMessage(`Chapter ${chapterName} is opened successfully.`);
               return;
             }
@@ -5886,6 +5906,142 @@ export class LoggedOutUser extends BaseUser {
    */
   async playExploration(explorationId: string | null): Promise<void> {
     await this.goto(`${baseUrl}/explore/${explorationId as string}`);
+  }
+
+  /**
+   * Navigates to and plays an lesson by exploration ID.
+   * @param {string | null} explorationId - The ID of the exploration to play.
+   */
+  async playLesson(explorationId: string | null): Promise<void> {
+    await this.goto(`${baseUrl}/lesson/${explorationId as string}`);
+  }
+
+  async selectReportIssueChip(chipName: string): Promise<void> {
+    switch (chipName) {
+      case 'typo':
+        await this.clickOnElementWithSelector(reportIssueTypoChipSelector);
+        break;
+      case 'confusing or incorrect answer':
+        await this.clickOnElementWithSelector(
+          reportIssueConfusingOrIncorrectChipSelector
+        );
+        break;
+      case 'broken layout':
+        await this.clickOnElementWithSelector(
+          reportIssueBrokenLayoutChipSelector
+        );
+        break;
+      case 'other':
+        await this.clickOnElementWithSelector(reportIssueOtherChipSelector);
+        break;
+      default:
+        throw new Error('Invalid chip name: ' + chipName);
+    }
+  }
+
+  /**
+   * Expect the technical log to be present in the feedback modal.
+   */
+  async expectIncludeTechnicalLogToBePresent(
+    shouldBePresent: boolean
+  ): Promise<void> {
+    if (shouldBePresent) {
+      await this.expectElementToBeVisible(
+        technicalLogsSelector,
+        shouldBePresent
+      );
+    }
+  }
+
+  /**
+   * Verifies that the report button is visible in the lesson player sidebar.
+   */
+  async isReportButtonVisible(): Promise<boolean> {
+    return await this.isElementVisible(lessonReportButtonSelector, true);
+  }
+  /**
+   * Open 'Open Options' in new lesson player page.
+   */
+  async toggleOptionsSidebar(): Promise<void> {
+    const isMobileViewport = this.isViewportAtMobileWidth();
+    if (isMobileViewport) {
+      await this.page.waitForSelector(mobileOpenOptionsButton);
+      await this.page.click(mobileOpenOptionsButton);
+      return;
+    }
+    await this.page.waitForSelector(lessonPlayerSideBarToggleButton);
+    await this.page.click(lessonPlayerSideBarToggleButton);
+  }
+
+  /**
+   * Open the Send a Lesson feedback modal of new lesson player.
+   */
+  async clickLessonFeedbackButton(isUserLoggedIn: boolean): Promise<void> {
+    const lessonFeedbackButtonElement = await this.page.waitForSelector(
+      lessonFeedbackButtonSelector,
+      {visible: true}
+    );
+    if (!lessonFeedbackButtonElement) {
+      throw new Error('Report lesson element not found');
+    }
+    await this.clickOnElement(lessonFeedbackButtonElement);
+    isUserLoggedIn ?
+      await this.expectModalTitleToBe('Send Feedback to the Lessons Team') : 
+      await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
+  }
+
+  /**
+   * Open the Report an Issue feedback modal of new lesson player.
+   */
+  async clickReportLessonButton(): Promise<void> {
+    const reportLessonButtonElement = await this.page.waitForSelector(
+      lessonReportButtonSelector,
+      {visible: true}
+    );
+    if (!reportLessonButtonElement) {
+      throw new Error('Report lesson element not found');
+    }
+    await this.clickOnElement(reportLessonButtonElement);
+    await this.expectModalTitleToBe('Report an Issue');
+  }
+
+  /**
+   * Submits the feedback in the text area.
+   * @param feedback - The feedback to submit.
+   */
+  async submitFeedbackInTextArea(feedback: string): Promise<void> {
+    await this.waitForElementToBeClickable(feedbackModaltextarea);
+    await this.typeInInputField(feedbackModaltextarea, feedback);
+  }
+
+  /**
+   * Adds a screenshot to the feedback form.
+   * @param {string} picturePath - The path to the screenshot to add.
+   */
+  async addFeedbackScreenshot(picturePath: string): Promise<void> {
+    await this.page.waitForSelector(imageRecieverFeedbackComponentSelector);
+
+    await this.uploadFile(picturePath);
+  }
+
+  /**
+   * Opens the report a site issue modal from the global footer.
+   */
+  async openReportASiteIssueModalFromGlobalFooter(): Promise<void> {
+    await this.page.waitForSelector(reportWebsiteIssueLink);
+    await this.clickOnElementWithSelector(reportWebsiteIssueLink);
+  }
+
+  /**
+   * Checks if the photo upload error message is visible.
+   * @param expectedText - The expected text of the error message.
+   */
+  async expectPhotoUploadErrorMessageToBe(expectedText: string): Promise<void> {
+    await this.expectElementToBeVisible(photoUploadErrorMessage);
+    await this.expectTextContentToContain(
+      photoUploadErrorMessage,
+      expectedText
+    );
   }
 
   /**
