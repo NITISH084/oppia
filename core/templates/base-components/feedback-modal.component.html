@@ -34,7 +34,7 @@
 
 <ng-container *ngIf="!isLessonFeedbackMode || isUserLoggedIn">
   <div class="oppia-feedback-modal">
-    <div class="modal-header oppia-flag-lesson-header ">
+    <div class="modal-header oppia-flag-lesson-header">
       <div class="oppia-flag-lesson-header-left">
         <div class="oppia-flag-lesson-header-icon">
           <mat-icon aria-hidden="true">
@@ -68,7 +68,7 @@
           | translate
           }}
           <span class="oppia-feedback-label-optional">
-            (optional)
+            {{ 'I18N_REPORT_LESSON_BUG_OPTIONAL_LABEL' | translate }}
           </span>
         </div>
 

@@ -243,7 +243,9 @@ export class FeedbackModalComponent implements OnInit {
 
   isFormValid(): boolean {
     if (!this.feedbackText.trim()) {
-      this.formError = 'Please add a description before submitting.';
+      this.formError = this.translateService.instant(
+        'I18N_LESSON_FEEDBACK_DESCRIPTION_REQUIRED'
+      );
       return false;
     }
 

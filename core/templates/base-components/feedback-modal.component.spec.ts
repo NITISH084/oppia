@@ -227,6 +227,21 @@ describe('FeedbackModalComponent', () => {
     activeModal = new MockActiveModal();
     windowRef = new MockWindowRef();
     userService = new MockUserService();
+    translateService = jasmine.createSpyObj('TranslateService', ['instant']);
+
+    translateService.instant.and.callFake(
+      (key: string, params?: {maxLength: number}) => {
+        if (key === 'I18N_LESSON_FEEDBACK_DESCRIPTION_REQUIRED') {
+          return 'Please add a description before submitting.';
+        }
+
+        if (key === 'I18N_LESSON_FEEDBACK_MESSAGE_TOO_LONG') {
+          return `Please keep your feedback under ${params?.maxLength} characters.`;
+        }
+
+        return key;
+      }
+    );
     feedbackSessionInfoService = jasmine.createSpyObj(
       'FeedbackSessionInfoService',
       ['getSessionInfo']
