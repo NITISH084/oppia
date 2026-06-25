@@ -19,18 +19,32 @@
 import {Page} from '@playwright/test';
 import {BaseUser} from '../common/playwright-utils';
 import {showMessage} from '../common/show-message';
+import testConstants from '../common/test-constants';
+import isElementClickable from '../../functions/is-element-clickable';
+
+const communityLibraryUrl = testConstants.URLs.CommunityLibrary;
 
 const navbarLearnTab = 'a.e2e-test-navbar-learn-menu';
 
 const mobileNavbarOpenSidebarButton = 'a.e2e-mobile-test-navbar-button';
 const mobileSidebarOpenSelector = '.e2e-test-sidebar-menu-open';
 
+const nextCardButton = '.e2e-test-next-card-button';
+const nextCardArrowButton = '.e2e-test-next-button';
+
 const explorationCompletionToastMessage = '.e2e-test-lesson-completion-message';
+
+const stateConversationContent = '.e2e-test-conversation-content';
+
+const searchInputSelector = '.e2e-test-search-input';
+const lessonCardTitleSelector = '.e2e-test-exploration-tile-title';
 
 const communityLibraryLinkInNavbarSelector =
   '.e2e-test-topnb-go-to-community-library-link';
 const communityLibraryContainerSelector = '.e2e-test-library-container';
 const communityLibraryLinkInNavMenuSelector = '.e2e-mobile-test-library-link';
+
+const returnToLibraryButtonSelector = '.e2e-test-exploration-return-to-library';
 
 export class LoggedOutUser extends BaseUser {
   /**
@@ -48,6 +62,38 @@ export class LoggedOutUser extends BaseUser {
         element.click();
       }
     }, selector);
+  }
+
+  /**
+   * Function to navigate to the next card in the preview tab.
+   */
+  async continueToNextCard(): Promise<void> {
+    const currentCardContentSelector = `${stateConversationContent} p`;
+    await this.page.waitForSelector(currentCardContentSelector);
+    const currentCardContent = await this.page.$eval(
+      currentCardContentSelector,
+      el => el.textContent
+    );
+    try {
+      await this.page.waitForSelector(nextCardButton, {timeout: 7000});
+      await this.clickOnElementWithSelector(nextCardButton);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('Timeout')) {
+        await this.clickOnElementWithSelector(nextCardArrowButton);
+      } else {
+        throw error;
+      }
+    }
+
+    // Wait until card content changes.
+    await this.page.waitForFunction(
+      ({selector, value}: {selector: string; value: string}) => {
+        const element = document.querySelector(selector);
+        const text = element?.textContent?.trim();
+        return !!text && text !== value?.trim();
+      },
+      {selector: currentCardContentSelector, value: currentCardContent}
+    );
   }
 
   /**
@@ -73,6 +119,13 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(
       explorationCompletionToastMessage,
       false
+    );
+  }
+
+  async expectToBeOnCommunityLibraryPage(): Promise<void> {
+    await this.page.waitForFunction(
+      (url: string) => window.location.href.includes(url),
+      testConstants.URLs.CommunityLibrary
     );
   }
 
@@ -103,6 +156,15 @@ export class LoggedOutUser extends BaseUser {
     ) {
       throw new Error('Community Library container is not visible.');
     }
+  }
+
+  /**
+   * Navigates to the community library page.
+   */
+  async navigateToCommunityLibraryPage(
+    verifyURL: boolean = true
+  ): Promise<void> {
+    await this.goto(communityLibraryUrl, verifyURL);
   }
 
   /**
@@ -175,6 +237,100 @@ export class LoggedOutUser extends BaseUser {
     await this.openMobileSidebar();
     await this.expectElementToBeVisible(communityLibraryLinkInNavMenuSelector);
     showMessage('Opened Navigation Menu (mobile).');
+  }
+
+  /**
+   * Searches for a specific lesson in the search results and opens it.
+   * @param {string} lessonTitle - The title of the lesson to search for.
+   */
+  async playLessonFromSearchResults(lessonTitle: string): Promise<void> {
+    try {
+      await this.page.waitForSelector(lessonCardTitleSelector);
+      const searchResultsElements = await this.page.$$(lessonCardTitleSelector);
+      const searchResults = await Promise.all(
+        searchResultsElements.map(result =>
+          this.page.evaluate(el => el.textContent.trim(), result)
+        )
+      );
+
+      const lessonIndex = searchResults.indexOf(lessonTitle);
+      if (lessonIndex === -1) {
+        throw new Error(
+          `Lesson "${lessonTitle}" not found in search results.\nFound: ${searchResults.join(', ')}`
+        );
+      }
+
+      // TODO(#26453): The search page fires /searchhandler/data multiple
+      // times on load, causing Angular to re-render the search results list and
+      // detach ElementHandle references mid-operation. To avoid stale handles,
+      // we re-query the DOM by selector and index on each poll and at click time
+      // rather than holding an ElementHandle across async boundaries. Remove this
+      // workaround once the upstream re-rendering issue is fixed.
+      await this.page.waitForFunction(
+        ({selector, index, clickableFn}) => {
+          const element = document.querySelectorAll(selector)[index];
+          if (!element) {
+            return false;
+          }
+          const fn = new Function(
+            'element',
+            `return (${clickableFn})(element)`
+          );
+          return fn(element);
+        },
+        {
+          selector: lessonCardTitleSelector,
+          index: lessonIndex,
+          clickableFn: isElementClickable.toString(),
+        }
+      );
+
+      await this.page.evaluate(
+        ({selector, index}) => {
+          const element = document.querySelectorAll(selector)[
+            index
+          ] as HTMLElement;
+          element.click();
+        },
+        {selector: lessonCardTitleSelector, index: lessonIndex}
+      );
+      await this.waitForStaticAssetsToLoad();
+
+      await this.page.waitForSelector(lessonCardTitleSelector, {
+        state: 'hidden',
+      });
+      showMessage(`Lesson "${lessonTitle}" opened from search results.`);
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      const newError = new Error(
+        `Failed to open lesson from search results: ${err.message}`
+      );
+      newError.stack = err.stack;
+      throw newError;
+    }
+  }
+
+  /**
+   * Return to Learner Dashboard from exploration completion card.
+   */
+  async returnToLibraryFromExplorationCompletion(): Promise<void> {
+    await this.expectElementToBeVisible(returnToLibraryButtonSelector);
+    await this.clickOnElementWithSelector(returnToLibraryButtonSelector);
+  }
+
+  /**
+   * Searches for a lesson in the search bar present in the community library.
+   * @param {string} lessonName - The name of the lesson to search for.
+   */
+  async searchForLessonInSearchBar(lessonName: string): Promise<void> {
+    await this.page.waitForSelector(searchInputSelector, {
+      state: 'visible',
+    });
+    await this.clickOnElementWithSelector(searchInputSelector);
+    await this.typeInInputField(searchInputSelector, lessonName);
+
+    await this.page.keyboard.press('Enter');
+    await this.page.waitForNavigation({waitUntil: 'load'});
   }
 }
 
