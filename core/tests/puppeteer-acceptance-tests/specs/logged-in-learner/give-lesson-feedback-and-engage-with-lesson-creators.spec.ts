@@ -64,11 +64,11 @@ describe('Logged-in User', function () {
       'learner',
       'learner@example.com'
     );
-    await UserFactory.closeSuperAdminBrowser();
-  }, 400000);
+  }, 350000);
 
   afterAll(async function () {
     await UserFactory.closeBrowserForUser(loggedInLearner);
+    await UserFactory.closeSuperAdminBrowser();
   });
 
   it('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {

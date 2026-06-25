@@ -60,11 +60,11 @@ describe('Logged-Out User', function () {
     await UserFactory.closeBrowserForUser(curriculumAdmin);
 
     loggedOutLearner = await UserFactory.createLoggedOutUser();
-    await UserFactory.closeSuperAdminBrowser();
   }, 350000);
 
   afterAll(async function () {
     await UserFactory.closeBrowserForUser(loggedOutLearner);
+    await UserFactory.closeSuperAdminBrowser();
   });
 
   it('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {

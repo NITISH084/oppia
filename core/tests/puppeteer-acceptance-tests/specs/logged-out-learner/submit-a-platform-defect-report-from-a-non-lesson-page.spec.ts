@@ -44,6 +44,7 @@ describe('Logged-Out User', function () {
 
   afterAll(async function () {
     await UserFactory.closeBrowserForUser(loggedOutLearner);
+    await UserFactory.closeSuperAdminBrowser();
   });
 
   it('should scroll down to the bottom global footer layout and click the "Report a Website Issue" link.', async () => {
