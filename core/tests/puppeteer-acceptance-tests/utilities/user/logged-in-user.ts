@@ -146,7 +146,7 @@ const contributorDashboardMenuLink =
   '.e2e-test-contributor-dashboard-menu-link';
 const profileMenuLink = '.e2e-test-profile-link';
 const preferencesMenuLink = '.e2e-test-preferences-link';
-const reportSiteProblemLink ='.e2e-test-report-site-problem-link'
+const reportSiteProblemLink = '.e2e-test-report-site-problem-link';
 const createExplorationButton = 'button.e2e-test-create-new-exploration-button';
 const saveContentButton = 'button.e2e-test-save-state-content';
 const addInteractionButton = 'button.e2e-test-open-add-interaction-modal';

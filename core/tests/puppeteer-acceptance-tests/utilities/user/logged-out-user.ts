@@ -16,7 +16,7 @@
  * @fileoverview Logged-out users utility file.
  */
 
-import puppeteer, {Page} from 'puppeteer';
+import puppeteer from 'puppeteer';
 import {BaseUser} from '../common/puppeteer-utils';
 import testConstants from '../common/test-constants';
 import {showMessage} from '../common/show-message';
@@ -6023,9 +6023,9 @@ export class LoggedOutUser extends BaseUser {
       throw new Error('Report lesson element not found');
     }
     await this.clickOnElement(lessonFeedbackButtonElement);
-    isUserLoggedIn ?
-      await this.expectModalTitleToBe('Send Feedback to the Lessons Team') : 
-      await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
+    isUserLoggedIn
+      ? await this.expectModalTitleToBe('Send Feedback to the Lessons Team')
+      : await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
   }
 
   /**

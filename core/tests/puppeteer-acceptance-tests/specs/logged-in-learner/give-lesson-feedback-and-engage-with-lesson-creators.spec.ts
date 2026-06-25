@@ -117,7 +117,7 @@ describe('Logged-in User', function () {
     showMessage('Submitted Lesson feedback.');
   });
 
-  it('While playing a lesson, open the options sidebar drawer and click the "Report an Issue" flag icon.', async function () {
+  it('should open the options sidebar drawer and click the "Report an Issue" flag icon.', async function () {
     await loggedInLearner.clickReportLessonButton();
     showMessage('Clicked on "Report an Issue" button.');
 
