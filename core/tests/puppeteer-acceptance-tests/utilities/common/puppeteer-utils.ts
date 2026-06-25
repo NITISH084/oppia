@@ -2230,10 +2230,12 @@ export class BaseUser {
    * Clicks on the button in the modal with the given title and action.
    * @param title - The title of the modal.
    * @param action - The action to click on the button in the modal.
+   * @param expectModalToClose - Whether to expect the modal to close after clicking the button.
    */
   async clickButtonInModal(
     title: string,
-    action: 'confirm' | 'cancel'
+    action: 'confirm' | 'cancel',
+    expectModalToClose: boolean = true
   ): Promise<void> {
     await this.expectElementToBeVisible(commonModalTitleSelector);
     await this.expectTextContentToBe(commonModalTitleSelector, title);
@@ -2245,7 +2247,10 @@ export class BaseUser {
     await this.expectElementToBeVisible(currentActionBtnSelector);
     await this.clickOnElementWithSelector(currentActionBtnSelector);
 
-    await this.expectElementToBeVisible(currentActionBtnSelector, false);
+    await this.expectElementToBeVisible(
+      currentActionBtnSelector,
+      !expectModalToClose
+    );
   }
 
   /**

@@ -20,7 +20,7 @@
  */
 
 import {UserFactory} from '../../utilities/common/user-factory';
-import testConstants, { FILEPATHS } from '../../utilities/common/test-constants';
+import testConstants, {FILEPATHS} from '../../utilities/common/test-constants';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
 import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
 import {showMessage} from '../../utilities/common/show-message';
@@ -54,26 +54,34 @@ describe('Logged-Out User', function () {
       'reportASiteIssueModal',
       __dirname
     );
-    await loggedOutLearner.clickButtonInModal('Cancel', "cancel");;
+    await loggedOutLearner.clickButtonInModal(
+      'Report a Website Issue',
+      'cancel'
+    );
     showMessage('Closed Report a Website Issue feedback modal.');
   });
 
   it('should not be able to submit "Report a Website Issue" feedback while the text area description is completely blank.', async () => {
     await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter();
-    await loggedOutLearner.clickButtonInModal('Submit', "confirm");
+    await loggedOutLearner.clickButtonInModal(
+      'Report a Website Issue',
+      'confirm',
+      false
+    );
     await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
       '.e2e-test-form-error',
       'Please add a description before submitting.'
     );
-    await loggedOutLearner.clickButtonInModal('Cancel', "cancel");;
+    await loggedOutLearner.clickButtonInModal(
+      'Report a Website Issue',
+      'cancel'
+    );
   });
 
   it('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
     await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter();
     // Add a screenshot of size greater than 1MB.
-    await loggedOutLearner.addFeedbackScreenshot(
-      FILEPATHS.BANNER_HIGH_RES
-    )
+    await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_HIGH_RES);
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
       'The maximum allowed file size is 1024 KB'
     );
@@ -94,9 +102,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
-    await loggedOutLearner.addFeedbackScreenshot(
-      testConstants.data.oppiaPage
-    )
+    await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
     // In the screenshot, it is seen that all error messages are cleared.
     await loggedOutLearner.expectScreenshotToMatch(
       'reportASiteIssueModalAfterDroppingValidScreenshot',
@@ -111,7 +117,10 @@ describe('Logged-Out User', function () {
       'reportASiteIssueModalAfterEnteringFeedback',
       __dirname
     );
-    await loggedOutLearner.clickButtonInModal('Submit', "confirm");;
+    await loggedOutLearner.clickButtonInModal(
+      'Report a Website Issue',
+      'confirm'
+    );
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );

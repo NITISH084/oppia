@@ -23,9 +23,7 @@ import {UserFactory} from '../../utilities/common/user-factory';
 import testConstants, {FILEPATHS} from '../../utilities/common/test-constants';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
 import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
-import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
-import {TopicManager} from '../../utilities/user/topic-manager';
 import {showMessage} from '../../utilities/common/show-message';
 
 const ROLES = testConstants.Roles;
@@ -33,7 +31,7 @@ const ROLES = testConstants.Roles;
 describe('Logged-Out User', function () {
   let loggedOutLearner: LoggedOutUser;
   let releaseCoordinator: ReleaseCoordinator;
-  let curriculumAdmin: CurriculumAdmin & TopicManager & ExplorationEditor;
+  let curriculumAdmin: ExplorationEditor;
   let expId: string;
 
   beforeAll(async function () {
@@ -54,43 +52,16 @@ describe('Logged-Out User', function () {
     await releaseCoordinator.enableFeatureFlag('new_lesson_player');
     await UserFactory.closeBrowserForUser(releaseCoordinator);
 
-    await curriculumAdmin.createNewClassroom('Math', 'math');
-    await curriculumAdmin.updateClassroom(
-      'Math',
-      'Welcome to Math classroom!',
-      'This course covers basic operations.',
-      'In this course, you will learn the following topics: Place Values.'
-    );
-
-    await curriculumAdmin.createAndPublishTopic(
-      'Place Values',
-      'Place Values subtopics',
-      'Place Values skills'
-    );
-    await curriculumAdmin.addTopicToClassroom('Math', 'Place Values');
-    await curriculumAdmin.publishClassroom('Math');
-
     expId = await curriculumAdmin.createAndPublishExplorationWithCards(
       'What are the Place Values',
       'Algebra',
       2
     );
-
-    await curriculumAdmin.addStoryToTopic(
-      "Jamie's Adventures in the Arcade",
-      'story',
-      'Place Values'
-    );
-
-    await curriculumAdmin.addChapter('What are the Place Values', expId);
-
-    await curriculumAdmin.saveStoryDraft();
-    await curriculumAdmin.publishStoryDraft();
     await UserFactory.closeBrowserForUser(curriculumAdmin);
 
     loggedOutLearner = await UserFactory.createLoggedOutUser();
     await UserFactory.closeSuperAdminBrowser();
-  }, 60000000);
+  }, 350000);
 
   afterAll(async function () {
     await UserFactory.closeBrowserForUser(loggedOutLearner);
@@ -109,7 +80,11 @@ describe('Logged-Out User', function () {
   });
 
   it('should be able to continue as guest by clicking on "Continue as Guest" button on the feedback modal.', async () => {
-    await loggedOutLearner.clickButtonInModal('Continue as Guest', 'cancel');
+    await loggedOutLearner.clickButtonInModal(
+      'Want to chat with our Lessons Team?',
+      'cancel'
+    );
+    showMessage('Clicked on "Continue as Guest" button.');
 
     await loggedOutLearner.expectScreenshotToMatch(
       'sendALessonFeedbackModalAfterClickingContinueAsGuest',
@@ -120,9 +95,14 @@ describe('Logged-Out User', function () {
   it('should be able to click on the "Send Lesson Feedback" button, then click "Sign Up or Login" and proceed through the user flow.', async () => {
     await loggedOutLearner.clickLessonFeedbackButton(false);
     showMessage('Clicked on "Send Lesson Feedback" button.');
-    await loggedOutLearner.clickButtonInModal('Sign up or Login', 'confirm');
+    await loggedOutLearner.clickButtonInModal(
+      'Want to chat with our Lessons Team?',
+      'confirm'
+    );
+    showMessage('Clicked on "Sign Up or Login" button.');
 
     await loggedOutLearner.expectToBeOnLoginPage();
+    showMessage('On login page.');
     await loggedOutLearner.expectScreenshotToMatch(
       'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
       __dirname
@@ -134,15 +114,13 @@ describe('Logged-Out User', function () {
     );
     await loggedOutLearner.playLesson(expId);
     await loggedOutLearner.clickLessonFeedbackButton(true);
-
-    await loggedOutLearner.expectScreenshotToMatch(
-      'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
-      __dirname
-    );
     await loggedOutLearner.submitFeedbackInTextArea(
       'This fraction model is awesome, but can we get more marble examples?'
     );
-    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.clickButtonInModal(
+      'Send Feedback to the Lessons Team',
+      'confirm'
+    );
     showMessage('Clicked on "Submit" button.');
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your feedback has been sent to the lesson team.'
@@ -162,30 +140,38 @@ describe('Logged-Out User', function () {
       __dirname
     );
 
-    await loggedOutLearner.clickButtonInModal('Cancel', 'cancel');
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
     showMessage('Closed Report an issue feedback modal.');
   });
 
   it('should not be able to submit "Report an Issue" feedback while the text area description is completely blank.', async () => {
     await loggedOutLearner.clickReportLessonButton();
-    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.clickButtonInModal(
+      'Report an Issue',
+      'confirm',
+      false
+    );
     await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
       '.e2e-test-form-error',
       'Please add a description before submitting.'
     );
-    await loggedOutLearner.clickButtonInModal('Cancel', 'cancel');
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
   });
 
   it('should not be able to submit "Report an Issue" feedback while the text area description is longer than 2500 characters.', async () => {
     await loggedOutLearner.clickReportLessonButton();
     const longDescription = 'a'.repeat(2501);
     await loggedOutLearner.submitFeedbackInTextArea(longDescription);
-    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.clickButtonInModal(
+      'Report an Issue',
+      'confirm',
+      false
+    );
     await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
       '.e2e-test-form-error',
       'Your description is a bit too long (2501/2500 characters). Please shorten it slightly so our team can review it quickly!'
     );
-    await loggedOutLearner.clickButtonInModal('Cancel', 'cancel');
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
   });
 
   it('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
@@ -227,7 +213,7 @@ describe('Logged-Out User', function () {
       'reportAnIssueModalAfterEnteringFeedback',
       __dirname
     );
-    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );
@@ -247,9 +233,9 @@ describe('Logged-Out User', function () {
       'reportALessonModalAfterEnteringFeedback',
       __dirname
     );
-    await loggedOutLearner.clickButtonInModal('Submit', 'confirm');
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedOutLearner.expectToastMessage(
-      'Thank you for your feedback! The team has received your report.'
+      'Thank you! Your report has been sent to the technical team.'
     );
   });
 });

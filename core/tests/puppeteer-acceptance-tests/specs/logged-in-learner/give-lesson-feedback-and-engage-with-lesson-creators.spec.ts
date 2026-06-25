@@ -24,9 +24,7 @@ import testConstants from '../../utilities/common/test-constants';
 import {LoggedInUser} from '../../utilities/user/logged-in-user';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
 import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
-import {CurriculumAdmin} from '../../utilities/user/curriculum-admin';
 import {ExplorationEditor} from '../../utilities/user/exploration-editor';
-import {TopicManager} from '../../utilities/user/topic-manager';
 import {showMessage} from '../../utilities/common/show-message';
 
 const ROLES = testConstants.Roles;
@@ -34,7 +32,7 @@ const ROLES = testConstants.Roles;
 describe('Logged-in User', function () {
   let loggedInLearner: LoggedInUser & LoggedOutUser;
   let releaseCoordinator: ReleaseCoordinator;
-  let curriculumAdmin: CurriculumAdmin & TopicManager & ExplorationEditor;
+  let curriculumAdmin: ExplorationEditor;
   let expId: string;
 
   beforeAll(async function () {
@@ -55,38 +53,11 @@ describe('Logged-in User', function () {
     await releaseCoordinator.enableFeatureFlag('new_lesson_player');
     await UserFactory.closeBrowserForUser(releaseCoordinator);
 
-    await curriculumAdmin.createNewClassroom('Math', 'math');
-    await curriculumAdmin.updateClassroom(
-      'Math',
-      'Welcome to Math classroom!',
-      'This course covers basic operations.',
-      'In this course, you will learn the following topics: Place Values.'
-    );
-
-    await curriculumAdmin.createAndPublishTopic(
-      'Place Values',
-      'Place Values subtopics',
-      'Place Values skills'
-    );
-    await curriculumAdmin.addTopicToClassroom('Math', 'Place Values');
-    await curriculumAdmin.publishClassroom('Math');
-
     expId = await curriculumAdmin.createAndPublishExplorationWithCards(
       'What are the Place Values',
       'Algebra',
       2
     );
-
-    await curriculumAdmin.addStoryToTopic(
-      "Jamie's Adventures in the Arcade",
-      'story',
-      'Place Values'
-    );
-
-    await curriculumAdmin.addChapter('What are the Place Values', expId);
-
-    await curriculumAdmin.saveStoryDraft();
-    await curriculumAdmin.publishStoryDraft();
     await UserFactory.closeBrowserForUser(curriculumAdmin);
 
     loggedInLearner = await UserFactory.createNewUser(
@@ -94,7 +65,7 @@ describe('Logged-in User', function () {
       'learner@example.com'
     );
     await UserFactory.closeSuperAdminBrowser();
-  }, 60000000);
+  }, 400000);
 
   afterAll(async function () {
     await UserFactory.closeBrowserForUser(loggedInLearner);
@@ -111,7 +82,10 @@ describe('Logged-in User', function () {
       __dirname
     );
 
-    await loggedInLearner.clickButtonInModal('Cancel', "cancel");
+    await loggedInLearner.clickButtonInModal(
+      'Send Feedback to the Lessons Team',
+      'cancel'
+    );
     showMessage('Closed Lesson feedback modal.');
   });
 
@@ -129,7 +103,10 @@ describe('Logged-in User', function () {
       'sendALessonFeedbackModalAfterEnteringFeedback',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Submit', "confirm");
+    await loggedInLearner.clickButtonInModal(
+      'Send Feedback to the Lessons Team',
+      'confirm'
+    );
     await loggedInLearner.expectScreenshotToMatch(
       'sendALessonFeedbackModalAfterSubmittingFeedback',
       __dirname
@@ -149,7 +126,7 @@ describe('Logged-in User', function () {
       __dirname
     );
 
-    await loggedInLearner.clickButtonInModal('Cancel', "cancel");
+    await loggedInLearner.clickButtonInModal('Report an Issue', 'cancel');
     showMessage('Closed Report an issue feedback modal.');
   });
 
@@ -168,7 +145,7 @@ describe('Logged-in User', function () {
       'reportALessonModalAfterEnteringFeedbackWithTypoChip',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Submit', "confirm");
+    await loggedInLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedInLearner.expectToastMessage(
       'Thank you for your feedback! The team has received your report.'
     );
@@ -190,7 +167,7 @@ describe('Logged-in User', function () {
       'reportALessonModalAfterEnteringFeedbackWithConfusingChip',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Submit', "confirm");
+    await loggedInLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedInLearner.expectToastMessage(
       'Thank you for your feedback! The team has received your report.'
     );
@@ -210,7 +187,7 @@ describe('Logged-in User', function () {
       'reportALessonModalAfterEnteringFeedbackWithBrokenLayoutChip',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Submit', "confirm");
+    await loggedInLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedInLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );
@@ -228,7 +205,7 @@ describe('Logged-in User', function () {
       'reportALessonModalAfterEnteringFeedbackWithOtherChip',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Submit', "confirm");
+    await loggedInLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedInLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );
@@ -246,7 +223,10 @@ describe('Logged-in User', function () {
       'reportASiteIssueModal',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Cancel', "cancel");
+    await loggedInLearner.clickButtonInModal(
+      'Report a Website Issue',
+      'cancel'
+    );
     showMessage('Closed Report a problem with the site feedback modal.');
   });
 
@@ -269,7 +249,10 @@ describe('Logged-in User', function () {
       'reportASiteIssueModalAfterEnteringFeedback',
       __dirname
     );
-    await loggedInLearner.clickButtonInModal('Submit', "confirm");
+    await loggedInLearner.clickButtonInModal(
+      'Report a Website Issue',
+      'confirm'
+    );
     await loggedInLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );

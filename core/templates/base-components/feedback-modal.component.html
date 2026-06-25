@@ -11,7 +11,7 @@
         | translate
         }}
       </p>
-      <div class="oppia-guest-feedback-body modal-footer">
+      <div class="oppia-guest-feedback-body">
         <button class="oppia-guest-signup-btn e2e-test-confirm-action-button"
                 (click)="signIn()">
           {{
@@ -177,13 +177,13 @@
 
 
     <div class="modal-footer">
-      <button class="btn btn-secondary e2e-test-feedback-modal-cancel-button" (click)="closeModal()">
+      <button class="btn btn-secondary e2e-test-cancel-action-button" (click)="closeModal()">
         {{
         'I18N_MODAL_CANCEL_BUTTON'
         | translate
         }}
       </button>
-      <button class="btn btn-success e2e-test-feedback-modal-submit-button" (click)="submit()">
+      <button class="btn btn-success e2e-test-confirm-action-button" (click)="submit()">
         {{
         'I18N_PLAYER_REPORT_MODAL_FOOTER_SUBMIT'
         | translate
