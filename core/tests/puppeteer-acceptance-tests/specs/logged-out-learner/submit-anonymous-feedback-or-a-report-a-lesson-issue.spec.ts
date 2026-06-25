@@ -69,6 +69,7 @@ describe('Logged-Out User', function () {
 
   it('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {
     await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     showMessage('On lesson page.');
 
     await loggedOutLearner.clickLessonFeedbackButton(false);
@@ -131,7 +132,7 @@ describe('Logged-Out User', function () {
     );
   });
 
-  it('should open the options sidebar drawer and click the "Report an Issue" flag icon.', async function () {
+  it('should be able to click the "Report an Issue" flag icon.', async function () {
     await loggedOutLearner.clickReportLessonButton();
     showMessage('Clicked on "Report an Issue" button.');
 

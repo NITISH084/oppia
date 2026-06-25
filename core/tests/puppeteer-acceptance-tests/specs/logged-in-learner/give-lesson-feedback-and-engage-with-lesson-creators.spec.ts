@@ -211,14 +211,14 @@ describe('Logged-in User', function () {
     );
   });
 
-  it('should be able to click the Profile menu dropdown at the top right, and select the "Report a problem with the site" option.', async () => {
+  it('should be able to click the Profile menu dropdown at the top right, and select the "Report a Website Issue" option.', async () => {
     await loggedInLearner.navigateToLearnerDashboard();
     await loggedInLearner.clickOnProfileDropdown();
     await loggedInLearner.expectProfileDropdownToContainElementWithContent(
-      'Report a problem with the site'
+      'Report a Website Issue'
     );
     await loggedInLearner.openReportASiteIssueModal();
-    showMessage('Clicked on "Report a problem with the site" button.');
+    showMessage('Clicked on "Report a Website Issue" button.');
     await loggedInLearner.expectScreenshotToMatch(
       'reportASiteIssueModal',
       __dirname
@@ -227,17 +227,17 @@ describe('Logged-in User', function () {
       'Report a Website Issue',
       'cancel'
     );
-    showMessage('Closed Report a problem with the site feedback modal.');
+    showMessage('Closed Report a Website Issue feedback modal.');
   });
 
-  it('should submit feedback for "Report a problem with the site".', async () => {
+  it('should submit feedback for "Report a Website Issue".', async () => {
     await loggedInLearner.navigateToContributorDashboardUsingProfileDropdown();
     await loggedInLearner.clickOnProfileDropdown();
     await loggedInLearner.expectProfileDropdownToContainElementWithContent(
-      'Report a problem with the site'
+      'Report a Website Issue'
     );
     await loggedInLearner.openReportASiteIssueModal();
-    showMessage('Clicked on "Report a problem with the site" button.');
+    showMessage('Clicked on "Report a Website Issue" button.');
 
     await loggedInLearner.submitFeedbackInTextArea(
       'The contributor dashboard is broken.'
