@@ -1235,13 +1235,16 @@ export class BaseUser {
     // screenshot to prevent snapshot mismatches caused by transitions
     // being mid-way when the screenshot is captured.
     showMessage('2 styleHandle');
-    const styleHandle = await currentPage.addStyleTag({
-      content: `
+    await currentPage.evaluate(() => {
+      const style = document.createElement('style');
+      style.id = 'e2e-disable-animations';
+      style.textContent = `
         *, *::before, *::after {
           transition: none !important;
           animation: none !important;
         }
-      `,
+      `;
+      document.head.appendChild(style);
     });
     showMessage('2 after addStyleTag');
 
@@ -1330,7 +1333,9 @@ export class BaseUser {
     } finally {
       showMessage('6 finally');
       // Remove the injected style tag so it doesn't affect subsequent actions.
-      await currentPage.evaluate(el => el.remove(), styleHandle);
+      await currentPage.evaluate(() => {
+        document.getElementById('e2e-disable-animations')?.remove();
+      });
     }
     showMessage('7');
   }
