@@ -67,73 +67,9 @@ describe('Logged-Out User', function () {
     await UserFactory.closeSuperAdminBrowser();
   });
 
-  it('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {
-    await loggedOutLearner.playLesson(expId);
-    await loggedOutLearner.toggleOptionsSidebar();
-    showMessage('On lesson page.');
-
-    await loggedOutLearner.clickLessonFeedbackButton(false);
-    showMessage('Clicked on "Send Lesson Feedback" button.');
-    await loggedOutLearner.expectScreenshotToMatch(
-      'sendALessonFeedbackModal',
-      __dirname
-    );
-  });
-
-  it('should be able to continue as guest by clicking on "Continue as Guest" button on the feedback modal.', async () => {
-    await loggedOutLearner.clickButtonInModal(
-      'Want to chat with our Lessons Team?',
-      'cancel'
-    );
-    showMessage('Clicked on "Continue as Guest" button.');
-
-    await loggedOutLearner.expectScreenshotToMatch(
-      'sendALessonFeedbackModalAfterClickingContinueAsGuest',
-      __dirname
-    );
-  });
-
-  it('should be able to click on the "Send Lesson Feedback" button, then click "Sign Up or Login" and proceed through the user flow.', async () => {
-    await loggedOutLearner.clickLessonFeedbackButton(false);
-    showMessage('Clicked on "Send Lesson Feedback" button.');
-    await loggedOutLearner.clickButtonInModal(
-      'Want to chat with our Lessons Team?',
-      'confirm'
-    );
-    showMessage('Clicked on "Sign Up or Login" button.');
-
-    await loggedOutLearner.expectToBeOnLoginPage();
-    showMessage('On login page.');
-    await loggedOutLearner.expectScreenshotToMatch(
-      'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
-      __dirname
-    );
-
-    await loggedOutLearner.goThoroughSignUpProcess(
-      'learner@example.com',
-      'learner'
-    );
-    await loggedOutLearner.playLesson(expId);
-    await loggedOutLearner.toggleOptionsSidebar();
-    await loggedOutLearner.clickLessonFeedbackButton(true);
-    await loggedOutLearner.submitFeedbackInTextArea(
-      'This fraction model is awesome, but can we get more marble examples?'
-    );
-    await loggedOutLearner.clickButtonInModal(
-      'Send Feedback to the Lessons Team',
-      'confirm'
-    );
-    showMessage('Clicked on "Submit" button.');
-    await loggedOutLearner.expectToastMessage(
-      'Thank you! Your feedback has been sent to the lesson team.'
-    );
-    await loggedOutLearner.expectScreenshotToMatch(
-      'sendALessonFeedbackModalAfterSubmittingFeedback',
-      __dirname
-    );
-  });
-
   it('should be able to click the "Report an Issue" flag icon.', async function () {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.clickReportLessonButton();
     showMessage('Clicked on "Report an Issue" button.');
 
@@ -238,6 +174,72 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
+    );
+  });
+
+  it('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    showMessage('On lesson page.');
+
+    await loggedOutLearner.clickLessonFeedbackButton(false);
+    showMessage('Clicked on "Send Lesson Feedback" button.');
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModal',
+      __dirname
+    );
+  });
+
+  it('should be able to continue as guest by clicking on "Continue as Guest" button on the feedback modal.', async () => {
+    await loggedOutLearner.clickButtonInModal(
+      'Want to chat with our Lessons Team?',
+      'cancel'
+    );
+    showMessage('Clicked on "Continue as Guest" button.');
+
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingContinueAsGuest',
+      __dirname
+    );
+  });
+
+  it('should be able to click on the "Send Lesson Feedback" button, then click "Sign Up or Login" and proceed through the user flow.', async () => {
+    await loggedOutLearner.clickLessonFeedbackButton(false);
+    showMessage('Clicked on "Send Lesson Feedback" button.');
+    await loggedOutLearner.clickButtonInModal(
+      'Want to chat with our Lessons Team?',
+      'confirm'
+    );
+    showMessage('Clicked on "Sign Up or Login" button.');
+
+    await loggedOutLearner.expectToBeOnLoginPage();
+    showMessage('On login page.');
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
+      __dirname
+    );
+
+    await loggedOutLearner.goThoroughSignUpProcess(
+      'learner@example.com',
+      'learner'
+    );
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickLessonFeedbackButton(true);
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'This fraction model is awesome, but can we get more marble examples?'
+    );
+    await loggedOutLearner.clickButtonInModal(
+      'Send Feedback to the Lessons Team',
+      'confirm'
+    );
+    showMessage('Clicked on "Submit" button.');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you! Your feedback has been sent to the lesson team.'
+    );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterSubmittingFeedback',
+      __dirname
     );
   });
 });
