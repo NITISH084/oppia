@@ -6041,6 +6041,7 @@ export class LoggedOutUser extends BaseUser {
     }
     await reportLessonButtonElement.click();
     await this.expectModalTitleToBe('Report an Issue');
+    await this.waitForNetworkIdle();
   }
 
   /**
@@ -6068,6 +6069,8 @@ export class LoggedOutUser extends BaseUser {
   async openReportASiteIssueModalFromGlobalFooter(): Promise<void> {
     await this.page.waitForSelector(reportWebsiteIssueLink);
     await this.clickOnElementWithSelector(reportWebsiteIssueLink);
+    await this.expectModalTitleToBe('Report a Website Issue');
+    await this.waitForNetworkIdle();
   }
 
   /**

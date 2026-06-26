@@ -1227,12 +1227,14 @@ export class BaseUser {
     const specName = process.env.SPEC_NAME;
     const currentPage = typeof newPage !== 'undefined' ? newPage : this.page;
     await currentPage.mouse.move(0, 0);
+    showMessage('1 wait timeout');
     // To wait for all images to load and the page to be stable.
     await currentPage.waitForTimeout(5000);
 
     // Disable all CSS transitions and animations before taking the
     // screenshot to prevent snapshot mismatches caused by transitions
     // being mid-way when the screenshot is captured.
+    showMessage('2 styleHandle');
     const styleHandle = await currentPage.addStyleTag({
       content: `
         *, *::before, *::after {

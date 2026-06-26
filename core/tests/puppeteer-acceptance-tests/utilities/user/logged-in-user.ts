@@ -2344,6 +2344,7 @@ export class LoggedInUser extends BaseUser {
     });
     await this.clickOnElementWithSelector(reportSiteProblemLink);
     await this.expectModalTitleToBe('Report a Website Issue');
+    await this.waitForNetworkIdle();
   }
 
   /**
