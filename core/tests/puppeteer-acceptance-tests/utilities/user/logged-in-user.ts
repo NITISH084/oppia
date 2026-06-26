@@ -1028,22 +1028,6 @@ export class LoggedInUser extends BaseUser {
   }
 
   /**
-   * Logs out the user.
-   */
-  async logoutUsingProfileDropdown(): Promise<void> {
-    await this.clickOnElementWithSelector(profileDropdown);
-
-    await this.page.waitForSelector(signOutButton, {
-      visible: true,
-    });
-
-    await Promise.all([
-      this.page.waitForNavigation({waitUntil: 'networkidle0'}),
-      this.clickOnElementWithSelector(signOutButton),
-    ]);
-  }
-
-  /**
    * Verifies that the current page URL includes the expected page pathname.
    */
   async expectToBeOnPage(expectedPage: string): Promise<void> {
