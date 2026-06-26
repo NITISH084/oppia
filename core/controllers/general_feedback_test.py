@@ -213,13 +213,6 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         )
 
     def test_submit_report_rejects_missing_captcha_token(self) -> None:
-        payload = self._get_report(
-            'report_id',
-            'lesson',
-            'https://oppia.org/exp1',
-            'broken_layout_or_image',
-            self._get_lesson_metadata(),
-        )
         csrf_token = self.get_new_csrf_token()
         with self.swap_to_always_return(
             captcha_services, 'verify_turnstile_token', False
@@ -247,13 +240,6 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         )
 
     def test_submit_feedback_rejects_invalid_captcha_token(self) -> None:
-        payload = self._get_report(
-            'report_id',
-            'lesson',
-            'https://oppia.org/exp1',
-            'broken_layout_or_image',
-            self._get_lesson_metadata(),
-        )
         csrf_token = self.get_new_csrf_token()
         with self.swap_to_always_return(
             captcha_services, 'verify_turnstile_token', False
