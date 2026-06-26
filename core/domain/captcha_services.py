@@ -37,7 +37,7 @@ _TURNSTILE_VERIFY_URL = (
 )
 _TURNSTILE_SECRET_KEY_ENV_VAR = 'CLOUDFLARE_TURNSTILE_SECRET_KEY'
 _TURNSTILE_SITE_KEY_ENV_VAR = 'CLOUDFLARE_TURNSTILE_SITE_KEY'
-# Cloudflare official Turnstile testing keys for non-production use.
+# Cloudflare official Turnstile testing keys for non-production use(EMULATOR_MODE).
 # Reference:
 # https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 _TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA'
@@ -48,7 +48,7 @@ _TURNSTILE_VERIFY_TIMEOUT_SECS = 15
 
 def get_turnstile_site_key() -> Optional[str]:
     """Returns the configured Turnstile site key."""
-    if constants.DEV_MODE:
+    if constants.EMULATOR_MODE:
         return _TURNSTILE_TEST_SITE_KEY
     return secrets_services.get_secret(_TURNSTILE_SITE_KEY_ENV_VAR)
 
@@ -64,7 +64,7 @@ def verify_turnstile_token(token: str) -> bool:
     """
     secret_key = (
         _TURNSTILE_TEST_SECRET_KEY
-        if constants.DEV_MODE
+        if constants.EMULATOR_MODE
         else secrets_services.get_secret(_TURNSTILE_SECRET_KEY_ENV_VAR)
     )
     if not secret_key:

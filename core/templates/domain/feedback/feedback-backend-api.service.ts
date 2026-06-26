@@ -100,47 +100,24 @@ export class FeedbackBackendApiService {
       ...payload.toBackendDict(),
       ...(captchaToken ? {captcha_token: captchaToken} : {}),
     };
-    try {
-      return await this.http
-        .post<FeedbackSubmitResponse>(this.lessonFeedbackUrl, requestPayload)
-        .toPromise();
-      // We use unknown type because we are unsure of the type of error
-      // that was thrown. Since the catch block cannot identify the
-      // specific type of error, we are unable to further optimise the
-      // code by introducing more types of errors.
-    } catch (error: unknown) {
-      if (error instanceof HttpErrorResponse) {
-        return Promise.reject(error);
-      }
-      throw error;
-    }
+    return await this.http
+      .post<FeedbackSubmitResponse>(this.lessonFeedbackUrl, requestPayload)
+      .toPromise();
   }
 
   async submitSiteAndLessonIssueReportAsync(
     payload: PlatformFeedbackModel,
     captchaToken: string | null
   ): Promise<FeedbackSubmitResponse> {
-    try {
-      const screenshotData = await this.getStagedScreenshotSubmissionDataAsync(
-        payload.screenshotFilename
-      );
-      return await this.http
-        .post<FeedbackSubmitResponse>(this.reportUrl, {
-          ...payload.toBackendDict(),
-          screenshot_file: screenshotData.screenshotFile,
-          ...(captchaToken ? {captcha_token: captchaToken} : {}),
-        })
-        .toPromise();
-      // We use unknown type because we are unsure of the type of error
-      // that was thrown. Since the catch block cannot identify the
-      // specific type of error, we are unable to further optimise the
-      // code by introducing more types of errors.
-    } catch (error: unknown) {
-      if (error instanceof HttpErrorResponse) {
-        return Promise.reject(error);
-      } else {
-        throw error;
-      }
-    }
+    const screenshotData = await this.getStagedScreenshotSubmissionDataAsync(
+      payload.screenshotFilename
+    );
+    return await this.http
+      .post<FeedbackSubmitResponse>(this.reportUrl, {
+        ...payload.toBackendDict(),
+        screenshot_file: screenshotData.screenshotFile,
+        ...(captchaToken ? {captcha_token: captchaToken} : {}),
+      })
+      .toPromise();
   }
 }

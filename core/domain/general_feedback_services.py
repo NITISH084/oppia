@@ -57,8 +57,10 @@ def _lesson_feedback_model_to_domain(
         ),
     }
 
-    # Strip responded_by from each response entry before surfacing to domain.
-    # Only response_text and responded_on are safe to expose.
+    # responded_by is stored in the backend for internal tracking of who authored
+    # a staff response. Since this information is not intended for learners, remove
+    # it before surfacing the data through the domain layer. Only response_text and
+    # responded_on are exposed.
     sanitized_responses: List[
         general_feedback_domain.LessonFeedbackResponseDict
     ] = [

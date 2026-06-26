@@ -238,6 +238,12 @@ describe('FeedbackModalComponent', () => {
         if (key === 'I18N_LESSON_FEEDBACK_MESSAGE_TOO_LONG') {
           return `Please keep your feedback under ${params?.maxLength} characters.`;
         }
+        if (key === 'I18N_FEEDBACK_CAPTCHA_UNAVAILABLE') {
+          return 'Captcha is currently unavailable. Please log in to submit feedback.';
+        }
+        if (key === 'I18N_FEEDBACK_CAPTCHA_LOAD_FAILED') {
+          return 'Captcha failed to load.';
+        }
 
         return key;
       }
@@ -246,7 +252,6 @@ describe('FeedbackModalComponent', () => {
       'FeedbackSessionInfoService',
       ['getSessionInfo']
     );
-    translateService = jasmine.createSpyObj('TranslateService', ['instant']);
     alertService = jasmine.createSpyObj('AlertsService', [
       'addSuccessMessage',
       'addWarning',
@@ -1271,7 +1276,7 @@ describe('FeedbackModalComponent', () => {
     flushMicrotasks();
 
     expect(component.captchaLoadError).toEqual(
-      'Captcha is currently unavailable. Please Login to submit feedback.'
+      'Captcha is currently unavailable. Please log in to submit feedback.'
     );
 
     expect(insertScriptService.loadScript).not.toHaveBeenCalled();
@@ -1288,7 +1293,7 @@ describe('FeedbackModalComponent', () => {
     flushMicrotasks();
 
     expect(component.captchaLoadError).toEqual(
-      'Captcha is currently unavailable, Please Login to submit feedback.'
+      'Captcha is currently unavailable. Please log in to submit feedback.'
     );
 
     expect(insertScriptService.loadScript).not.toHaveBeenCalled();

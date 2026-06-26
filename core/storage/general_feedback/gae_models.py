@@ -250,6 +250,7 @@ class LessonFeedbackModel(BaseFeedbackModel):
         parent_feedback_id: Optional[str]. References the original
             LessonFeedbackModel when this entry is a follow-up note.
             None for top-level submissions.
+        response_list_schema_version: int. Version of the response list.
         response_list: List[Dict]. Ordered list of creator responses. Each
             element is a dict with keys:
                 response_text (str),
@@ -264,6 +265,10 @@ class LessonFeedbackModel(BaseFeedbackModel):
     ID_PREFIX: str = 'feedback.lesson'
 
     parent_feedback_id = datastore_services.StringProperty(
+        required=False,
+        indexed=True,
+    )
+    response_list_schema_version = datastore_services.IntegerProperty(
         required=False,
         indexed=True,
     )
@@ -301,6 +306,9 @@ class LessonFeedbackModel(BaseFeedbackModel):
             super().get_export_policy(),
             **{
                 'parent_feedback_id': base_models.EXPORT_POLICY.EXPORTED,
+                'response_list_schema_version': (
+                    base_models.EXPORT_POLICY.EXPORTED
+                ),
                 # response_list stores responded_by (raw user ID) internally
                 # but export_data strips it, emitting only response_text
                 # and responded_on to the takeout output.
@@ -430,6 +438,7 @@ class LessonFeedbackModel(BaseFeedbackModel):
             lesson_metadata_schema_version=feconf.CURRENT_LESSON_METADATA_SCHEMA_VERSION,
             lesson_metadata_json=lesson_metadata_json,
             parent_feedback_id=parent_feedback_id,
+            response_list_schema_version=feconf.CURRENT_RESPONSE_LIST_SCHEMA_VERSION,
             response_list=[],
             response_count=0,
             seen_response_count=0,

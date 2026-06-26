@@ -133,6 +133,7 @@ class LessonFeedbackModelTests(test_utils.GenericTestBase):
                 'lesson_metadata_json': base_models.EXPORT_POLICY.EXPORTED,
                 # Fields specific to LessonFeedbackModel.
                 'parent_feedback_id': base_models.EXPORT_POLICY.EXPORTED,
+                'response_list_schema_version': base_models.EXPORT_POLICY.EXPORTED,
                 'response_list': base_models.EXPORT_POLICY.EXPORTED,
                 'response_count': base_models.EXPORT_POLICY.EXPORTED,
                 'seen_response_count': base_models.EXPORT_POLICY.EXPORTED,

@@ -415,27 +415,29 @@ export class FeedbackModalComponent implements OnInit {
     this.closeModal();
   }
 
-  initializeCaptchaIfRequired(): void {
+  async initializeCaptchaIfRequired(): Promise<void> {
     if (this.isUserLoggedIn) {
       return;
     }
-    this.feedbackBackendApiService
-      .fetchCaptchaConfigAsync()
-      .then(config => {
-        this.captchaSiteKey = config.site_key;
-        if (!this.captchaSiteKey) {
-          this.captchaLoadError =
-            'Captcha is currently unavailable. Please Login to submit feedback.';
-          return;
-        }
-        this.insertScriptService.loadScript(KNOWN_SCRIPTS.TURNSTILE, () => {
-          this.renderTurnstile();
-        });
-      })
-      .catch(() => {
-        this.captchaLoadError =
-          'Captcha is currently unavailable, Please Login to submit feedback.';
+    try {
+      const config =
+        await this.feedbackBackendApiService.fetchCaptchaConfigAsync();
+
+      this.captchaSiteKey = config.site_key;
+      if (!this.captchaSiteKey) {
+        this.captchaLoadError = this.translateService.instant(
+          'I18N_FEEDBACK_CAPTCHA_UNAVAILABLE'
+        );
+        return;
+      }
+      this.insertScriptService.loadScript(KNOWN_SCRIPTS.TURNSTILE, () => {
+        this.renderTurnstile();
       });
+    } catch {
+      this.captchaLoadError = this.translateService.instant(
+        'I18N_FEEDBACK_CAPTCHA_UNAVAILABLE'
+      );
+    }
   }
 
   renderTurnstile(): void {
@@ -448,7 +450,9 @@ export class FeedbackModalComponent implements OnInit {
     }
     const turnstileWindow = this.windowRef.nativeWindow as TurnstileWindow;
     if (!turnstileWindow.turnstile) {
-      this.captchaLoadError = 'Captcha failed to load.';
+      this.captchaLoadError = this.translateService.instant(
+        'I18N_FEEDBACK_CAPTCHA_LOAD_FAILED'
+      );
       return;
     }
     this.turnstileWidgetId = turnstileWindow.turnstile.render(
@@ -461,7 +465,9 @@ export class FeedbackModalComponent implements OnInit {
         },
         'error-callback': () => {
           this.captchaToken = '';
-          this.captchaLoadError = 'Captcha failed to load.';
+          this.captchaLoadError = this.translateService.instant(
+            'I18N_FEEDBACK_CAPTCHA_LOAD_FAILED'
+          );
         },
         'expired-callback': () => {
           this.captchaToken = '';

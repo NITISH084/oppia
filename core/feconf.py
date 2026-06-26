@@ -384,9 +384,13 @@ CURRENT_SESSION_INFO_SCHEMA_VERSION = 1
 # This is the minimum version of the FeedbackSessionLogModel schema that is supported.
 MINIMUM_SESSION_INFO_SCHEMA_VERSION = 1
 
-# This value should be updated if the schema OF Lesson Metadata
+# This value should be updated if the schema Of Lesson Metadata
 # schema changes.
 CURRENT_LESSON_METADATA_SCHEMA_VERSION = 1
+
+# This value should be updated if the schema Of Response List
+# schema changes.
+CURRENT_RESPONSE_LIST_SCHEMA_VERSION = 1
 
 # The default number of exploration tiles to load at a time in the search
 # results page.
