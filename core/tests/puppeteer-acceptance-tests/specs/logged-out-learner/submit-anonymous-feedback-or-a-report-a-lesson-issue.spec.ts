@@ -114,6 +114,7 @@ describe('Logged-Out User', function () {
       'learner'
     );
     await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.clickLessonFeedbackButton(true);
     await loggedOutLearner.submitFeedbackInTextArea(
       'This fraction model is awesome, but can we get more marble examples?'

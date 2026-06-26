@@ -75,6 +75,7 @@ describe('Logged-in User', function () {
     await loggedInLearner.navigateToLearnerDashboard();
     await loggedInLearner.playLesson(expId);
 
+    await loggedInLearner.toggleOptionsSidebar();
     await loggedInLearner.clickLessonFeedbackButton(true);
     showMessage('Clicked on "Send Lesson Feedback" button.');
     await loggedInLearner.expectScreenshotToMatch(
@@ -114,10 +115,12 @@ describe('Logged-in User', function () {
     await loggedInLearner.expectToastMessage(
       'Thank you! Your feedback has been sent to the lesson team.'
     );
+    await loggedInLearner.toggleOptionsSidebar();
     showMessage('Submitted Lesson feedback.');
   });
 
   it('should open the options sidebar drawer and click the "Report an Issue" flag icon.', async function () {
+    await loggedInLearner.toggleOptionsSidebar();
     await loggedInLearner.clickReportLessonButton();
     showMessage('Clicked on "Report an Issue" button.');
 
@@ -209,6 +212,7 @@ describe('Logged-in User', function () {
     await loggedInLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );
+    await loggedInLearner.toggleOptionsSidebar();
   });
 
   it('should be able to click the Profile menu dropdown at the top right, and select the "Report a Website Issue" option.', async () => {

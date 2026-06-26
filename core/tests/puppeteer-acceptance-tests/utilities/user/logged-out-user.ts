@@ -6020,9 +6020,9 @@ export class LoggedOutUser extends BaseUser {
       {visible: true}
     );
     if (!lessonFeedbackButtonElement) {
-      throw new Error('Report lesson element not found');
+      throw new Error('Lesson feedback element not found');
     }
-    await this.clickOnElement(lessonFeedbackButtonElement);
+    await lessonFeedbackButtonElement.click();
     isUserLoggedIn
       ? await this.expectModalTitleToBe('Send Feedback to the Lessons Team')
       : await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
@@ -6039,7 +6039,7 @@ export class LoggedOutUser extends BaseUser {
     if (!reportLessonButtonElement) {
       throw new Error('Report lesson element not found');
     }
-    await this.clickOnElement(reportLessonButtonElement);
+    await reportLessonButtonElement.click();
     await this.expectModalTitleToBe('Report an Issue');
   }
 
