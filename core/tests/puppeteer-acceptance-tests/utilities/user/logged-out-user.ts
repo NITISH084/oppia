@@ -632,6 +632,7 @@ const reportIssueOtherChipSelector = '.e2e-test-report-issue-other-chip';
 const technicalLogsSelector = '.e2e-test-technical-logs';
 const imageRecieverFeedbackComponentSelector = '.e2e-test-photo-upload-input';
 const reportWebsiteIssueLink = '.e2e-test-report-website-issue-link';
+const feedbackCaptchaContainer = '.e2e-test-feedback-captcha-container';
 
 /**
  * The KeyInput type is based on the key names from the UI Events KeyboardEvent key Values specification.
@@ -5992,12 +5993,6 @@ export class LoggedOutUser extends BaseUser {
   }
 
   /**
-   * Verifies that the report button is visible in the lesson player sidebar.
-   */
-  async isReportButtonVisible(): Promise<boolean> {
-    return await this.isElementVisible(lessonReportButtonSelector, true);
-  }
-  /**
    * Open 'Open Options' in new lesson player page.
    */
   async toggleOptionsSidebar(): Promise<void> {
@@ -6013,6 +6008,7 @@ export class LoggedOutUser extends BaseUser {
 
   /**
    * Open the Send a Lesson feedback modal of new lesson player.
+   * @param {boolean} isUserLoggedIn - Whether the user is logged in or not.
    */
   async clickLessonFeedbackButton(isUserLoggedIn: boolean): Promise<void> {
     const lessonFeedbackButtonElement = await this.page.waitForSelector(
@@ -6026,12 +6022,16 @@ export class LoggedOutUser extends BaseUser {
     isUserLoggedIn
       ? await this.expectModalTitleToBe('Send Feedback to the Lessons Team')
       : await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
+    await this.expectElementToBeVisible(commonModalBodySelector);
+    await this.expectElementToBeVisible(feedbackModaltextarea);
+    await this.waitForElementToStabilize(commonModalBodySelector);
   }
 
   /**
    * Open the Report an Issue feedback modal of new lesson player.
+   * @param {boolean} isUserLoggedIn - Whether the user is logged in or not.
    */
-  async clickReportLessonButton(): Promise<void> {
+  async clickReportLessonButton(isUserLoggedIn: boolean): Promise<void> {
     const reportLessonButtonElement = await this.page.waitForSelector(
       lessonReportButtonSelector,
       {visible: true}
@@ -6042,6 +6042,13 @@ export class LoggedOutUser extends BaseUser {
     await reportLessonButtonElement.click();
     await this.expectModalTitleToBe('Report an Issue');
     await this.waitForNetworkIdle();
+    await this.expectElementToBeVisible(commonModalBodySelector);
+    await this.expectElementToBeVisible(feedbackModaltextarea);
+    await this.waitForElementToStabilize(commonModalBodySelector);
+    if (isUserLoggedIn) {
+      await this.expectElementToBeVisible(feedbackCaptchaContainer);
+      await this.waitForElementToStabilize(feedbackCaptchaContainer);
+    }
   }
 
   /**
@@ -6049,6 +6056,8 @@ export class LoggedOutUser extends BaseUser {
    * @param feedback - The feedback to submit.
    */
   async submitFeedbackInTextArea(feedback: string): Promise<void> {
+    await this.expectElementToBeVisible(feedbackModaltextarea);
+    await this.waitForElementToStabilize(feedbackModaltextarea);
     await this.waitForElementToBeClickable(feedbackModaltextarea);
     await this.typeInInputField(feedbackModaltextarea, feedback);
   }
@@ -6066,11 +6075,19 @@ export class LoggedOutUser extends BaseUser {
   /**
    * Opens the report a site issue modal from the global footer.
    */
-  async openReportASiteIssueModalFromGlobalFooter(): Promise<void> {
+  async openReportASiteIssueModalFromGlobalFooter(
+    isUserLoggedIn: boolean
+  ): Promise<void> {
     await this.page.waitForSelector(reportWebsiteIssueLink);
     await this.clickOnElementWithSelector(reportWebsiteIssueLink);
     await this.expectModalTitleToBe('Report a Website Issue');
-    await this.waitForNetworkIdle();
+    await this.expectElementToBeVisible(commonModalBodySelector);
+    await this.expectElementToBeVisible(feedbackModaltextarea);
+    await this.waitForElementToStabilize(commonModalBodySelector);
+    if (isUserLoggedIn) {
+      await this.expectElementToBeVisible(feedbackCaptchaContainer);
+      await this.waitForElementToStabilize(feedbackCaptchaContainer);
+    }
   }
 
   /**

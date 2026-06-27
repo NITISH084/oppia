@@ -49,7 +49,7 @@ describe('Logged-Out User', function () {
 
   it('should scroll down to the bottom global footer layout and click the "Report a Website Issue" link.', async () => {
     await loggedOutLearner.navigateToAboutPage();
-    await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter();
+    await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter(false);
     showMessage('Clicked on "Report a Website Issue" button.');
     await loggedOutLearner.expectScreenshotToMatch(
       'reportASiteIssueModal',
@@ -63,7 +63,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should not be able to submit "Report a Website Issue" feedback while the text area description is completely blank.', async () => {
-    await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter();
+    await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter(false);
     await loggedOutLearner.clickButtonInModal(
       'Report a Website Issue',
       'confirm',
@@ -80,7 +80,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
-    await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter();
+    await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter(false);
     // Add a screenshot of size greater than 1MB.
     await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_HIGH_RES);
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(

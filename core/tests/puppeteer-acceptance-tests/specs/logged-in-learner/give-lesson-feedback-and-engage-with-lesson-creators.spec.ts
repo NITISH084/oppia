@@ -121,7 +121,7 @@ describe('Logged-in User', function () {
 
   it('should open the options sidebar drawer and click the "Report an Issue" flag icon.', async function () {
     await loggedInLearner.toggleOptionsSidebar();
-    await loggedInLearner.clickReportLessonButton();
+    await loggedInLearner.clickReportLessonButton(true);
     showMessage('Clicked on "Report an Issue" button.');
 
     await loggedInLearner.expectScreenshotToMatch(
@@ -134,7 +134,7 @@ describe('Logged-in User', function () {
   });
 
   it('should be able to choose a "typo" or "confusing or incorrect answer" chip, enter feedback, and click the main "Submit" button at the bottom of the modal overlay', async () => {
-    await loggedInLearner.clickReportLessonButton();
+    await loggedInLearner.clickReportLessonButton(true);
 
     await loggedInLearner.selectReportIssueChip('typo');
     showMessage('Typo chip selected in report an issue modal.');
@@ -153,7 +153,7 @@ describe('Logged-in User', function () {
       'Thank you for your feedback! The team has received your report.'
     );
 
-    await loggedInLearner.clickReportLessonButton();
+    await loggedInLearner.clickReportLessonButton(true);
     await loggedInLearner.selectReportIssueChip(
       'confusing or incorrect answer'
     );
@@ -177,7 +177,7 @@ describe('Logged-in User', function () {
   });
 
   it('should be able to choose a "broken layout / image" or "other" chip, enter feedback, and click the main "Submit" button at the bottom of the modal overlay.', async () => {
-    await loggedInLearner.clickReportLessonButton();
+    await loggedInLearner.clickReportLessonButton(true);
 
     await loggedInLearner.selectReportIssueChip('broken layout');
     await loggedInLearner.submitFeedbackInTextArea(
@@ -195,7 +195,7 @@ describe('Logged-in User', function () {
       'Thank you! Your report has been sent to the technical team.'
     );
 
-    await loggedInLearner.clickReportLessonButton();
+    await loggedInLearner.clickReportLessonButton(true);
 
     await loggedInLearner.selectReportIssueChip('other');
     await loggedInLearner.submitFeedbackInTextArea(

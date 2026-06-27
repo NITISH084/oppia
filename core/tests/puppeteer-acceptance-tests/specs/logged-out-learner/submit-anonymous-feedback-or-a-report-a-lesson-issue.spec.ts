@@ -70,7 +70,7 @@ describe('Logged-Out User', function () {
   it('should be able to click the "Report an Issue" flag icon.', async function () {
     await loggedOutLearner.playLesson(expId);
     await loggedOutLearner.toggleOptionsSidebar();
-    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.clickReportLessonButton(false);
     showMessage('Clicked on "Report an Issue" button.');
 
     await loggedOutLearner.expectScreenshotToMatch(
@@ -83,7 +83,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should not be able to submit "Report an Issue" feedback while the text area description is completely blank.', async () => {
-    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.clickReportLessonButton(false);
     await loggedOutLearner.clickButtonInModal(
       'Report an Issue',
       'confirm',
@@ -97,7 +97,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should not be able to submit "Report an Issue" feedback while the text area description is longer than 2500 characters.', async () => {
-    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.clickReportLessonButton(false);
     const longDescription = 'a'.repeat(2501);
     await loggedOutLearner.submitFeedbackInTextArea(longDescription);
     await loggedOutLearner.clickButtonInModal(
@@ -113,7 +113,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
-    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.clickReportLessonButton(false);
     // Add a screenshot of size greater than 1MB.
     await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_HIGH_RES);
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
@@ -162,7 +162,7 @@ describe('Logged-Out User', function () {
   });
 
   it('should type a customized issue or positive message directly into the text box without clicking any of the category chips', async () => {
-    await loggedOutLearner.clickReportLessonButton();
+    await loggedOutLearner.clickReportLessonButton(false);
     await loggedOutLearner.submitFeedbackInTextArea(
       'This fraction explanation makes so much sense, thank you!'
     );

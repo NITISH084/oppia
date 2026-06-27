@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <div class="modal-body oppia-feedback-body">
+    <div class="modal-body oppia-feedback-body e2e-test-modal-body">
 
       <p *ngIf="isLessonFeedbackMode" class="oppia-lesson-feedback-microcopy">
         {{
@@ -167,7 +167,7 @@
         </span>
       </label>
       <div class="oppia-feedback-captcha-section" *ngIf="!isLessonFeedbackMode && !isUserLoggedIn">
-        <div #turnstileContainer class="oppia-feedback-turnstile-container">
+        <div #turnstileContainer class="oppia-feedback-turnstile-container e2e-test-feedback-captcha-container">
         </div>
         <div *ngIf="captchaLoadError" class="oppia-feedback-error-text">
           {{ captchaLoadError }}
