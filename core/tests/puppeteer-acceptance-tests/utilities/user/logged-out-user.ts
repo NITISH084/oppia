@@ -6045,7 +6045,7 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     await this.waitForElementToStabilize(commonModalBodySelector);
-    if (isUserLoggedIn) {
+    if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.waitForElementToStabilize(feedbackCaptchaContainer);
     }
@@ -6084,7 +6084,7 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     await this.waitForElementToStabilize(commonModalBodySelector);
-    if (isUserLoggedIn) {
+    if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.waitForElementToStabilize(feedbackCaptchaContainer);
     }
