@@ -253,6 +253,7 @@ export class FeedbackModalComponent implements OnInit {
       this.formError = this.translateService.instant(
         'I18N_LESSON_FEEDBACK_MESSAGE_TOO_LONG',
         {
+          length: this.feedbackText.length,
           maxLength: this.MAX_REPORT_MESSAGE_LENGTH,
         }
       );
@@ -322,7 +323,11 @@ export class FeedbackModalComponent implements OnInit {
         this.captchaToken
       );
       const successMessage = this.translateService.instant(
-        'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
+        this.category === 'broken_layout_or_image' ||
+          this.category === 'other_or_not_sure' ||
+          this.category === null
+          ? 'I18N_REPORT_WEBSITE_ISSUE_SUBMITTED_SUCCESS'
+          : 'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
       );
       this.alertsService.addSuccessMessage(successMessage, 7000);
     } catch (error) {

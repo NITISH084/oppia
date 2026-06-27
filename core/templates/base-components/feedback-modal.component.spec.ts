@@ -915,6 +915,7 @@ describe('FeedbackModalComponent', () => {
     createComponent();
     component.feedbackModalType = FeedbackModalType.LESSON_ISSUE;
     component.feedbackText = 'Lesson issue report';
+    component.category = 'typo';
     component.includeTechnicalLogs = true;
 
     spyOn(pageContextService, 'getExplorationId').and.returnValue('exp1');
@@ -997,7 +998,7 @@ describe('FeedbackModalComponent', () => {
     component.submit();
     tick();
     expect(translateService.instant).toHaveBeenCalledWith(
-      'I18N_LESSON_FEEDBACK_SUBMITTED_SUCCESS'
+      'I18N_REPORT_WEBSITE_ISSUE_SUBMITTED_SUCCESS'
     );
     expect(alertService.addSuccessMessage).toHaveBeenCalled();
     expect(closeSpy).toHaveBeenCalled();
