@@ -49,6 +49,7 @@ describe('Logged-Out User', function () {
 
   it('should scroll down to the bottom global footer layout and click the "Report a Website Issue" link.', async () => {
     await loggedOutLearner.navigateToAboutPage();
+    await loggedOutLearner.scrollToBottomOfPage();
     await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter(false);
     showMessage('Clicked on "Report a Website Issue" button.');
     // await loggedOutLearner.expectScreenshotToMatch(
@@ -113,7 +114,7 @@ describe('Logged-Out User', function () {
       'The partner image grid overlaps text headers when scaling down to smaller mobile screen viewports.'
     );
     await loggedOutLearner.expectIncludeTechnicalLogToBePresent(true);
-
+    await loggedOutLearner.scrollToCaptchaContainer();
     // await loggedOutLearner.expectScreenshotToMatch(
     //   'reportASiteIssueModalAfterEnteringFeedback',
     //   __dirname

@@ -5993,6 +5993,19 @@ export class LoggedOutUser extends BaseUser {
   }
 
   /**
+   * Scrolls to the captcha container.
+   */
+  async scrollToCaptchaContainer(): Promise<void> {
+    await this.page.waitForSelector(feedbackCaptchaContainer);
+
+    await this.page.evaluate((selector: string) => {
+      const element = document.querySelector(selector);
+      element?.scrollIntoView();
+    }, feedbackCaptchaContainer);
+    await this.page.waitForTimeout(4000);
+  }
+
+  /**
    * Open 'Open Options' in new lesson player page.
    */
   async toggleOptionsSidebar(): Promise<void> {

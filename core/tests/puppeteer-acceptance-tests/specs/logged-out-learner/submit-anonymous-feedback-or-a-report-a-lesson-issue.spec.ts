@@ -146,6 +146,7 @@ describe('Logged-Out User', function () {
       'The partner image grid overlaps text headers when scaling down to smaller mobile screen viewports.'
     );
     await loggedOutLearner.expectIncludeTechnicalLogToBePresent(true);
+    await loggedOutLearner.scrollToCaptchaContainer();
 
     // await loggedOutLearner.expectScreenshotToMatch(
     //   'reportAnIssueModalAfterEnteringFeedback',
@@ -166,6 +167,7 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.submitFeedbackInTextArea(
       'This fraction explanation makes so much sense, thank you!'
     );
+    await loggedOutLearner.scrollToCaptchaContainer();
 
     // await loggedOutLearner.expectScreenshotToMatch(
     //   'reportALessonModalAfterEnteringFeedback',
