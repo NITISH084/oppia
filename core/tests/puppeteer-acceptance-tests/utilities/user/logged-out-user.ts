@@ -2763,6 +2763,70 @@ export class LoggedOutUser extends BaseUser {
   }
 
   /**
+   * Waits for the Cloudflare Turnstile iframe to finish loading.
+   * This avoids interacting with the captcha before the third-party
+   * iframe has been fully initialized.
+   */
+  private async waitForTurnstileFrameToLoad(): Promise<void> {
+    const maxWaitMsecs = 20000;
+    const pollIntervalMsecs = 500;
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < maxWaitMsecs) {
+      const turnstileFrame = this.page
+        .frames()
+        .find(frame => frame.url().includes('challenges.cloudflare.com'));
+
+      if (turnstileFrame) {
+        return;
+      }
+
+      await this.page.waitForTimeout(pollIntervalMsecs);
+    }
+
+    throw new Error(
+      'The Cloudflare Turnstile iframe did not finish loading within the expected time.'
+    );
+  }
+
+  /**
+   * Function to check if the Cloudflare Turnstile captcha is visible in the
+   * feedback modal. Here we don't test the functionality of the captcha, just
+   * its visibility because Turnstile is a third-party service.
+   */
+  async isTurnstileCaptchaVisible(): Promise<void> {
+    const turnstileCaptcha = await this.page.waitForSelector(
+      feedbackCaptchaContainer
+    );
+
+    await this.page.waitForFunction(
+      (selector: string) => {
+        const element = document.querySelector(selector);
+        if (!element) {
+          return false;
+        }
+
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      },
+      {},
+      feedbackCaptchaContainer
+    );
+
+    await this.waitForTurnstileFrameToLoad();
+
+    if (!turnstileCaptcha) {
+      throw new Error(
+        'The Cloudflare Turnstile captcha is not visible in the feedback modal.'
+      );
+    } else {
+      showMessage(
+        'The Cloudflare Turnstile captcha is visible in the feedback modal.'
+      );
+    }
+  }
+
+  /**
    * Function to check if the donor box is visible on the donate page.
    * Here we don't test the functionality of the donor box, just its visibility.
    * because the donor box is an iframe and a third-party service.
@@ -5996,7 +6060,7 @@ export class LoggedOutUser extends BaseUser {
    * Scrolls to the captcha container.
    */
   async scrollToCaptchaContainer(): Promise<void> {
-    await this.page.waitForSelector(feedbackCaptchaContainer);
+    await this.isTurnstileCaptchaVisible();
 
     await this.page.evaluate((selector: string) => {
       const element = document.querySelector(selector);
@@ -6055,13 +6119,12 @@ export class LoggedOutUser extends BaseUser {
     }
     await reportLessonButtonElement.click();
     await this.expectModalTitleToBe('Report an Issue');
-    await this.waitForNetworkIdle();
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     await this.waitForElementToStabilize(commonModalBodySelector);
     if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
-      await this.waitForElementToStabilize(feedbackCaptchaContainer);
+      await this.waitForDonorBoxFrameToLoad(feedbackCaptchaContainer);
     }
   }
 
