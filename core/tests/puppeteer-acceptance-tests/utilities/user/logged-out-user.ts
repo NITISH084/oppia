@@ -6124,7 +6124,7 @@ export class LoggedOutUser extends BaseUser {
     await this.waitForElementToStabilize(commonModalBodySelector);
     if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
-      await this.waitForDonorBoxFrameToLoad(feedbackCaptchaContainer);
+      await this.waitForDonorBoxFrameToLoad();
     }
   }
 
