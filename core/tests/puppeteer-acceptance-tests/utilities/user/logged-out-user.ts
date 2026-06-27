@@ -6102,7 +6102,6 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     if (isUserLoggedIn)
       await this.expectElementToBeVisible(feedbackModaltextarea);
-    await this.waitForElementToStabilize(commonModalBodySelector);
   }
 
   /**
@@ -6121,7 +6120,6 @@ export class LoggedOutUser extends BaseUser {
     await this.expectModalTitleToBe('Report an Issue');
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
-    await this.waitForElementToStabilize(commonModalBodySelector);
     if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.isTurnstileCaptchaVisible();
@@ -6134,7 +6132,6 @@ export class LoggedOutUser extends BaseUser {
    */
   async submitFeedbackInTextArea(feedback: string): Promise<void> {
     await this.expectElementToBeVisible(feedbackModaltextarea);
-    await this.waitForElementToStabilize(feedbackModaltextarea);
     await this.waitForElementToBeClickable(feedbackModaltextarea);
     await this.typeInInputField(feedbackModaltextarea, feedback);
   }
@@ -6144,7 +6141,10 @@ export class LoggedOutUser extends BaseUser {
    * @param {string} picturePath - The path to the screenshot to add.
    */
   async addFeedbackScreenshot(picturePath: string): Promise<void> {
-    await this.page.waitForSelector(imageRecieverFeedbackComponentSelector);
+    await this.expectElementToBeVisible(imageRecieverFeedbackComponentSelector);
+    await this.waitForElementToBeClickable(
+      imageRecieverFeedbackComponentSelector
+    );
 
     await this.uploadFile(picturePath);
   }
@@ -6160,7 +6160,6 @@ export class LoggedOutUser extends BaseUser {
     await this.expectModalTitleToBe('Report a Website Issue');
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
-    await this.waitForElementToStabilize(commonModalBodySelector);
     if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.isTurnstileCaptchaVisible();
