@@ -6131,6 +6131,7 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {
+      await this.scrollToCaptchaContainer();
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.waitForTurnstileFrameToLoad();
     }
@@ -6151,6 +6152,9 @@ export class LoggedOutUser extends BaseUser {
    */
   async addFeedbackScreenshot(picturePath: string): Promise<void> {
     await this.expectElementToBeVisible(imageRecieverFeedbackComponentSelector);
+    await this.clickOnElementWithSelector(
+      imageRecieverFeedbackComponentSelector
+    );
     await this.uploadFile(picturePath);
   }
 
@@ -6166,6 +6170,8 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {
+      await this.scrollToCaptchaContainer();
+      await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.waitForTurnstileFrameToLoad();
     }
   }
