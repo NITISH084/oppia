@@ -55,6 +55,7 @@ describe('Logged-Out User', function () {
     //   'reportASiteIssueModal',
     //   __dirname
     // );
+    await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal(
       'Report a Website Issue',
       'cancel'
@@ -64,6 +65,7 @@ describe('Logged-Out User', function () {
 
   it('should not be able to submit "Report a Website Issue" feedback while the text area description is completely blank.', async () => {
     await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter(false);
+    await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal(
       'Report a Website Issue',
       'confirm',

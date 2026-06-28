@@ -6069,6 +6069,14 @@ export class LoggedOutUser extends BaseUser {
       element?.scrollIntoView();
     }, feedbackCaptchaContainer);
     await this.page.waitForTimeout(4000);
+    showMessage('Scrolled to captcha container.');
+    showMessage(
+      (await this.page.evaluate(() => {
+        return !!document.querySelector('.e2e-test-modal-header');
+      }))
+        ? 'Modal still exists'
+        : 'Modal disappeared'
+    );
   }
 
   /**
@@ -6124,7 +6132,7 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {
       await this.expectElementToBeVisible(feedbackCaptchaContainer);
-      await this.isTurnstileCaptchaVisible();
+      await this.waitForTurnstileFrameToLoad();
     }
   }
 
@@ -6133,9 +6141,7 @@ export class LoggedOutUser extends BaseUser {
    * @param feedback - The feedback to submit.
    */
   async submitFeedbackInTextArea(feedback: string): Promise<void> {
-    await this.page.waitForSelector(feedbackModaltextarea, {
-      visible: true,
-    });
+    await this.clickOnElementWithSelector(feedbackModaltextarea);
     await this.typeInInputField(feedbackModaltextarea, feedback);
   }
 
@@ -6145,10 +6151,6 @@ export class LoggedOutUser extends BaseUser {
    */
   async addFeedbackScreenshot(picturePath: string): Promise<void> {
     await this.expectElementToBeVisible(imageRecieverFeedbackComponentSelector);
-    await this.waitForElementToBeClickable(
-      imageRecieverFeedbackComponentSelector
-    );
-
     await this.uploadFile(picturePath);
   }
 
@@ -6164,7 +6166,7 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {
-      await this.isTurnstileCaptchaVisible();
+      await this.waitForTurnstileFrameToLoad();
     }
   }
 

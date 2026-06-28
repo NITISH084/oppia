@@ -2469,7 +2469,9 @@ export class BaseUser {
    */
   attachNavigationLogs(page: Page): void {
     page.on('framenavigated', frame => {
-      showMessage('NAVIGATED: ' + frame.url());
+      showMessage(
+        `[${frame === page.mainFrame() ? 'MAIN' : 'IFRAME'}] ${frame.url()}`
+      );
     });
 
     page.on('response', response => {

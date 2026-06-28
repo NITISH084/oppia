@@ -76,13 +76,16 @@ describe('Logged-Out User', function () {
     //   'reportALessonModal',
     //   __dirname
     // );
-
+    await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
     showMessage('Closed Report an issue feedback modal.');
   });
 
   it('should not be able to submit "Report an Issue" feedback while the text area description is completely blank.', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.clickReportLessonButton(false);
+    await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal(
       'Report an Issue',
       'confirm',
@@ -96,9 +99,12 @@ describe('Logged-Out User', function () {
   });
 
   it('should not be able to submit "Report an Issue" feedback while the text area description is longer than 2500 characters.', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.clickReportLessonButton(false);
     const longDescription = 'a'.repeat(2501);
     await loggedOutLearner.submitFeedbackInTextArea(longDescription);
+    await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal(
       'Report an Issue',
       'confirm',
@@ -108,10 +114,13 @@ describe('Logged-Out User', function () {
       '.e2e-test-form-error',
       'Your description is a bit too long (2501/2500 characters). Please shorten it slightly so our team can review it quickly!'
     );
+    await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
   });
 
   it('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.clickReportLessonButton(false);
     // Add a screenshot of size greater than 1MB.
     await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_HIGH_RES);
@@ -135,6 +144,8 @@ describe('Logged-Out User', function () {
   });
 
   it('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
     // In the screenshot, it is seen that all error messages are cleared.
     // await loggedOutLearner.expectScreenshotToMatch(
@@ -162,6 +173,8 @@ describe('Logged-Out User', function () {
   });
 
   it('should type a customized issue or positive message directly into the text box without clicking any of the category chips', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.clickReportLessonButton(false);
     await loggedOutLearner.submitFeedbackInTextArea(
       'This fraction explanation makes so much sense, thank you!'
