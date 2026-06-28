@@ -144,8 +144,6 @@ describe('Logged-Out User', function () {
   });
 
   it('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
-    await loggedOutLearner.playLesson(expId);
-    await loggedOutLearner.toggleOptionsSidebar();
     await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
     // In the screenshot, it is seen that all error messages are cleared.
     // await loggedOutLearner.expectScreenshotToMatch(
