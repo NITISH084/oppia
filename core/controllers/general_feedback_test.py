@@ -175,29 +175,28 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         csrf_token = self.get_new_csrf_token()
         with self.swap_to_always_return(
             captcha_services, 'verify_turnstile_token', True
+        ), self.swap(
+            general_feedback_services,
+            'create_platform_report',
+            create_platform_report_mock,
         ):
-            with self.swap(
-                general_feedback_services,
-                'create_platform_report',
-                create_platform_report_mock,
-            ):
-                response = self.post_json(
-                    feconf.PLATFORM_FEEDBACK_URL,
-                    {
-                        'source': 'lesson',
-                        'report_message': 'The card image is broken.',
-                        'page_url': 'https://oppia.org/exp1',
-                        'category': 'broken_layout_or_image',
-                        'lesson_metadata_json': self._get_lesson_metadata(),
-                        'include_technical_logs': False,
-                        'session_info': None,
-                        'screenshot_filename': None,
-                        'screenshot_file': None,
-                        'captcha_token': 'captcha_token',
-                    },
-                    csrf_token=csrf_token,
-                    expected_status_int=200,
-                )
+            response = self.post_json(
+                feconf.PLATFORM_FEEDBACK_URL,
+                {
+                    'source': 'lesson',
+                    'report_message': 'The card image is broken.',
+                    'page_url': 'https://oppia.org/exp1',
+                    'category': 'broken_layout_or_image',
+                    'lesson_metadata_json': self._get_lesson_metadata(),
+                    'include_technical_logs': False,
+                    'session_info': None,
+                    'screenshot_filename': None,
+                    'screenshot_file': None,
+                    'captcha_token': 'captcha_token',
+                },
+                csrf_token=csrf_token,
+                expected_status_int=200,
+            )
 
         self.assertEqual(response, {'id': 'report_id'})
         create_platform_report_mock.assert_called_once_with(
@@ -275,29 +274,28 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         csrf_token = self.get_new_csrf_token()
         with self.swap_to_always_return(
             captcha_services, 'verify_turnstile_token', True
+        ), self.swap(
+            general_feedback_services,
+            'create_platform_report',
+            mock.Mock(return_value=report),
         ):
-            with self.swap(
-                general_feedback_services,
-                'create_platform_report',
-                mock.Mock(return_value=report),
-            ):
-                response = self.post_json(
-                    feconf.PLATFORM_FEEDBACK_URL,
-                    {
-                        'source': 'lesson',
-                        'report_message': 'Something is wrong.',
-                        'page_url': 'https://oppia.org/exp1',
-                        'category': None,
-                        'lesson_metadata_json': self._get_lesson_metadata(),
-                        'include_technical_logs': False,
-                        'session_info': None,
-                        'screenshot_filename': None,
-                        'screenshot_file': None,
-                        'captcha_token': 'captcha_token',
-                    },
-                    csrf_token=csrf_token,
-                    expected_status_int=200,
-                )
+            response = self.post_json(
+                feconf.PLATFORM_FEEDBACK_URL,
+                {
+                    'source': 'lesson',
+                    'report_message': 'Something is wrong.',
+                    'page_url': 'https://oppia.org/exp1',
+                    'category': None,
+                    'lesson_metadata_json': self._get_lesson_metadata(),
+                    'include_technical_logs': False,
+                    'session_info': None,
+                    'screenshot_filename': None,
+                    'screenshot_file': None,
+                    'captcha_token': 'captcha_token',
+                },
+                csrf_token=csrf_token,
+                expected_status_int=200,
+            )
 
         self.assertEqual(response, {'id': 'report_id'})
 
@@ -363,34 +361,40 @@ class PlatformFeedbackSubmitHandlerTests(test_utils.GenericTestBase):
         create_platform_report_mock = mock.Mock(return_value=report)
         csrf_token = self.get_new_csrf_token()
 
-        with self.swap(
-            fs_services, 'validate_and_save_image', validate_and_save_image_mock
+        with (
+            self.swap_to_always_return(
+                captcha_services,
+                'verify_turnstile_token',
+                True,
+            ),
+            self.swap(
+                fs_services,
+                'validate_and_save_image',
+                validate_and_save_image_mock,
+            ),
+            self.swap(
+                general_feedback_services,
+                'create_platform_report',
+                create_platform_report_mock,
+            ),
         ):
-            with self.swap_to_always_return(
-                captcha_services, 'verify_turnstile_token', True
-            ):
-                with self.swap(
-                    general_feedback_services,
-                    'create_platform_report',
-                    create_platform_report_mock,
-                ):
-                    response = self.post_json(
-                        feconf.PLATFORM_FEEDBACK_URL,
-                        {
-                            'source': 'lesson',
-                            'report_message': 'The card image is broken.',
-                            'page_url': 'https://oppia.org/exp1',
-                            'category': 'broken_layout_or_image',
-                            'lesson_metadata_json': self._get_lesson_metadata(),
-                            'include_technical_logs': False,
-                            'session_info': None,
-                            'screenshot_filename': 'feedback.png',
-                            'screenshot_file': 'aGVsbG8=',
-                            'captcha_token': 'captcha_token',
-                        },
-                        csrf_token=csrf_token,
-                        expected_status_int=200,
-                    )
+            response = self.post_json(
+                feconf.PLATFORM_FEEDBACK_URL,
+                {
+                    'source': 'lesson',
+                    'report_message': 'The card image is broken.',
+                    'page_url': 'https://oppia.org/exp1',
+                    'category': 'broken_layout_or_image',
+                    'lesson_metadata_json': self._get_lesson_metadata(),
+                    'include_technical_logs': False,
+                    'session_info': None,
+                    'screenshot_filename': 'feedback.png',
+                    'screenshot_file': 'aGVsbG8=',
+                    'captcha_token': 'captcha_token',
+                },
+                csrf_token=csrf_token,
+                expected_status_int=200,
+            )
 
         self.assertEqual(response, {'id': 'report_id'})
         validate_and_save_image_mock.assert_called_once()

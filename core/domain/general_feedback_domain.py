@@ -20,7 +20,20 @@ from typing import Dict, List, Optional, TypedDict
 
 
 class LessonMetadataDict(TypedDict):
-    """Lesson metadata captured at feedback or report submission time."""
+    """Lesson metadata captured when lesson feedback is submitted.
+
+    Attributes:
+        exploration_id: ID of the exploration where the feedback was
+            submitted.
+        exploration_version: Version of the exploration viewed by the learner.
+        state_name: Name of the exploration state (card) where the learner
+            submitted the feedback.
+        state_index: Position of the displayed exploration card at the time
+            the feedback was submitted. This helps reviewers identify the
+            lesson context in which the learner submitted the feedback.
+        learner_current_answer: The learner's current answer for the state, if
+            available.
+    """
 
     exploration_id: str
     exploration_version: int

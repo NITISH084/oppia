@@ -37,7 +37,7 @@ _TURNSTILE_VERIFY_URL = (
 )
 _TURNSTILE_SECRET_KEY_ENV_VAR = 'CLOUDFLARE_TURNSTILE_SECRET_KEY'
 _TURNSTILE_SITE_KEY_ENV_VAR = 'CLOUDFLARE_TURNSTILE_SITE_KEY'
-# Cloudflare official Turnstile testing keys for non-production use(EMULATOR_MODE).
+# Cloudflare official Turnstile testing keys for non-production use.
 # Reference:
 # https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 _TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA'
