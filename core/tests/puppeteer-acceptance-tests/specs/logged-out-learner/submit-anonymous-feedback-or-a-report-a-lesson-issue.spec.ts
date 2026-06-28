@@ -63,8 +63,7 @@ describe('Logged-Out User', function () {
   }, 350000);
 
   afterAll(async function () {
-    await UserFactory.closeBrowserForUser(loggedOutLearner);
-    await UserFactory.closeSuperAdminBrowser();
+    await UserFactory.closeAllBrowsers();
   });
 
   it('should be able to click the "Report an Issue" flag icon.', async function () {

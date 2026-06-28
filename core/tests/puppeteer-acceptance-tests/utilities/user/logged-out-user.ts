@@ -633,6 +633,8 @@ const technicalLogsSelector = '.e2e-test-technical-logs';
 const imageRecieverFeedbackComponentSelector = '.e2e-test-photo-upload-input';
 const reportWebsiteIssueLink = '.e2e-test-report-website-issue-link';
 const feedbackCaptchaContainer = '.e2e-test-feedback-captcha-container';
+const cancelFeedbackUploadButtonSelector =
+  '.e2e-test-cancel-feedback-upload-button';
 
 /**
  * The KeyInput type is based on the key names from the UI Events KeyboardEvent key Values specification.
@@ -6131,8 +6133,9 @@ export class LoggedOutUser extends BaseUser {
    * @param feedback - The feedback to submit.
    */
   async submitFeedbackInTextArea(feedback: string): Promise<void> {
-    await this.expectElementToBeVisible(feedbackModaltextarea);
-    await this.waitForElementToBeClickable(feedbackModaltextarea);
+    await this.page.waitForSelector(feedbackModaltextarea, {
+      visible: true,
+    });
     await this.typeInInputField(feedbackModaltextarea, feedback);
   }
 
@@ -6161,7 +6164,6 @@ export class LoggedOutUser extends BaseUser {
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {
-      await this.expectElementToBeVisible(feedbackCaptchaContainer);
       await this.isTurnstileCaptchaVisible();
     }
   }
@@ -6175,6 +6177,18 @@ export class LoggedOutUser extends BaseUser {
     await this.expectTextContentToContain(
       photoUploadErrorMessage,
       expectedText
+    );
+  }
+
+  /**
+   * Cancels the photo upload.
+   */
+  async cancelPhotoUpload(): Promise<void> {
+    await this.expectElementToBeVisible(cancelFeedbackUploadButtonSelector);
+    await this.clickOnElementWithSelector(cancelFeedbackUploadButtonSelector);
+    await this.expectElementToBeVisible(
+      cancelFeedbackUploadButtonSelector,
+      false
     );
   }
 
