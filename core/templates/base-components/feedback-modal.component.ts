@@ -260,10 +260,15 @@ export class FeedbackModalComponent implements OnInit {
       return false;
     }
 
-    if (!this.isUserLoggedIn && !this.captchaToken) {
+    if (
+      !this.isLessonFeedbackMode &&
+      !this.isUserLoggedIn &&
+      !this.captchaToken
+    ) {
       this.captchaSubmitError = this.translateService.instant(
         'I18N_LESSON_FEEDBACK_CAPTCHA_REQUIRED'
       );
+      return false;
     }
 
     this.formError = null;

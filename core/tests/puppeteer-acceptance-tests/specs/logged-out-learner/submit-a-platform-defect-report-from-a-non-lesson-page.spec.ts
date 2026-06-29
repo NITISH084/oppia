@@ -120,6 +120,7 @@ describe('Logged-Out User', function () {
     //   'reportASiteIssueModalAfterEnteringFeedback',
     //   __dirname
     // );
+    await loggedOutLearner.waitForTurnstileTokenIfPresent();
     await loggedOutLearner.clickButtonInModal(
       'Report a Website Issue',
       'confirm'

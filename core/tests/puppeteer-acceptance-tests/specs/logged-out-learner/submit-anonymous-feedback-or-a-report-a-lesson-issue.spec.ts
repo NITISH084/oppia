@@ -155,6 +155,7 @@ describe('Logged-Out User', function () {
     );
     await loggedOutLearner.expectIncludeTechnicalLogToBePresent(true);
     await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.waitForTurnstileTokenIfPresent();
 
     // await loggedOutLearner.expectScreenshotToMatch(
     //   'reportAnIssueModalAfterEnteringFeedback',
@@ -178,6 +179,7 @@ describe('Logged-Out User', function () {
       'This fraction explanation makes so much sense, thank you!'
     );
     await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.waitForTurnstileTokenIfPresent();
 
     // await loggedOutLearner.expectScreenshotToMatch(
     //   'reportALessonModalAfterEnteringFeedback',

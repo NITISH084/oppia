@@ -6066,16 +6066,34 @@ export class LoggedOutUser extends BaseUser {
 
     await this.page.evaluate((selector: string) => {
       const element = document.querySelector(selector);
-      element?.scrollIntoView();
+      element?.scrollIntoView({block: 'center'});
     }, feedbackCaptchaContainer);
-    await this.page.waitForTimeout(4000);
     showMessage('Scrolled to captcha container.');
-    showMessage(
-      (await this.page.evaluate(() => {
-        return !!document.querySelector('.e2e-test-modal-header');
-      }))
-        ? 'Modal still exists'
-        : 'Modal disappeared'
+  }
+
+  /**
+   * Waits until Turnstile has produced a response token. The iframe can be
+   * visible before the token callback runs, especially on mobile headless.
+   */
+  async waitForTurnstileTokenIfPresent(): Promise<void> {
+    const captchaContainerIsPresent = await this.page.evaluate(
+      (selector: string) => document.querySelector(selector) !== null,
+      feedbackCaptchaContainer
+    );
+
+    if (!captchaContainerIsPresent) {
+      return;
+    }
+
+    await this.page.waitForFunction(
+      () => {
+        const responseInput = document.querySelector(
+          '[name="cf-turnstile-response"]'
+        ) as HTMLInputElement | HTMLTextAreaElement | null;
+
+        return Boolean(responseInput?.value);
+      },
+      {timeout: 60000}
     );
   }
 
@@ -6188,7 +6206,7 @@ export class LoggedOutUser extends BaseUser {
   /**
    * Cancels the photo upload.
    */
-  async cancelPhotoUpload(): Promise<void> {
+  async removeScreenshot(): Promise<void> {
     await this.expectElementToBeVisible(cancelFeedbackUploadButtonSelector);
     await this.clickOnElementWithSelector(cancelFeedbackUploadButtonSelector);
     await this.expectElementToBeVisible(
