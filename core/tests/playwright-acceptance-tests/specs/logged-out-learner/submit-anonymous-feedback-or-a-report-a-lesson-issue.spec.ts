@@ -1,0 +1,265 @@
+// Copyright 2026 The Oppia Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS-IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Acceptance test from CUJv3 Doc
+ * https://docs.google.com/document/d/1D7kkFTzg3rxUe3QJ_iPlnxUzBFNElmRkmAWss00nFno/
+ *
+ * L0.15. Submit anonymous feedback or a report a lesson issue
+ */
+
+import {test} from '@playwright/test';
+import {UserFactory} from '../../utilities/common/user-factory';
+import testConstants, {FILEPATHS} from '../../utilities/common/test-constants';
+import {LoggedOutUser} from '../../utilities/user/logged-out-user';
+import {ReleaseCoordinator} from '../../utilities/user/release-coordinator';
+import {ExplorationEditor} from '../../utilities/user/exploration-editor';
+import {showMessage} from '../../utilities/common/show-message';
+
+test.describe.configure({mode: 'serial'});
+
+const ROLES = testConstants.Roles;
+
+test.describe('Logged-Out User', function () {
+  let loggedOutLearner: LoggedOutUser;
+  let releaseCoordinator: ReleaseCoordinator;
+  let curriculumAdmin: ExplorationEditor;
+  let expId: string;
+
+  test.beforeAll(async function ({browser}) {
+    test.setTimeout(350000);
+    curriculumAdmin = await UserFactory.createNewUser(
+      'curriculumAdm',
+      'curriculumAdmin@example.com',
+      browser,
+      [ROLES.CURRICULUM_ADMIN]
+    );
+    releaseCoordinator = await UserFactory.createNewUser(
+      'releaseCoordinator',
+      'releaseCoordinator@example.com',
+      browser,
+      [ROLES.RELEASE_COORDINATOR]
+    );
+    await releaseCoordinator.enableFeatureFlag(
+      'show_redesigned_learner_dashboard'
+    );
+    await releaseCoordinator.enableFeatureFlag('web_feedback_modal_enabled');
+    await releaseCoordinator.enableFeatureFlag('new_lesson_player');
+    await UserFactory.closeBrowserForUser(releaseCoordinator);
+
+    expId = await curriculumAdmin.createAndPublishExplorationWithCards(
+      'What are the Place Values',
+      'Algebra',
+      2
+    );
+    await UserFactory.closeBrowserForUser(curriculumAdmin);
+
+    loggedOutLearner = await UserFactory.createLoggedOutUser(browser);
+  });
+
+  test.afterAll(async function () {
+    await UserFactory.closeAllBrowsers();
+  });
+
+  test('should be able to click the "Report an Issue" flag icon.', async function () {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickReportLessonButton(false);
+    showMessage('Clicked on "Report an Issue" button.');
+
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportALessonModal',
+    //   __dirname
+    // );
+    await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
+    showMessage('Closed Report an issue feedback modal.');
+  });
+
+  test('should not be able to submit "Report an Issue" feedback while the text area description is completely blank.', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickReportLessonButton(false);
+    await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.clickButtonInModal(
+      'Report an Issue',
+      'confirm',
+      false
+    );
+    await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
+      '.e2e-test-form-error',
+      'Please add a description before submitting.'
+    );
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
+  });
+
+  test('should not be able to submit "Report an Issue" feedback while the text area description is longer than 2500 characters.', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickReportLessonButton(false);
+    const longDescription = 'a'.repeat(2501);
+    await loggedOutLearner.submitFeedbackInTextArea(longDescription);
+    await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.clickButtonInModal(
+      'Report an Issue',
+      'confirm',
+      false
+    );
+    await loggedOutLearner.expectTextContentInElementWithSelectorToBe(
+      '.e2e-test-form-error',
+      'Your description is a bit too long (2501/2500 characters). Please shorten test slightly so our team can review test quickly!'
+    );
+    await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
+  });
+
+  test('should not be able to add a screenshot of size greater than 1MB and invalid file types.', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickReportLessonButton(false);
+    // Add a screenshot of size greater than 1MB.
+    await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_HIGH_RES);
+    await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
+      'The maximum allowed file size is 1024 KB'
+    );
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportAnIssueModalAfterEnteringFeedbackWithLargeFile',
+    //   __dirname
+    // );
+
+    // Add an invalid file type.
+    await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_BMP);
+    await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
+      'This image format is not supported'
+    );
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportAnIssueModalAfterEnteringFeedbackWithInvalidFileType',
+    //   __dirname
+    // );
+  });
+
+  test('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
+    await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
+    // In the screenshot, test is seen that all error messages are cleared.
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportAnIssueModalAfterDroppingValidScreenshot',
+    //   __dirname
+    // );
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'The partner image grid overlaps text headers when scaling down to smaller mobile screen viewports.'
+    );
+    await loggedOutLearner.expectIncludeTechnicalLogToBePresent(true);
+    await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.waitForTurnstileTokenIfPresent();
+
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportAnIssueModalAfterEnteringFeedback',
+    //   __dirname
+    // );
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you! Your report has been sent to the technical team.'
+    );
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportAnIssueModalAfterSubmittingFeedback',
+    //   __dirname
+    // );
+  });
+
+  test('should type a customized issue or positive message directly into the text box without clicking any of the category chips', async () => {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickReportLessonButton(false);
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'This fraction explanation makes so much sense, thank you!'
+    );
+    await loggedOutLearner.scrollToCaptchaContainer();
+    await loggedOutLearner.waitForTurnstileTokenIfPresent();
+
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'reportALessonModalAfterEnteringFeedback',
+    //   __dirname
+    // );
+    await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you! Your report has been sent to the technical team.'
+    );
+  });
+
+  test('should play a lesson, open the sidebar options drawer and click on the "Send Lesson Feedback" button.', async function () {
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    showMessage('On lesson page.');
+
+    await loggedOutLearner.clickLessonFeedbackButton(false);
+    showMessage('Clicked on "Send Lesson Feedback" button.');
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'sendALessonFeedbackModal',
+    //   __dirname
+    // );
+  });
+
+  test('should be able to continue as guest by clicking on "Continue as Guest" button on the feedback modal.', async () => {
+    await loggedOutLearner.clickButtonInModal(
+      'Want to chat with our Lessons Team?',
+      'cancel'
+    );
+    showMessage('Clicked on "Continue as Guest" button.');
+
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'sendALessonFeedbackModalAfterClickingContinueAsGuest',
+    //   __dirname
+    // );
+  });
+
+  test('should be able to click on the "Send Lesson Feedback" button, then click "Sign Up or Login" and proceed through the user flow.', async () => {
+    await loggedOutLearner.clickLessonFeedbackButton(false);
+    showMessage('Clicked on "Send Lesson Feedback" button.');
+    await loggedOutLearner.clickButtonInModal(
+      'Want to chat with our Lessons Team?',
+      'confirm'
+    );
+    showMessage('Clicked on "Sign Up or Login" button.');
+
+    await loggedOutLearner.expectToBeOnLoginPage();
+    showMessage('On login page.');
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
+    //   __dirname
+    // );
+
+    await loggedOutLearner.goThoroughSignUpProcess(
+      'learner@example.com',
+      'learner'
+    );
+    await loggedOutLearner.playLesson(expId);
+    await loggedOutLearner.toggleOptionsSidebar();
+    await loggedOutLearner.clickLessonFeedbackButton(true);
+    await loggedOutLearner.submitFeedbackInTextArea(
+      'This fraction model is awesome, but can we get more marble examples?'
+    );
+    await loggedOutLearner.clickButtonInModal(
+      'Send Feedback to the Lessons Team',
+      'confirm'
+    );
+    showMessage('Clicked on "Submit" button.');
+    await loggedOutLearner.expectToastMessage(
+      'Thank you! Your feedback has been sent to the lesson team.'
+    );
+    // await loggedOutLearner.expectScreenshotToMatch(
+    //   'sendALessonFeedbackModalAfterSubmittingFeedback',
+    //   __dirname
+    // );
+  });
+});

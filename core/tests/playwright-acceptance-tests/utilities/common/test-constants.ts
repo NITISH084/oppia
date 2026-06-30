@@ -76,6 +76,7 @@ export default {
     LearnerDashboard: 'http://localhost:8181/learner-dashboard',
     Login: 'http://localhost:8181/login',
     Logout: 'http://localhost:8181/logout',
+    LessonPlayer: 'http://localhost:8181/lesson/',
     MathClassroom: 'http://localhost:8181/learn/math',
     ModeratorPage: 'http://localhost:8181/moderator',
     Partnerships: 'http://localhost:8181/partnerships',
@@ -177,6 +178,7 @@ export default {
       __dirname,
       '../../data/classroom-banner.png'
     ),
+    oppiaPage: path.resolve(__dirname, '../../data/oppia-page.png'),
     profilePicture: path.resolve(__dirname, '../../data/profile-picture.svg'),
     IntroContentVoiceoverInHindi: path.resolve(
       __dirname,

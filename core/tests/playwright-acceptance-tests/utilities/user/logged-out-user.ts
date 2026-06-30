@@ -25,6 +25,7 @@ import isElementClickable from '../../functions/is-element-clickable';
 const aboutUrl = testConstants.URLs.About;
 const communityLibraryUrl = testConstants.URLs.CommunityLibrary;
 const homeUrl = testConstants.URLs.Home;
+const baseUrl = testConstants.URLs.BaseURL;
 
 const signUpUsernameInputField = 'input.e2e-test-username-input';
 
@@ -80,6 +81,31 @@ const desktopStoryTitleSelector = '.e2e-test-story-title-in-topic-page';
 const mobileStoryTitleSelector = '.e2e-test-mobile-story-title';
 const chapterTitleSelector = '.e2e-test-chapter-title';
 const loginPromptContainer = '.story-viewer-login-container';
+
+// New lesson player page.
+const lessonPlayerSideBarToggleButton = '.e2e-test-player-sidebar-toggle';
+const mobileOpenOptionsButton = '.e2e-test-mobile-open-options-button';
+const lessonFeedbackButtonSelector = '.e2e-test-lesson-feedback-button';
+const lessonReportButtonSelector = '.e2e-test-lesson-report-button';
+const feedbackModaltextarea = '.e2e-test-feedback-modal-textarea';
+const reportIssueTypoChipSelector = '.e2e-test-report-issue-typo-chip';
+const photoUploadErrorMessage = '.e2e-test-upload-error';
+const reportIssueConfusingOrIncorrectChipSelector =
+  '.e2e-test-report-issue-confusing-or-incorrect-chip';
+const reportIssueBrokenLayoutChipSelector =
+  '.e2e-test-report-issue-broken-layout-chip';
+const reportIssueOtherChipSelector = '.e2e-test-report-issue-other-chip';
+const technicalLogsSelector = '.e2e-test-technical-logs';
+const imageRecieverFeedbackComponentSelector = '.e2e-test-photo-upload-input';
+const reportWebsiteIssueLink = '.e2e-test-report-website-issue-link';
+const feedbackCaptchaContainer = '.e2e-test-feedback-captcha-container';
+const cancelFeedbackUploadButtonSelector =
+  '.e2e-test-cancel-feedback-upload-button';
+const commonModalTitleSelector = '.e2e-test-modal-header';
+const commonModalBodySelector = '.e2e-test-modal-body';
+const commonModalConfirmBtnSelector = '.e2e-test-confirm-action-button';
+const commonModalCancelBtnSelector = '.e2e-test-cancel-action-button';
+const LABEL_FOR_SUBMIT_BUTTON = 'Submit and start contributing';
 
 export class LoggedOutUser extends BaseUser {
   /**
@@ -814,6 +840,378 @@ export class LoggedOutUser extends BaseUser {
     await this.page.waitForSelector(gotItButtonSelector, {
       state: 'visible',
     });
+  }
+
+  /**
+   * Function to navigate to the about page.
+   */
+  async navigateToAboutPage(): Promise<void> {
+    await this.goto(aboutUrl);
+  }
+
+  /**
+   * Waits for the Cloudflare Turnstile iframe to finish loading.
+   * This avoids interacting with the captcha before the third-party
+   * iframe has been fully initialized.
+   */
+  async waitForTurnstileFrameToLoad(): Promise<void> {
+    const maxWaitMsecs = 20000;
+    const pollIntervalMsecs = 500;
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < maxWaitMsecs) {
+      const turnstileFrame = this.page
+        .frames()
+        .find(frame => frame.url().includes('challenges.cloudflare.com'));
+
+      if (turnstileFrame) {
+        return;
+      }
+
+      await this.page.waitForTimeout(pollIntervalMsecs);
+    }
+
+    throw new Error(
+      'The Cloudflare Turnstile iframe did not finish loading within the expected time.'
+    );
+  }
+
+  /**
+   * Function to check if the Cloudflare Turnstile captcha is visible in the
+   * feedback modal. Here we don't test the functionality of the captcha, just
+   * its visibility because Turnstile is a third-party service.
+   */
+  async isTurnstileCaptchaVisible(): Promise<void> {
+    const turnstileCaptcha = await this.page.waitForSelector(
+      feedbackCaptchaContainer
+    );
+
+    await this.page.waitForFunction(
+      (selector: string) => {
+        const element = document.querySelector(selector);
+        if (!element) {
+          return false;
+        }
+
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      },
+      {},
+      feedbackCaptchaContainer
+    );
+
+    await this.waitForTurnstileFrameToLoad();
+
+    if (!turnstileCaptcha) {
+      throw new Error(
+        'The Cloudflare Turnstile captcha is not visible in the feedback modal.'
+      );
+    } else {
+      showMessage(
+        'The Cloudflare Turnstile captcha is visible in the feedback modal.'
+      );
+    }
+  }
+
+  /**
+   * Navigates to and plays an lesson by exploration ID.
+   * @param {string | null} explorationId - The ID of the exploration to play.
+   */
+  async playLesson(explorationId: string | null): Promise<void> {
+    await this.goto(`${baseUrl}/lesson/${explorationId as string}`);
+  }
+
+  async selectReportIssueChip(chipName: string): Promise<void> {
+    switch (chipName) {
+      case 'typo':
+        await this.clickOnElementWithSelector(reportIssueTypoChipSelector);
+        break;
+      case 'confusing or incorrect answer':
+        await this.clickOnElementWithSelector(
+          reportIssueConfusingOrIncorrectChipSelector
+        );
+        break;
+      case 'broken layout':
+        await this.clickOnElementWithSelector(
+          reportIssueBrokenLayoutChipSelector
+        );
+        break;
+      case 'other':
+        await this.clickOnElementWithSelector(reportIssueOtherChipSelector);
+        break;
+      default:
+        throw new Error('Invalid chip name: ' + chipName);
+    }
+  }
+
+  /**
+   * Expect the technical log to be present in the feedback modal.
+   */
+  async expectIncludeTechnicalLogToBePresent(
+    shouldBePresent: boolean
+  ): Promise<void> {
+    if (shouldBePresent) {
+      await this.expectElementToBeVisible(
+        technicalLogsSelector,
+        shouldBePresent
+      );
+    }
+  }
+
+  /**
+   * Scrolls to the captcha container.
+   */
+  async scrollToCaptchaContainer(): Promise<void> {
+    await this.isTurnstileCaptchaVisible();
+
+    await this.page.evaluate((selector: string) => {
+      const element = document.querySelector(selector);
+      element?.scrollIntoView({block: 'center'});
+    }, feedbackCaptchaContainer);
+    showMessage('Scrolled to captcha container.');
+  }
+
+  /**
+   * Waits until Turnstile has produced a response token. The iframe can be
+   * visible before the token callback runs, especially on mobile headless.
+   */
+  async waitForTurnstileTokenIfPresent(): Promise<void> {
+    const captchaContainerIsPresent = await this.page.evaluate(
+      (selector: string) => document.querySelector(selector) !== null,
+      feedbackCaptchaContainer
+    );
+
+    if (!captchaContainerIsPresent) {
+      return;
+    }
+
+    await this.page.waitForFunction(
+      () => {
+        const responseInput = document.querySelector(
+          '[name="cf-turnstile-response"]'
+        ) as HTMLInputElement | HTMLTextAreaElement | null;
+
+        return Boolean(responseInput?.value);
+      },
+      {timeout: 60000}
+    );
+  }
+
+  /**
+   * Open 'Open Options' in new lesson player page.
+   */
+  async toggleOptionsSidebar(): Promise<void> {
+    const isMobileViewport = this.isViewportAtMobileWidth();
+    if (isMobileViewport) {
+      await this.page.waitForSelector(mobileOpenOptionsButton);
+      await this.page.click(mobileOpenOptionsButton);
+      return;
+    }
+    await this.page.waitForSelector(lessonPlayerSideBarToggleButton);
+    await this.page.click(lessonPlayerSideBarToggleButton);
+  }
+
+  /**
+   * Open the Send a Lesson feedback modal of new lesson player.
+   * @param {boolean} isUserLoggedIn - Whether the user is logged in or not.
+   */
+  async clickLessonFeedbackButton(isUserLoggedIn: boolean): Promise<void> {
+    const lessonFeedbackButtonElement = await this.page.waitForSelector(
+      lessonFeedbackButtonSelector,
+      {visible: true}
+    );
+    if (!lessonFeedbackButtonElement) {
+      throw new Error('Lesson feedback element not found');
+    }
+    await lessonFeedbackButtonElement.click();
+    isUserLoggedIn
+      ? await this.expectModalTitleToBe('Send Feedback to the Lessons Team')
+      : await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
+    await this.expectElementToBeVisible(commonModalBodySelector);
+    if (isUserLoggedIn)
+      await this.expectElementToBeVisible(feedbackModaltextarea);
+  }
+
+  /**
+   * Open the Report an Issue feedback modal of new lesson player.
+   * @param {boolean} isUserLoggedIn - Whether the user is logged in or not.
+   */
+  async clickReportLessonButton(isUserLoggedIn: boolean): Promise<void> {
+    const reportLessonButtonElement = await this.page.waitForSelector(
+      lessonReportButtonSelector,
+      {visible: true}
+    );
+    if (!reportLessonButtonElement) {
+      throw new Error('Report lesson element not found');
+    }
+    await reportLessonButtonElement.click();
+    await this.expectModalTitleToBe('Report an Issue');
+    await this.expectElementToBeVisible(commonModalBodySelector);
+    await this.expectElementToBeVisible(feedbackModaltextarea);
+    if (!isUserLoggedIn) {
+      await this.scrollToCaptchaContainer();
+      await this.expectElementToBeVisible(feedbackCaptchaContainer);
+      await this.waitForTurnstileFrameToLoad();
+    }
+  }
+
+  /**
+   * Submits the feedback in the text area.
+   * @param feedback - The feedback to submit.
+   */
+  async submitFeedbackInTextArea(feedback: string): Promise<void> {
+    await this.clickOnElementWithSelector(feedbackModaltextarea);
+    await this.typeInInputField(feedbackModaltextarea, feedback);
+  }
+
+  /**
+   * Adds a screenshot to the feedback form.
+   * @param {string} picturePath - The path to the screenshot to add.
+   */
+  async addFeedbackScreenshot(picturePath: string): Promise<void> {
+    await this.expectElementToBeVisible(imageRecieverFeedbackComponentSelector);
+    await this.uploadFile(picturePath);
+  }
+
+  /**
+   * Opens the report a site issue modal from the global footer.
+   */
+  async openReportASiteIssueModalFromGlobalFooter(
+    isUserLoggedIn: boolean
+  ): Promise<void> {
+    await this.page.waitForSelector(reportWebsiteIssueLink);
+    await this.clickOnElementWithSelector(reportWebsiteIssueLink);
+    await this.expectModalTitleToBe('Report a Website Issue');
+    await this.expectElementToBeVisible(commonModalBodySelector);
+    await this.expectElementToBeVisible(feedbackModaltextarea);
+    if (!isUserLoggedIn) {
+      await this.scrollToCaptchaContainer();
+      await this.expectElementToBeVisible(feedbackCaptchaContainer);
+      await this.waitForTurnstileFrameToLoad();
+    }
+  }
+
+  /**
+   * Function to verify that the user is on the login page.
+   */
+  async expectToBeOnLoginPage(): Promise<void> {
+    await this.page.waitForFunction(
+      (url: string) => {
+        const currentURL = window.location.href;
+        return currentURL.includes(url);
+      },
+      {},
+      testConstants.URLs.Login
+    );
+  }
+
+  /**
+   * Checks if the photo upload error message is visible.
+   * @param expectedText - The expected text of the error message.
+   */
+  async expectPhotoUploadErrorMessageToBe(expectedText: string): Promise<void> {
+    await this.expectElementToBeVisible(photoUploadErrorMessage);
+    await this.expectTextContentToContain(
+      photoUploadErrorMessage,
+      expectedText
+    );
+  }
+
+  /**
+   * Clicks on the button in the modal with the given title and action.
+   * @param title - The title of the modal.
+   * @param action - The action to click on the button in the modal.
+   * @param expectModalToClose - Whether to expect the modal to close after clicking the button.
+   */
+  async clickButtonInModal(
+    title: string,
+    action: 'confirm' | 'cancel',
+    expectModalToClose: boolean = true
+  ): Promise<void> {
+    await this.expectElementToBeVisible(commonModalTitleSelector);
+    await this.expectTextContentToBe(commonModalTitleSelector, title);
+
+    const currentActionBtnSelector =
+      action === 'confirm'
+        ? commonModalConfirmBtnSelector
+        : commonModalCancelBtnSelector;
+    await this.expectElementToBeVisible(currentActionBtnSelector);
+    await this.clickOnElementWithSelector(currentActionBtnSelector);
+
+    await this.expectElementToBeVisible(
+      currentActionBtnSelector,
+      !expectModalToClose
+    );
+  }
+
+  /**
+   * Goes through the sign up process.
+   * @param {string} email - The email to sign up with.
+   * @param {string} username - The username to sign up with.
+   */
+  async goThoroughSignUpProcess(
+    email: string,
+    username: string
+  ): Promise<void> {
+    await this.page.waitForSelector(testConstants.SignInDetails.inputField, {
+      visible: true,
+    });
+    await this.typeInInputField(testConstants.SignInDetails.inputField, email);
+    await this.clickOnElementWithText('Sign In');
+    await this.page.waitForNavigation({waitUntil: 'networkidle0'});
+    await this.typeInInputField('input.e2e-test-username-input', username);
+    await this.clickOnElementWithSelector(
+      'input.e2e-test-agree-to-terms-checkbox'
+    );
+    await this.page.waitForSelector(
+      'button.e2e-test-register-user:not([disabled])'
+    );
+    await this.clickOnElementWithText(LABEL_FOR_SUBMIT_BUTTON);
+    await this.page.waitForNavigation({waitUntil: 'networkidle0'});
+    await this.page.waitForSelector('button.e2e-test-register-user', {
+      hidden: true,
+    });
+  }
+
+  /**
+   * Checks if the text content of an element matches the expected value.
+   * @param selector - The CSS selector to find the element.
+   * @param value - The expected text content value.
+   * @param exactMatch - If true, checks for exact match. If false, checks if value is contained in text content.
+   */
+  async expectTextContentInElementWithSelectorToBe(
+    selector: string,
+    value: string,
+    exactMatch: boolean = false
+  ): Promise<void> {
+    await this.expectElementToBeVisible(selector);
+
+    const actualTextContent = await this.page.$eval(
+      selector,
+      element => (element as HTMLElement).textContent
+    );
+
+    if (!exactMatch && !actualTextContent?.includes(value)) {
+      throw new Error(
+        `Expected text content to contain ${value}, but found ${actualTextContent}`
+      );
+    } else if (exactMatch && actualTextContent !== value) {
+      throw new Error(
+        `Expected text content to be ${value}, but found ${actualTextContent}`
+      );
+    }
+  }
+
+  /**
+   * Cancels the photo upload.
+   */
+  async removeScreenshot(): Promise<void> {
+    await this.expectElementToBeVisible(cancelFeedbackUploadButtonSelector);
+    await this.clickOnElementWithSelector(cancelFeedbackUploadButtonSelector);
+    await this.expectElementToBeVisible(
+      cancelFeedbackUploadButtonSelector,
+      false
+    );
   }
 }
 

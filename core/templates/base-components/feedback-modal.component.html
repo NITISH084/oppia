@@ -4,21 +4,21 @@
     <div class="modal-header
              oppia-lesson-feedback-header
              border-bottom-0">
-      {{ 'I18N_LESSON_FEEDBACK_GUEST_TITLE' | translate }}
+      <span class="e2e-test-modal-header">{{ 'I18N_LESSON_FEEDBACK_GUEST_TITLE' | translate }}</span>
       <p class="oppia-lesson-feedback-text">
         {{
         'I18N_LESSON_FEEDBACK_GUEST_SUBTITLE'
         | translate
         }}
       </p>
-      <div class="oppia-guest-feedback-body">
-        <button class="oppia-guest-signup-btn" (click)="signIn()">
+      <div class="oppia-guest-feedback-body e2e-test-modal-body">
+        <button class="oppia-guest-signup-btn e2e-test-confirm-action-button" (click)="signIn()">
           {{
           'I18N_LESSON_FEEDBACK_SIGN_IN_BUTTON'
           | translate
           }}
         </button>
-        <button class="oppia-guest-continue-btn" (click)="closeModal()">
+        <button class="oppia-guest-continue-btn e2e-test-cancel-action-button" (click)="closeModal()">
           {{
           'I18N_LESSON_FEEDBACK_CONTINUE_AS_GUEST_BUTTON'
           | translate
@@ -44,13 +44,13 @@
           </mat-icon>
         </div>
         <div>
-          <h3>{{ title | translate }}</h3>
+          <h3 class="e2e-test-modal-header">{{ title | translate }}</h3>
           <p>{{ subTitle | translate }}</p>
         </div>
       </div>
     </div>
 
-    <div class="modal-body oppia-feedback-body">
+    <div class="modal-body oppia-feedback-body e2e-test-modal-body">
 
       <p *ngIf="isLessonFeedbackMode" class="oppia-lesson-feedback-microcopy">
         {{
@@ -72,28 +72,28 @@
 
         <div class="oppia-flag-category-chips" aria-label="Issue category">
           <button type="button"
-                  class="oppia-flag-category-chip"
+                  class="oppia-flag-category-chip e2e-test-report-issue-typo-chip"
                   [class.selected]="category === 'typo'"
                   (click)="selectCategory('typo')">
             <mat-icon aria-hidden="true">spellcheck</mat-icon>
             {{ 'I18N_REPORT_LESSON_BUG_CATEGORY_TYPO' | translate }}
           </button>
           <button type="button"
-                  class="oppia-flag-category-chip"
+                  class="oppia-flag-category-chip e2e-test-report-issue-broken-layout-chip"
                   [class.selected]="category === 'broken_layout_or_image'"
                   (click)="selectCategory('broken_layout_or_image')">
             <mat-icon aria-hidden="true">broken_image</mat-icon>
             {{ 'I18N_REPORT_LESSON_BUG_CATEGORY_BROKEN_LAYOUT' | translate }}
           </button>
           <button type="button"
-                  class="oppia-flag-category-chip"
+                  class="oppia-flag-category-chip e2e-test-report-issue-confusing-or-incorrect-chip"
                   [class.selected]="category === 'confusing_or_incorrect_answer'"
                   (click)="selectCategory('confusing_or_incorrect_answer')">
             <mat-icon aria-hidden="true">error_outline</mat-icon>
             {{ 'I18N_REPORT_LESSON_BUG_CATEGORY_CONFUSING' | translate }}
           </button>
           <button type="button"
-                  class="oppia-flag-category-chip"
+                  class="oppia-flag-category-chip e2e-test-report-issue-other-chip"
                   [class.selected]="category === 'other_or_not_sure'"
                   (click)="selectCategory('other_or_not_sure')">
             <mat-icon aria-hidden="true">help_outline</mat-icon>
@@ -115,10 +115,10 @@
                 [placeholder]="textarePlaceholder | translate"
                 class="oppia-feedback-textarea">
       </textarea>
-      <div *ngIf="formError" class="oppia-feedback-error-text">
+      <div *ngIf="formError" class="oppia-feedback-error-text e2e-test-feedback-modal-textarea">
         {{ formError }}
       </div>
-      <div class="oppia-flag-character-count">
+      <div class="oppia-flag-character-count e2e-test-form-error">
         {{ feedbackText.length }}
         /
         {{ MAX_REPORT_MESSAGE_LENGTH }}
@@ -139,7 +139,7 @@
         </div>
         <div *ngIf="screenshotPreviewDataUrl" class="oppia-feedback-screenshot-preview">
           <button type="button"
-                  class="oppia-feedback-screenshot-remove-button" aria-label="Remove screenshot"
+                  class="oppia-feedback-screenshot-remove-button e2e-test-cancel-feedback-upload-button" aria-label="Remove screenshot"
                   (click)="removeScreenshot()">
             <mat-icon aria-hidden="true">close</mat-icon>
           </button>
@@ -153,7 +153,7 @@
         </div>
       </div>
       <label *ngIf="shouldShowTechnicalLogs" class="oppia-flag-technical-logs-checkbox">
-        <input type="checkbox" [(ngModel)]="includeTechnicalLogs" [ngModelOptions]="{standalone: true}">
+        <input type="checkbox" [(ngModel)]="includeTechnicalLogs" [ngModelOptions]="{standalone: true}" class="e2e-test-technical-logs">
         <span>
           {{
           'I18N_TECHNICAL_ERROR_LOG_CHECKBOX_TEXT'
@@ -161,8 +161,8 @@
           }}
         </span>
       </label>
-      <div class="oppia-feedback-captcha-section" *ngIf="!isLessonFeedbackMode && !isUserLoggedIn">
-        <div #turnstileContainer class="oppia-feedback-turnstile-container">
+      <div class="oppia-feedback-captcha-section " *ngIf="!isLessonFeedbackMode && !isUserLoggedIn">
+        <div #turnstileContainer class="oppia-feedback-turnstile-container e2e-test-feedback-captcha-container"">
         </div>
         <div *ngIf="captchaLoadError" class="oppia-feedback-error-text">
           {{ captchaLoadError }}
@@ -172,13 +172,13 @@
 
 
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeModal()">
+      <button class="btn btn-secondary e2e-test-cancel-action-button" (click)="closeModal()">
         {{
         'I18N_MODAL_CANCEL_BUTTON'
         | translate
         }}
       </button>
-      <button class="btn btn-success" (click)="submit()">
+      <button class="btn btn-success e2e-test-confirm-action-button" (click)="submit()">
         {{
         'I18N_PLAYER_REPORT_MODAL_FOOTER_SUBMIT'
         | translate

@@ -36,6 +36,10 @@ const usernameInputSelector = 'input.e2e-test-username-input';
 const agreeToTermsCheckboxSelector = 'input.e2e-test-agree-to-terms-checkbox';
 const registerButtonSelector = 'button.e2e-test-register-user:not([disabled])';
 const LABEL_FOR_SUBMIT_BUTTON = 'Submit and start contributing';
+const commonModalTitleSelector = '.e2e-test-modal-header';
+const commonModalBodySelector = '.e2e-test-modal-body';
+const commonModalConfirmBtnSelector = '.e2e-test-confirm-action-button';
+const commonModalCancelBtnSelector = '.e2e-test-cancel-action-button';
 
 export class BaseUser {
   readonly page: Page;
@@ -1057,6 +1061,25 @@ export class BaseUser {
     showMessage(
       `Element ${elementDesc} did not stabilize within ${timeout} ms`
     );
+  }
+
+  /**
+   * Checks if the modal title matches the expected title.
+   * @param expectedTitle The expected title of the modal.
+   */
+  async expectModalTitleToBe(expectedTitle: string): Promise<void> {
+    await this.expectElementToBeVisible(commonModalTitleSelector);
+    await this.expectTextContentToBe(commonModalTitleSelector, expectedTitle);
+  }
+
+  /**
+   * Scrolls to the bottom of the page.
+   */
+  async scrollToBottomOfPage(): Promise<void> {
+    await this.page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await this.waitForPageToFullyLoad();
   }
 }
 
