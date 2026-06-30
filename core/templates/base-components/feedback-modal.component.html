@@ -12,13 +12,15 @@
         }}
       </p>
       <div class="oppia-guest-feedback-body e2e-test-modal-body">
-        <button class="oppia-guest-signup-btn e2e-test-confirm-action-button" (click)="signIn()">
+        <button class="oppia-guest-signup-btn e2e-test-confirm-action-button"
+                (click)="signIn()">
           {{
           'I18N_LESSON_FEEDBACK_SIGN_IN_BUTTON'
           | translate
           }}
         </button>
-        <button class="oppia-guest-continue-btn e2e-test-cancel-action-button" (click)="closeModal()">
+        <button class="oppia-guest-continue-btn e2e-test-cancel-action-button"
+                (click)="closeModal()">
           {{
           'I18N_LESSON_FEEDBACK_CONTINUE_AS_GUEST_BUTTON'
           | translate
@@ -113,12 +115,12 @@
                 (ngModelChange)="clearFormError()"
                 [ngModelOptions]="{standalone: true}"
                 [placeholder]="textarePlaceholder | translate"
-                class="oppia-feedback-textarea">
+                class="oppia-feedback-textarea e2e-test-feedback-modal-textarea">
       </textarea>
-      <div *ngIf="formError" class="oppia-feedback-error-text e2e-test-feedback-modal-textarea">
+      <div *ngIf="formError" class="oppia-feedback-error-text e2e-test-form-error ">
         {{ formError }}
       </div>
-      <div class="oppia-flag-character-count e2e-test-form-error">
+      <div class="oppia-flag-character-count">
         {{ feedbackText.length }}
         /
         {{ MAX_REPORT_MESSAGE_LENGTH }}
@@ -153,7 +155,10 @@
         </div>
       </div>
       <label *ngIf="shouldShowTechnicalLogs" class="oppia-flag-technical-logs-checkbox">
-        <input type="checkbox" [(ngModel)]="includeTechnicalLogs" [ngModelOptions]="{standalone: true}" class="e2e-test-technical-logs">
+        <input type="checkbox"
+               [(ngModel)]="includeTechnicalLogs" 
+               [ngModelOptions]="{standalone: true}"
+               class="e2e-test-technical-logs">
         <span>
           {{
           'I18N_TECHNICAL_ERROR_LOG_CHECKBOX_TEXT'
@@ -161,11 +166,14 @@
           }}
         </span>
       </label>
-      <div class="oppia-feedback-captcha-section " *ngIf="!isLessonFeedbackMode && !isUserLoggedIn">
-        <div #turnstileContainer class="oppia-feedback-turnstile-container e2e-test-feedback-captcha-container"">
+      <div class="oppia-feedback-captcha-section" *ngIf="!isLessonFeedbackMode && !isUserLoggedIn">
+        <div #turnstileContainer class="oppia-feedback-turnstile-container e2e-test-feedback-captcha-container">
         </div>
         <div *ngIf="captchaLoadError" class="oppia-feedback-error-text">
           {{ captchaLoadError }}
+        </div>
+        <div *ngIf="captchaSubmitError" class="oppia-feedback-error-text">
+          {{ captchaSubmitError }}
         </div>
       </div>
     </div>

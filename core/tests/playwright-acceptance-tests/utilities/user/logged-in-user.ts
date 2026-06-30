@@ -117,6 +117,11 @@ const ACCOUNT_EXPORT_CONFIRMATION_MESSAGE_2 = 'Please do not leave this page.';
 const ratingsHeaderSelector = '.conversation-skin-final-ratings-header';
 const ratingStarSelector = '.e2e-test-rating-star';
 const filledRatingStarSelector = '.fas.fa-star';
+const reportSiteProblemLink = '.e2e-test-report-site-problem-link';
+const contributorDashboardMenuLink =
+  '.e2e-test-contributor-dashboard-menu-link';
+const contributorDashboardContainerSelector =
+  '.e2e-test-oppia-contributor-home';
 
 // Learner dashboard selectors.
 const communityLessonsSectionInLearnerDashboard =
@@ -2343,6 +2348,32 @@ export class LoggedInUser extends BaseUser {
       newError.stack = (error as Error).stack;
       throw newError;
     }
+  }
+
+  /**
+   * Navigates to the Contributor Dashboard Using Profile Dropdown Menu.
+   */
+  async navigateToContributorDashboardUsingProfileDropdown(): Promise<void> {
+    await this.clickOnElementWithSelector(profileDropdown);
+    await this.clickOnElementWithSelector(contributorDashboardMenuLink);
+
+    await this.expectElementToBeVisible(contributorDashboardContainerSelector);
+  }
+
+  /**
+   * Opens the Report a Site Issue Modal from the Profile Dropdown.
+   */
+  async openReportASiteIssueModal(): Promise<void> {
+    await this.page.waitForSelector(profileDropdown, {
+      state: 'visible',
+    });
+    await this.clickOnElementWithSelector(profileDropdown);
+
+    await this.page.waitForSelector(reportSiteProblemLink, {
+      state: 'visible',
+    });
+    await this.clickOnElementWithSelector(reportSiteProblemLink);
+    await this.expectModalTitleToBe('Report a Website Issue');
   }
 }
 

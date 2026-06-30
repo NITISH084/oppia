@@ -886,19 +886,15 @@ export class LoggedOutUser extends BaseUser {
       feedbackCaptchaContainer
     );
 
-    await this.page.waitForFunction(
-      (selector: string) => {
-        const element = document.querySelector(selector);
-        if (!element) {
-          return false;
-        }
+    await this.page.waitForFunction((selector: string) => {
+      const element = document.querySelector(selector);
+      if (!element) {
+        return false;
+      }
 
-        const rect = element.getBoundingClientRect();
-        return rect.width > 0 && rect.height > 0;
-      },
-      {},
-      feedbackCaptchaContainer
-    );
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    }, feedbackCaptchaContainer);
 
     await this.waitForTurnstileFrameToLoad();
 
@@ -1018,7 +1014,7 @@ export class LoggedOutUser extends BaseUser {
   async clickLessonFeedbackButton(isUserLoggedIn: boolean): Promise<void> {
     const lessonFeedbackButtonElement = await this.page.waitForSelector(
       lessonFeedbackButtonSelector,
-      {visible: true}
+      {state: 'visible'}
     );
     if (!lessonFeedbackButtonElement) {
       throw new Error('Lesson feedback element not found');
@@ -1039,7 +1035,7 @@ export class LoggedOutUser extends BaseUser {
   async clickReportLessonButton(isUserLoggedIn: boolean): Promise<void> {
     const reportLessonButtonElement = await this.page.waitForSelector(
       lessonReportButtonSelector,
-      {visible: true}
+      {state: 'visible'}
     );
     if (!reportLessonButtonElement) {
       throw new Error('Report lesson element not found');
@@ -1095,14 +1091,10 @@ export class LoggedOutUser extends BaseUser {
    * Function to verify that the user is on the login page.
    */
   async expectToBeOnLoginPage(): Promise<void> {
-    await this.page.waitForFunction(
-      (url: string) => {
-        const currentURL = window.location.href;
-        return currentURL.includes(url);
-      },
-      {},
-      testConstants.URLs.Login
-    );
+    await this.page.waitForFunction((url: string) => {
+      const currentURL = window.location.href;
+      return currentURL.includes(url);
+    }, testConstants.URLs.Login);
   }
 
   /**
@@ -1154,11 +1146,10 @@ export class LoggedOutUser extends BaseUser {
     username: string
   ): Promise<void> {
     await this.page.waitForSelector(testConstants.SignInDetails.inputField, {
-      visible: true,
+      state: 'visible',
     });
     await this.typeInInputField(testConstants.SignInDetails.inputField, email);
     await this.clickOnElementWithText('Sign In');
-    await this.page.waitForNavigation({waitUntil: 'networkidle0'});
     await this.typeInInputField('input.e2e-test-username-input', username);
     await this.clickOnElementWithSelector(
       'input.e2e-test-agree-to-terms-checkbox'
@@ -1167,9 +1158,8 @@ export class LoggedOutUser extends BaseUser {
       'button.e2e-test-register-user:not([disabled])'
     );
     await this.clickOnElementWithText(LABEL_FOR_SUBMIT_BUTTON);
-    await this.page.waitForNavigation({waitUntil: 'networkidle0'});
     await this.page.waitForSelector('button.e2e-test-register-user', {
-      hidden: true,
+      state: 'hidden',
     });
   }
 
