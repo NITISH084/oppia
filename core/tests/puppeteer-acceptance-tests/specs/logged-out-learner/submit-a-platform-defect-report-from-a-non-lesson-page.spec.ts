@@ -51,10 +51,10 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.scrollToBottomOfPage();
     await loggedOutLearner.openReportASiteIssueModalFromGlobalFooter(false);
     showMessage('Clicked on "Report a Website Issue" button.');
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportASiteIssueModal',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportASiteIssueModal',
+      __dirname
+    );
     await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal(
       'Report a Website Issue',
@@ -88,38 +88,38 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
       'The maximum allowed file size is 1024 KB'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportASiteIssueModalAfterEnteringFeedbackWithLargeFile',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportASiteIssueModalAfterEnteringFeedbackWithLargeFile',
+      __dirname
+    );
 
     // Add an invalid file type.
     await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_BMP);
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
       'This image format is not supported'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportASiteIssueModalAfterEnteringFeedbackWithInvalidFileType',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportASiteIssueModalAfterEnteringFeedbackWithInvalidFileType',
+      __dirname
+    );
   });
 
   it('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
     await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
     // In the screenshot, it is seen that all error messages are cleared.
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportASiteIssueModalAfterDroppingValidScreenshot',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportASiteIssueModalAfterDroppingValidScreenshot',
+      __dirname
+    );
     await loggedOutLearner.submitFeedbackInTextArea(
       'The partner image grid overlaps text headers when scaling down to smaller mobile screen viewports.'
     );
     await loggedOutLearner.expectIncludeTechnicalLogToBePresent(true);
     await loggedOutLearner.scrollToCaptchaContainer();
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportASiteIssueModalAfterEnteringFeedback',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportASiteIssueModalAfterEnteringFeedback',
+      __dirname
+    );
     await loggedOutLearner.waitForTurnstileTokenIfPresent();
     await loggedOutLearner.clickButtonInModal(
       'Report a Website Issue',
@@ -128,9 +128,9 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportASiteIssueModalAfterSubmittingFeedback',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportASiteIssueModalAfterSubmittingFeedback',
+      __dirname
+    );
   });
 });

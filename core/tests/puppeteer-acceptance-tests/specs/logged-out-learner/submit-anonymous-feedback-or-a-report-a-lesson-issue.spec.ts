@@ -72,10 +72,10 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.clickReportLessonButton(false);
     showMessage('Clicked on "Report an Issue" button.');
 
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportALessonModal',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportALessonModal',
+      __dirname
+    );
     await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.clickButtonInModal('Report an Issue', 'cancel');
     showMessage('Closed Report an issue feedback modal.');
@@ -127,29 +127,29 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
       'The maximum allowed file size is 1024 KB'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportAnIssueModalAfterEnteringFeedbackWithLargeFile',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterEnteringFeedbackWithLargeFile',
+      __dirname
+    );
 
     // Add an invalid file type.
     await loggedOutLearner.addFeedbackScreenshot(FILEPATHS.BANNER_BMP);
     await loggedOutLearner.expectPhotoUploadErrorMessageToBe(
       'This image format is not supported'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportAnIssueModalAfterEnteringFeedbackWithInvalidFileType',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterEnteringFeedbackWithInvalidFileType',
+      __dirname
+    );
   });
 
   it('should clear the error by dropping a valid screenshot image into the box, and type a valid issue description. Click "Submit".', async () => {
     await loggedOutLearner.addFeedbackScreenshot(testConstants.data.oppiaPage);
     // In the screenshot, it is seen that all error messages are cleared.
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportAnIssueModalAfterDroppingValidScreenshot',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterDroppingValidScreenshot',
+      __dirname
+    );
     await loggedOutLearner.submitFeedbackInTextArea(
       'The partner image grid overlaps text headers when scaling down to smaller mobile screen viewports.'
     );
@@ -157,18 +157,18 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.waitForTurnstileTokenIfPresent();
 
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportAnIssueModalAfterEnteringFeedback',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterEnteringFeedback',
+      __dirname
+    );
     await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportAnIssueModalAfterSubmittingFeedback',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportAnIssueModalAfterSubmittingFeedback',
+      __dirname
+    );
   });
 
   it('should type a customized issue or positive message directly into the text box without clicking any of the category chips', async () => {
@@ -181,10 +181,10 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.scrollToCaptchaContainer();
     await loggedOutLearner.waitForTurnstileTokenIfPresent();
 
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'reportALessonModalAfterEnteringFeedback',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'reportALessonModalAfterEnteringFeedback',
+      __dirname
+    );
     await loggedOutLearner.clickButtonInModal('Report an Issue', 'confirm');
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your report has been sent to the technical team.'
@@ -198,10 +198,10 @@ describe('Logged-Out User', function () {
 
     await loggedOutLearner.clickLessonFeedbackButton(false);
     showMessage('Clicked on "Send Lesson Feedback" button.');
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'sendALessonFeedbackModal',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModal',
+      __dirname
+    );
   });
 
   it('should be able to continue as guest by clicking on "Continue as Guest" button on the feedback modal.', async () => {
@@ -211,10 +211,10 @@ describe('Logged-Out User', function () {
     );
     showMessage('Clicked on "Continue as Guest" button.');
 
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'sendALessonFeedbackModalAfterClickingContinueAsGuest',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingContinueAsGuest',
+      __dirname
+    );
   });
 
   it('should be able to click on the "Send Lesson Feedback" button, then click "Sign Up or Login" and proceed through the user flow.', async () => {
@@ -228,10 +228,10 @@ describe('Logged-Out User', function () {
 
     await loggedOutLearner.expectToBeOnLoginPage();
     showMessage('On login page.');
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterClickingSignUpOrLogin',
+      __dirname
+    );
 
     await loggedOutLearner.goThoroughSignUpProcess(
       'learner@example.com',
@@ -251,9 +251,9 @@ describe('Logged-Out User', function () {
     await loggedOutLearner.expectToastMessage(
       'Thank you! Your feedback has been sent to the lesson team.'
     );
-    // await loggedOutLearner.expectScreenshotToMatch(
-    //   'sendALessonFeedbackModalAfterSubmittingFeedback',
-    //   __dirname
-    // );
+    await loggedOutLearner.expectScreenshotToMatch(
+      'sendALessonFeedbackModalAfterSubmittingFeedback',
+      __dirname
+    );
   });
 });

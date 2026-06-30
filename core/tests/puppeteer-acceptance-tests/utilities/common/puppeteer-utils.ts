@@ -1231,26 +1231,20 @@ export class BaseUser {
     const specName = process.env.SPEC_NAME;
     const currentPage = typeof newPage !== 'undefined' ? newPage : this.page;
     await currentPage.mouse.move(0, 0);
-    showMessage('1 wait timeout');
     // To wait for all images to load and the page to be stable.
     await currentPage.waitForTimeout(5000);
 
     // Disable all CSS transitions and animations before taking the
     // screenshot to prevent snapshot mismatches caused by transitions
     // being mid-way when the screenshot is captured.
-    showMessage('2 styleHandle');
-    await currentPage.evaluate(() => {
-      const style = document.createElement('style');
-      style.id = 'e2e-disable-animations';
-      style.textContent = `
+    const styleHandle = await currentPage.addStyleTag({
+      content: `
         *, *::before, *::after {
           transition: none !important;
           animation: none !important;
         }
-      `;
-      document.head.appendChild(style);
+      `,
     });
-    showMessage('2 after addStyleTag');
 
     /* The variable failureTrigger is the percentage of the difference between the stored screenshot and the current screenshot that would trigger a failure
      * In general, it is set as 0.04/4% (desktop) 0.042/4.2% (mobile) for the randomness of the page that are small enough to be ignored.
@@ -1260,7 +1254,6 @@ export class BaseUser {
     var failureTrigger = 0;
     var dirName = '';
     if (this.isViewportAtMobileWidth()) {
-      showMessage('3 mobile');
       if (await this.isInProdMode()) {
         dirName = '/prod-mobile-screenshots';
       } else {
@@ -1285,10 +1278,8 @@ export class BaseUser {
         failureTrigger += 0.006;
       }
     }
-    showMessage('4 after failureTrigger');
 
     const runningInCI = __dirname.startsWith('/home/runner');
-    showMessage('5 runningInCI');
     try {
       const screenshot = await currentPage.screenshot(screenshotOptions);
       expect(screenshot).toMatchImageSnapshot({
@@ -1335,13 +1326,9 @@ export class BaseUser {
         ' The new screenshot(s) should end with "-received". When replacing the screenshot(s), make sure to change the postfix "-received" to "-snap".';
       throw new Error(errorMessage);
     } finally {
-      showMessage('6 finally');
       // Remove the injected style tag so it doesn't affect subsequent actions.
-      await currentPage.evaluate(() => {
-        document.getElementById('e2e-disable-animations')?.remove();
-      });
+      await currentPage.evaluate(el => el.remove(), styleHandle);
     }
-    showMessage('7');
   }
 
   /**
