@@ -8,7 +8,7 @@
     {
       "name": "logged-in-learner/give-lesson-feedback-and-engage-with-lesson-creators",
       "module": "core/tests/playwright-acceptance-tests/specs/logged-in-learner/give-lesson-feedback-and-engage-with-lesson-creators.spec.ts",
-      "framework": "puppeteer"
+      "framework": "playwright"
     },
     {
       "name": "logged-out-learner/submit-a-platform-defect-report-from-a-non-lesson-page",
