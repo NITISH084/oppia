@@ -1090,6 +1090,7 @@ USER_GROUPS_HANDLER_URL = '/user_groups_handler'
 SUBSCRIBE_URL_PREFIX = '/subscribehandler'
 SUBTOPIC_PAGE_EDITOR_DATA_URL_PREFIX = '/subtopic_page_editor_handler/data'
 STUDY_GUIDE_EDITOR_DATA_URL_PREFIX = '/study_guide_editor_handler/data'
+TECHNICAL_FEEDBACK_DASHBOARD_URL = '/technical-feedback-dashboard'
 TOPIC_VIEWER_URL_PREFIX = '/learn/<classroom_url_fragment>/<topic_url_fragment>'
 TOPIC_DATA_HANDLER = '/topic_data_handler'
 TOPIC_ID_TO_TOPIC_NAME = '/topic_id_to_topic_name_handler'
@@ -1281,6 +1282,7 @@ ROLE_ID_TRANSLATION_ADMIN = 'TRANSLATION_ADMIN'
 ROLE_ID_VOICEOVER_ADMIN = 'VOICEOVER_ADMIN'
 ROLE_ID_QUESTION_COORDINATOR = 'QUESTION_COORDINATOR'
 ROLE_ID_TRANSLATION_COORDINATOR = 'TRANSLATION_COORDINATOR'
+ROLE_ID_TECH_LEAD = 'TECH_LEAD'
 
 ALLOWED_DEFAULT_USER_ROLES_ON_REGISTRATION = [
     ROLE_ID_FULL_USER,
@@ -1303,6 +1305,7 @@ ALLOWED_USER_ROLES = [
     ROLE_ID_VOICEOVER_ADMIN,
     ROLE_ID_QUESTION_COORDINATOR,
     ROLE_ID_TRANSLATION_COORDINATOR,
+    ROLE_ID_TECH_LEAD,
 ]
 
 # Intent of the User making query to role structure via admin interface. Used

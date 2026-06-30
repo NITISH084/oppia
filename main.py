@@ -355,6 +355,11 @@ URLS = [
         % feconf.ACCESS_VALIDATION_HANDLER_PREFIX,
         access_validators.TopicViewerPageAccessValidationHandler,
     ),
+    get_redirect_route(
+        r'%s/can_access_technical_feedback_dashboard'
+        % feconf.ACCESS_VALIDATION_HANDLER_PREFIX,
+        access_validators.TechnicalFeedbackDashboardAccessValidationHandler,
+    ),
     get_redirect_route(r'%s' % feconf.ADMIN_URL, oppia_root.OppiaRootPage),
     get_redirect_route(r'/adminhandler', admin.AdminHandler),
     get_redirect_route(r'/adminrolehandler', admin.AdminRoleHandler),
