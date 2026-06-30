@@ -110,7 +110,11 @@ export class BaseUser {
      * tests to fail while running in non headless mode (see
      * https://github.com/puppeteer/puppeteer/issues/7050).
      */
-    if (!headless) {
+    const skipSiteIsolationWorkaround = [
+      'logged-out-learner/submit-anonymous-feedback-or-a-report-a-lesson-issue',
+      'logged-out-learner/submit-a-platform-defect-report-from-a-non-lesson-page',
+    ].includes(specName ?? '');
+    if (!headless && !skipSiteIsolationWorkaround) {
       args.push('--disable-site-isolation-trials');
     }
 
