@@ -30,6 +30,10 @@ import {AppConstants} from 'app.constants';
 import {PlatformFeatureService} from 'services/platform-feature.service';
 import {AccessValidationBackendApiService} from 'pages/oppia-root/routing/access-validation-backend-api.service';
 
+interface ErrorResponse {
+  status: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -62,9 +66,10 @@ export class TechnicalFeedbackDashboardPageComponentAuthGuard
       await this.accessValidationBackendApiService.validateAccessToTechnicalFeedbackDashboardPage();
 
       return true;
-    } catch (err: any) {
+    } catch (err) {
+      const errorResponse = err as ErrorResponse;
       await this.router.navigate([
-        `${AppConstants.PAGES_REGISTERED_WITH_FRONTEND.ERROR.ROUTE}/${err.status}`,
+        `${AppConstants.PAGES_REGISTERED_WITH_FRONTEND.ERROR.ROUTE}/${errorResponse.status}`,
       ]);
       this.location.replaceState(state.url);
       return false;

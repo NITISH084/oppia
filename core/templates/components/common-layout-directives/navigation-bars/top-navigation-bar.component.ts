@@ -467,6 +467,11 @@ export class TopNavigationBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  isTechnicalFeedbackDashboardEnabled(): boolean {
+    return this.platformFeatureService.status.TechnicalFeedbackDashboardEnabled
+      .isEnabled;
+  }
+
   changeLanguage(languageCode: string): void {
     const pathname = this.urlService.getPathname().split('/');
     if (pathname.includes('lesson')) {

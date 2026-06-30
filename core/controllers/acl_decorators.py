@@ -5181,7 +5181,8 @@ def can_access_certificate_dashboard(
 def can_access_technical_feedback_dashboard(
     handler: Callable[..., _GenericHandlerFunctionReturnType],
 ) -> Callable[..., _GenericHandlerFunctionReturnType]:
-    """Decorator to check whether user can access the technical feedback dashboard.
+    """Decorator to check whether user can access
+        the technical feedback dashboard.
 
     Args:
         handler: function. The function to be decorated.
@@ -5209,10 +5210,8 @@ def can_access_technical_feedback_dashboard(
         Raises:
             NotLoggedInException. The user is not logged in.
             UnauthorizedUserException. The user does not have credentials to
-            access the technical feedback dashboard.
+                access the technical feedback dashboard.
         """
-        print(self.user.actions)
-        print(role_services.ACTION_ACCESS_TECHNICAL_FEEDBACK_DASHBOARD)
         if not self.user_id:
             raise base.UserFacingExceptions.NotLoggedInException
 

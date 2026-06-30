@@ -22,7 +22,6 @@ import {
   ActivatedRouteSnapshot,
   Router,
   RouterStateSnapshot,
-  convertToParamMap,
 } from '@angular/router';
 
 import {AppConstants} from 'app.constants';
