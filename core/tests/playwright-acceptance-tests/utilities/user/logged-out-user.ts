@@ -1021,8 +1021,10 @@ export class LoggedOutUser extends BaseUser {
     }
     await lessonFeedbackButtonElement.click();
     isUserLoggedIn
-      ? await this.expectModalTitleToBe('Send Feedback to the Lessons Team')
-      : await this.expectModalTitleToBe('Want to chat with our Lessons Team?');
+      ? await this.expectModalTitleTextToBe('Send Feedback to the Lessons Team')
+      : await this.expectModalTitleTextToBe(
+          'Want to chat with our Lessons Team?'
+        );
     await this.expectElementToBeVisible(commonModalBodySelector);
     if (isUserLoggedIn)
       await this.expectElementToBeVisible(feedbackModaltextarea);
@@ -1041,7 +1043,7 @@ export class LoggedOutUser extends BaseUser {
       throw new Error('Report lesson element not found');
     }
     await reportLessonButtonElement.click();
-    await this.expectModalTitleToBe('Report an Issue');
+    await this.expectModalTitleTextToBe('Report an Issue');
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {
@@ -1077,7 +1079,7 @@ export class LoggedOutUser extends BaseUser {
   ): Promise<void> {
     await this.page.waitForSelector(reportWebsiteIssueLink);
     await this.clickOnElementWithSelector(reportWebsiteIssueLink);
-    await this.expectModalTitleToBe('Report a Website Issue');
+    await this.expectModalTitleTextToBe('Report a Website Issue');
     await this.expectElementToBeVisible(commonModalBodySelector);
     await this.expectElementToBeVisible(feedbackModaltextarea);
     if (!isUserLoggedIn) {

@@ -2373,7 +2373,7 @@ export class LoggedInUser extends BaseUser {
       state: 'visible',
     });
     await this.clickOnElementWithSelector(reportSiteProblemLink);
-    await this.expectModalTitleToBe('Report a Website Issue');
+    await this.expectModalTitleTextToBe('Report a Website Issue');
   }
 }
 
