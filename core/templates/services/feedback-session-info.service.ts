@@ -31,9 +31,11 @@ type WindowWithConsole = Window & {console: Console};
   providedIn: 'root',
 })
 export class FeedbackSessionInfoService {
+  private static readonly MAX_ERROR_MESSAGE_LENGTH = 1000;
   private static readonly MAX_CONSOLE_ERRORS = 25;
   private static readonly MAX_FAILED_REQUESTS = 25;
   private static readonly MAX_NAVIGATION_ENTRIES = 5;
+  private static readonly MAX_STACK_TRACE_LENGTH = 4000;
   private static consolePatched = false;
   private static activeInstance: FeedbackSessionInfoService | null = null;
   private recentConsoleErrors: FeedbackSessionInfo['console_logs_json'] = [];
@@ -159,7 +161,27 @@ export class FeedbackSessionInfoService {
   private pushConsoleLog(
     entry: FeedbackSessionInfo['console_logs_json'][number]
   ): void {
-    this.recentConsoleErrors.push(entry);
+    this.recentConsoleErrors.push({
+      ...entry,
+      error_message:
+        entry.error_message.length >
+        FeedbackSessionInfoService.MAX_ERROR_MESSAGE_LENGTH
+          ? entry.error_message.slice(
+              0,
+              FeedbackSessionInfoService.MAX_ERROR_MESSAGE_LENGTH
+            )
+          : entry.error_message,
+      stack_trace:
+        entry.stack_trace &&
+        entry.stack_trace.length >
+          FeedbackSessionInfoService.MAX_STACK_TRACE_LENGTH
+          ? entry.stack_trace.slice(
+              0,
+              FeedbackSessionInfoService.MAX_STACK_TRACE_LENGTH
+            )
+          : entry.stack_trace,
+    });
+
     if (
       this.recentConsoleErrors.length >
       FeedbackSessionInfoService.MAX_CONSOLE_ERRORS
